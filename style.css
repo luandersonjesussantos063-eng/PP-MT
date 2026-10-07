@@ -120,3 +120,57 @@ header{background:#111213}.version{color:#d5b36a;border-color:#594c32}h1,h2,h3{f
 .question-context summary,.question-original summary{cursor:pointer;font-weight:700;padding:4px 0 10px}
 .exam-image-link{display:block;margin:8px auto;max-width:780px;background:#fff;border-radius:6px;overflow:hidden}
 .exam-image{display:block;width:100%;height:auto}.question .statement{white-space:pre-wrap;overflow-wrap:anywhere}.exam-source-card button{width:100%;margin-top:8px}.exam-source-card a{display:block;margin-top:8px}
+
+
+/* Experiência de aplicativo instalado e mobile nativo */
+html{min-height:100%;background:#0c0d0e;overscroll-behavior-y:none}
+body{min-height:100%;overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
+.mobile-app-brand{display:none;align-items:center;gap:8px;text-decoration:none;font-weight:800;letter-spacing:.5px}
+.mobile-app-brand img{width:30px;height:34px;object-fit:contain}
+.install-top{min-height:32px;padding:6px 10px;border-color:#6a5732;background:#211e17;color:#e5c77e;font-size:10px}
+.install-card{display:grid;grid-template-columns:72px 1fr;gap:18px;align-items:center;margin:0 0 20px;border-color:#584a2e;background:linear-gradient(120deg,#201d16,#141617)}
+.install-card h2{margin:2px 0 7px}
+.install-card p{margin:0 0 13px}
+.install-card.installed{border-color:#405438;background:#151d18}
+.install-app-icon{width:72px;height:72px;border-radius:18px;background:#101112;display:grid;place-items:center;box-shadow:0 10px 26px #0007}
+.install-app-icon img{width:66px;height:66px}
+.install-overlay{position:fixed;inset:0;z-index:150;background:#000c;display:flex;align-items:flex-end;justify-content:center;padding:20px}
+.install-sheet{width:min(560px,100%);background:#151718;border:1px solid #4c432f;border-top:3px solid var(--accent);border-radius:18px 18px 12px 12px;padding:22px;box-shadow:0 -24px 60px #000a}
+.install-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.install-sheet-head h2{margin:0}
+.install-sheet ol{padding-left:22px;color:#d8d1c4;line-height:1.8}
+.install-sheet p{color:#a6a39c;font-size:13px}
+
+@media(max-width:640px){
+  body{padding-top:env(safe-area-inset-top);padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+  aside{height:0!important;padding:0!important;border:0!important;background:transparent!important}
+  aside .brand{display:none!important}
+  header{position:sticky;top:0;z-index:55;height:56px;padding:0 14px;background:#101314ef;border-bottom:1px solid #2e302e;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .mobile-app-brand{display:flex}
+  .desktop-context{display:none}
+  .header-right{margin-left:auto}
+  .install-top{font-size:0;width:34px;padding:5px}
+  .install-top::before{content:'⇩';font-size:18px}
+  .account-email{display:none}
+  .account-logout{border:0;padding:5px 6px;font-size:9px}
+  main{padding:14px 12px 28px}
+  footer{display:none}
+  .card,.stat{border-radius:14px}
+  .hero{border-radius:16px;margin-top:10px}
+  .mission-status{border-radius:14px}
+  .question{border-radius:16px;padding:18px 16px}
+  .option{border-radius:12px;min-height:62px}
+  .actions{position:sticky;bottom:calc(76px + env(safe-area-inset-bottom));z-index:45;padding:9px 0;background:linear-gradient(180deg,transparent,#0c0d0e 30%)}
+  .install-card{grid-template-columns:56px 1fr;gap:12px;padding:16px}
+  .install-app-icon{width:56px;height:56px;border-radius:14px}
+  .install-app-icon img{width:52px;height:52px}
+  .install-card h2{font-size:20px}
+  .install-card .primary{width:100%}
+  .install-overlay{padding:0}
+  .install-sheet{border-radius:20px 20px 0 0;padding:20px 18px calc(22px + env(safe-area-inset-bottom))}
+}
+@media(display-mode:standalone){
+  body{user-select:none;-webkit-user-select:none}
+  input,select,textarea,.statement,.option span:nth-child(2){user-select:text;-webkit-user-select:text}
+  .install-top{display:none!important}
+}
