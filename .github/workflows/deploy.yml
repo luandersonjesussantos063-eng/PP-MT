@@ -23,7 +23,7 @@ jobs:
       - name: Preparar arquivos públicos
         run: |
           mkdir dist
-          cp index.html style.css app.js auth.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js sw.js icon.svg manifest.webmanifest dist/
+          cp index.html style.css app.js auth.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js sw.js icon.svg manifest.webmanifest dist/
           touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v4
         with:
