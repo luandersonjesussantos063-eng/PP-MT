@@ -1,4 +1,4 @@
-const CACHE='ppmt-v6-90day-plan';
+const CACHE='ppmt-v7-ui-focus';
 const FILES=['./','./index.html','./style.css','./app.js','./core.js','./data.js','./official.js','./official-1.js','./official-2.js','./official-3.js','./official-4.js','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ppmt-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
