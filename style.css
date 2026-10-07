@@ -174,3 +174,24 @@ body{min-height:100%;overscroll-behavior-y:none;-webkit-text-size-adjust:100%}
   input,select,textarea,.statement,.option span:nth-child(2){user-select:text;-webkit-user-select:text}
   .install-top{display:none!important}
 }
+
+/* iPhone: impede títulos e cards de estourarem a largura */
+@media(max-width:640px){
+  html,body,.layout,.main,main,#content{width:100%;max-width:100%;overflow-x:hidden}
+  *,*::before,*::after{min-width:0}
+  .mission-hero,.daily-mission,.hero,.card,.history-block,.stats,.subject-progress{max-width:100%;overflow:hidden}
+  .mission-hero h2,.daily-mission h1{font-size:clamp(25px,8.2vw,34px)!important;line-height:.98!important;overflow-wrap:anywhere;word-break:normal;max-width:100%;padding-right:44px}
+  .hero h1{font-size:clamp(27px,9vw,38px);line-height:1}
+  h1{overflow-wrap:anywhere}
+  .mission-facts,.home-mission-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .mission-facts span,.home-mission-facts span{min-width:0}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat{min-width:0}
+}
+@supports(-webkit-touch-callout:none){
+  @media(max-width:640px){
+    body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+    header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}
+    main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  }
+}
