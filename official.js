@@ -1064,19 +1064,19 @@ export const OFFICIAL_QUESTIONS = [
   {
     "id": "mt-2017-s05-t-35",
     "subject": "Direito Administrativo",
-    "topic": "Caderno T • questão 35",
-    "statement": "Questão 35 — Direito Administrativo",
+    "topic": "Atos administrativos • anulação",
+    "statement": "O desfazimento de um ato administrativo, ilegal ou ilegítimo pela Administração ou pelo Judiciário, denomina-se:",
     "options": [
-      "Alternativa A",
-      "Alternativa B",
-      "Alternativa C",
-      "Alternativa D",
-      "Alternativa E"
+      "revogação.",
+      "caducidade.",
+      "cassação.",
+      "anulação.",
+      "suspensão."
     ],
     "answer": 4,
-    "explanation": "A alternativa E é a resposta publicada no gabarito final da IBADE para a questão 35 do caderno S05 T. Esta correção reproduz o resultado histórico de 2017, sem comentário de mérito ou validação da legislação atual.",
+    "explanation": "O gabarito final do caderno S05 T indica a alternativa E para a questão 35. A fonte original continua disponível para conferência.",
     "origin": "prova",
-    "displayMode": "source-pdf",
+    "displayMode": "inline",
     "source": {
       "board": "IBADE",
       "exam": "SEJUDH/MT — Agente Penitenciário Masculino",
