@@ -24,12 +24,13 @@ export function trapWords(q){
 }
 
 export function microLesson(q){
+  if(q?.lesson?.concept)return String(q.lesson.concept).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const text=(String(q?.statement||'')+' '+String(q?.subject||'')).toLocaleLowerCase('pt-BR');
   const lessons=[
     [/diagnóstico estratégico externo|diagnostico estrategico externo|rastreamento|mapeamento ambiental/,
       '<b>Diagnóstico estratégico externo em 60s:</b> pense em uma sequência: <b>rastreamento</b> identifica sinais e tendências; <b>monitoramento</b> acompanha esses sinais ao longo do tempo; <b>previsão</b> projeta possíveis desdobramentos futuros; <b>avaliação</b> mede o impacto provável dessas mudanças para a organização. Se a alternativa troca “previsão” por análise contínua do presente, desconfie.'],
     [/retroaliment|processador|parâmetros de sistemas|parametros de sistemas/,
-      '<b>Teoria de sistemas em 60s:</b> entrada é o que o sistema recebe; processamento é a transformação das entradas; saída é o resultado; retroalimentação (feedback) compara o resultado com o objetivo/padrão e devolve informação para correção. Cuidado: processador é o mecanismo que transforma entradas em saídas — não simplesmente “o modo como elementos interagem”.'],
+      '<b>Teoria de sistemas em 60s:</b> entrada é o que o sistema recebe; processamento é a transformação das entradas; saída é o resultado; retroalimentação (feedback) compara o resultado com o objetivo/padrão e devolve informação para correção. O processador representa a transformação das entradas em saídas por meio da interação entre elementos. A nomenclatura de controle e retroação depende do referencial; consulte a ressalva da questão 30 de MT.'],
     [/embora|concessiv/,
       '<b>Concessão em 60s:</b> uma oração concessiva admite um fato que poderia dificultar outro, mas não o impede. Palavras comuns: “embora”, “ainda que”, “mesmo que”. Pergunte: “isso cria uma oposição que não impede o fato principal?”'],
     [/pronome oblíquo|pronome obliquo|chama ela/,
@@ -65,7 +66,7 @@ export function findSimilar(q,all){
   const base=new Set(words(q?.statement));
   let best=null,bestScore=-1;
   for(const other of all||[]){
-    if(!other||other.id===q?.id||other.displayMode==='source-pdf'||other.subject!==q.subject||other.topic!==q.topic) continue;
+    if(!other||other.id===q?.id||other.displayMode==='source-pdf'||other.historicalOnly||other.subject!==q.subject||other.topic!==q.topic) continue;
     const ow=words(other.statement), common=ow.filter(w=>base.has(w)).length;
     if(common<3)continue;
     let score=common*3;

@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {MT_QUESTIONS,OFFICIAL_QUESTIONS} from '../official.js';
+import {MT_LESSONS} from '../lessons.js';
+import {microLesson,findSimilar} from '../help.js';
+test('all 57 MT questions have substantive structured lessons and five option analyses',()=>{assert.equal(Object.keys(MT_LESSONS).length,57);for(const q of MT_QUESTIONS){const l=q.lesson;assert.ok(l,q.id);for(const k of ['concept','reasoning','example'])assert.ok(l[k].length>60,q.id+' '+k);assert.equal(l.alternatives.length,q.options.length);assert.ok(l.alternatives.every(t=>t.length>15));assert.ok(l.recall.prompt&&l.recall.answer);assert.ok(l.sources.length>=2);assert.ok(l.sources.every(s=>s.title&&new URL(s.url).protocol==='https:'));assert.equal(l.checkedAt,'2026-10-07');assert.equal(q.explanation,l.reasoning)}});
+test('historical exceptions preserve official answers without entering automatic learning',()=>{const ids=MT_QUESTIONS.filter(q=>q.historicalOnly).map(q=>Number(q.source.number));assert.deepEqual(ids,[11,19,22,24,25,30,34,51,59]);assert.equal(MT_QUESTIONS.find(q=>q.source.number==='51').answer,4);assert.equal(MT_QUESTIONS.find(q=>q.source.number==='30').answer,2);const app=fs.readFileSync(new URL('../app.js',import.meta.url),'utf8');assert.ok(app.includes("!q.historicalOnly&&q.displayMode"));assert.ok(app.includes("!q.historicalOnly||!!$('#examSource').value"));});
+test('basic help uses the question-specific concept rather than contradictory generic text',()=>{const q=MT_QUESTIONS.find(q=>q.source.number==='30');assert.equal(microLesson(q),q.lesson.concept);assert.ok(!microLesson(q).includes('não simplesmente'));});
+test('a historical candidate cannot be used to validate transfer of a concept',()=>{const q={id:'a',subject:'S',topic:'T',statement:'palavras comuns suficientes'};assert.equal(findSimilar(q,[{...q,id:'b',historicalOnly:true}]),null)});
+test('other states are not labeled as pedagogically checked by the MT enrichment',()=>{assert.ok(OFFICIAL_QUESTIONS.filter(q=>!q.id.startsWith('mt-2017')).every(q=>!q.lesson))});
+test('publication packages the lesson module and cache uses the current module versions',()=>{const workflow=fs.readFileSync(new URL('../.github/workflows/deploy.yml',import.meta.url),'utf8');assert.match(workflow,/app.js lessons.js/);const sw=fs.readFileSync(new URL('../sw.js',import.meta.url),'utf8');for(const file of ['lessons.js?v=27','official.js?v=27','help.js?v=27','learning.js?v=26'])assert.ok(sw.includes(file),file)});

@@ -79,3 +79,13 @@ Projeto independente, sem vínculo com órgãos públicos. Provas históricas n�
 Mantidos: fontes, questões históricas, textos de apoio, favoritos, backup e armazenamento por conta. Retirados do fluxo principal: missão obrigatória, bloqueios de treino e progresso fictício calculado por dias corridos.
 
 O acervo ainda não é um curso completo: parte dos comentários é apenas orientação de resolução ou indicação do gabarito histórico. Não há revisão jurídica atualizada de todas as questões, explicação individual de todos os distratores, notificações de horário ou mapa validado de edital futuro. A seleção de questões relacionadas é aproximada e exige matéria, assunto e termos em comum. O cronômetro não mede atenção: conta apenas em estudo visível com interação recente e pausa manual. Sessões de estudo guiado são retomáveis; simulados ainda precisam ser concluídos antes de fechar a página.
+
+## Atualização 27 — comentários aprofundados de MT
+
+As 57 questões válidas da prova MT/2017 têm conceito, raciocínio, análise individual das cinco alternativas, exemplo e pergunta de recuperação com resposta, além de fontes e ressalvas. Disponíveis no estudo guiado, na correção, na revisão e em **Mais → Comentários MT**, com pesquisa por assunto ou número. Os gabaritos oficiais foram preservados.
+
+48 itens participam do treino regular. Os itens 11, 19, 22, 24, 25, 30, 34, 51 e 59 ficam apenas no acervo e na prova histórica explicitamente selecionada, por dados antigos, ambiguidades, insuficiência do gabarito ou verificação normativa pendente. Não entram na seleção automática, revisões, XP ou cobertura de aprendizagem. O histórico de respostas não é apagado. As ressalvas constam de cada comentário.
+
+Comentários produzidos com assistência de IA; não são justificativas oficiais da banca nem revisão docente independente. A conferência das fontes não equivale a uma auditoria jurídica completa do acervo. Os demais estados ainda usam os comentários anteriores.
+
+Para editar, altere `content/mt-2017-lessons.json` e `content/lesson-sources.json`, execute `python3 tools/build_lessons.py` e `npm test`. O módulo gerado `lessons.js` é publicado e armazenado no cache offline. Os testes verificam cobertura, integração, gabaritos e exclusão dos itens com ressalvas; não certificam a correção pedagógica do texto.
