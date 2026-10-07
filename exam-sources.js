@@ -8,14 +8,21 @@ export const EXAM_SOURCES = [
   {
     id:'seap-ba-2024-t1', state:'BA', year:2024, board:'FGV',
     exam:'SEAP/BA — Agente Penitenciário — Tipo 1', questionCount:80,
-    status:'queued', verifiedOfficialSource:true,
-    sourcePage:'https://conhecimento.fgv.br/concursos/seapba24'
+    status:'verified-source', verifiedOfficialSource:true,
+    sourcePage:'https://conhecimento.fgv.br/concursos/seapba24',
+    examUrl:'https://conhecimento.fgv.br/sites/default/files/concursos/agente-penitenciariocnm-tipo-1.pdf',
+    answerUrl:'https://conhecimento.fgv.br/sites/default/files/concursos/gabarito_definitivo_seapba.pdf',
+    examDate:'2024-09-15', definitiveAnswerPublished:'2024-10-17',
+    verification:'FGV oficial: caderno Tipo 1 com 80 questões e gabarito oficial definitivo publicados na página do concurso.',
+    importNote:'Fonte e gabarito validados. Texto integral não importado automaticamente; aguarda base clara de reutilização ou material fornecido ao projeto.'
   },
   {
     id:'deppen-pr-2024', state:'PR', year:2024, board:'Instituto AOCP',
     exam:'Polícia Penal do Paraná — Policial Penal', questionCount:75,
-    status:'queued', verifiedOfficialSource:true,
-    sourcePage:'https://www.institutoaocp.org.br/concursos/604'
+    status:'verified-source', verifiedOfficialSource:true,
+    sourcePage:'https://www.institutoaocp.org.br/concursos/604',
+    verification:'Instituto AOCP oficial: página do Concurso Público nº 04/2024 da Polícia Penal do Paraná oferece cadernos de questões e gabarito definitivo.',
+    importNote:'Fonte oficial validada. Questões não transcritas automaticamente sem base clara de reutilização.'
   },
   {
     id:'pp-rs-2026', state:'RS', year:2026, board:'FUNDATEC',
