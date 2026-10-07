@@ -1,4 +1,5 @@
-export const EXAM_SOURCES = [
+import {IMPORTED_EXAMS} from './imported-exams.js';
+const PENDING_SOURCES = [
   {
     id:'sejudh-mt-2017-s05-t', state:'MT', year:2017, board:'IBADE',
     exam:'SEJUDH/MT — Agente Penitenciário Masculino', questionCount:57,
@@ -97,5 +98,10 @@ export const EXAM_SOURCES = [
   }
 ];
 
-export const SOURCE_TOTAL = EXAM_SOURCES.reduce((sum, exam) => sum + exam.questionCount, 0);
-export const IMPORTED_SOURCE_TOTAL = EXAM_SOURCES.filter(exam => exam.status === 'imported').reduce((sum, exam) => sum + exam.questionCount, 0);
+// Collapse alternate listings of the same AL paper and replace queued sources after import.
+export const EXAM_SOURCES = [
+ ...PENDING_SOURCES.filter(e=>!['seap-ba-2024-t1','seris-al-2021','seplag-al-2021'].includes(e.id)),
+ ...IMPORTED_EXAMS.map(e=>({...e,status:'imported',sourcePage:e.examUrl,verifiedOfficialSource:e.answerStatus==='definitivo'}))
+];
+export const SOURCE_TOTAL = EXAM_SOURCES.reduce((sum,e)=>sum+e.questionCount,0);
+export const IMPORTED_SOURCE_TOTAL = EXAM_SOURCES.filter(e=>e.status==='imported').reduce((sum,e)=>sum+(e.importedQuestionCount??e.questionCount),0);

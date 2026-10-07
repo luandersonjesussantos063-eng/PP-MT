@@ -1,3 +1,6 @@
+import {OFFICIAL_QUESTIONS_ES_2013_SEJUS} from './official-es-2013-sejus.js';
+import {OFFICIAL_QUESTIONS_BA_2024_SEAP} from './official-ba-2024-seap.js';
+import {OFFICIAL_QUESTIONS_RS_2022_SUSEPE} from './official-rs-2022-susepe.js';
 import {OFFICIAL_QUESTIONS_1} from './official-1.js';
 import {OFFICIAL_QUESTIONS_2} from './official-2.js';
 import {OFFICIAL_QUESTIONS_3} from './official-3.js';
@@ -40,5 +43,10 @@ export const OFFICIAL_QUESTIONS=[
   ...OFFICIAL_QUESTIONS_2,
   ...OFFICIAL_QUESTIONS_3,
   ...OFFICIAL_QUESTIONS_4,
+  ...OFFICIAL_QUESTIONS_ES_2013_SEJUS,
+  ...OFFICIAL_QUESTIONS_BA_2024_SEAP,
+  ...OFFICIAL_QUESTIONS_RS_2022_SUSEPE,
   ...OFFICIAL_QUESTIONS_AL_2021
 ];
+
+export const MT_QUESTIONS = OFFICIAL_QUESTIONS.filter(q => q.source.examUrl === MT_EXAM.examUrl);
