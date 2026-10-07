@@ -1,11 +1,11 @@
-import {OFFICIAL_QUESTIONS_ES_2013_SEJUS} from './official-es-2013-sejus.js';
-import {OFFICIAL_QUESTIONS_BA_2024_SEAP} from './official-ba-2024-seap.js';
-import {OFFICIAL_QUESTIONS_RS_2022_SUSEPE} from './official-rs-2022-susepe.js';
-import {OFFICIAL_QUESTIONS_1} from './official-1.js';
-import {OFFICIAL_QUESTIONS_2} from './official-2.js';
-import {OFFICIAL_QUESTIONS_3} from './official-3.js';
-import {OFFICIAL_QUESTIONS_4} from './official-4.js';
-import {OFFICIAL_QUESTIONS_AL_2021} from './official-al-2021.js';
+import {OFFICIAL_QUESTIONS_ES_2013_SEJUS} from './official-es-2013-sejus.js?v=15';
+import {OFFICIAL_QUESTIONS_BA_2024_SEAP} from './official-ba-2024-seap.js?v=15';
+import {OFFICIAL_QUESTIONS_RS_2022_SUSEPE} from './official-rs-2022-susepe.js?v=15';
+import {OFFICIAL_QUESTIONS_1} from './official-1.js?v=15';
+import {OFFICIAL_QUESTIONS_2} from './official-2.js?v=15';
+import {OFFICIAL_QUESTIONS_3} from './official-3.js?v=15';
+import {OFFICIAL_QUESTIONS_4} from './official-4.js?v=15';
+import {OFFICIAL_QUESTIONS_AL_2021} from './official-al-2021.js?v=15';
 
 export const MT_EXAM={
   id:'sejudh-mt-2017-s05-t',
