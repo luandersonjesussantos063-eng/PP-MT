@@ -36,6 +36,11 @@ test('Administração Geral e Direito Administrativo ficam rigidamente separadas
  assert.equal(MT_QUESTIONS.filter(q=>q.subject==='Administração').length,0);
  assert.equal(MT_QUESTIONS.find(q=>q.id==='mt-2017-s05-t-32').subject,'Administração Geral');
 });
+test('questões 1 a 10 de MT 2017 mantêm referência ao texto-base da prova',()=>{
+ const qs=MT_QUESTIONS.filter(q=>Number(q.source.number)>=1&&Number(q.source.number)<=10);
+ assert.equal(qs.length,10);
+ for(const q of qs){assert.equal(q.source.code,'S05');assert.equal(q.source.version,'T');assert.equal(q.source.year,'2017');assert.ok(q.source.examUrl)}
+});
 test('figuras, textos de apoio e PDFs estão presentes no pacote publicado',()=>{
  for(const q of OFFICIAL_QUESTIONS.filter(q=>q.source.examId)){
   assert.ok(q.statement.length>10);
