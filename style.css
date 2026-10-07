@@ -236,3 +236,36 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
  .source-text-frame-wrap{height:52vh;min-height:360px}
  .source-text-actions .button{width:100%;text-align:center}
 }
+
+
+/* v24: cronômetro líquido + rumo pós-missão */
+.study-clock-mini{display:inline-flex;align-items:center;padding:6px 9px;border:1px solid #4a4435;border-radius:999px;color:#b9b19d;background:#151716;font-size:10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.study-clock-mini.counting{color:#e5c77e;border-color:#7a6234;background:#211e17}
+.study-clock-card{margin:18px 0;border-color:#4b4435;background:linear-gradient(120deg,#171916,#121414)}
+.study-clock-top{display:flex;align-items:flex-end;justify-content:space-between;gap:18px}
+.study-clock-top h2{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:38px;margin:4px 0 0;color:#e5c77e;font-variant-numeric:tabular-nums}
+.study-goal-badge{text-align:right}
+.study-goal-badge b{display:block;font-size:26px;color:#eeeae0}
+.study-goal-badge span{font-size:10px;color:#8f8b82;text-transform:uppercase;letter-spacing:.6px}
+.study-time-track{margin:18px 0 12px;height:8px}
+.study-clock-foot{display:flex;gap:8px;align-items:center;color:#8f8b82;font-size:10px;line-height:1.5}
+.study-clock-foot b{margin-left:auto;color:#c9b67f;white-space:nowrap}
+.continuation-card{margin:18px 0;border-left:3px solid var(--accent);background:#151614}
+.continuation-card.done{border-left-color:#8fc96b;background:#141a15}
+.continuation-card h2{margin:4px 0 6px}
+.continuation-facts{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.continuation-facts span{border:1px solid #3f3b32;border-radius:8px;padding:10px 12px;color:#9f9a8f;font-size:10px}
+.continuation-facts b{color:#eeeae0;font-size:15px;margin-right:4px}
+.study-goal-settings{margin:0 0 18px}
+.study-goal-settings label{min-width:150px}
+@media(max-width:640px){
+ .study-clock-mini{font-size:9px;padding:5px 7px}
+ .study-clock-top{align-items:center}
+ .study-clock-top h2{font-size:30px}
+ .study-goal-badge b{font-size:22px}
+ .study-clock-foot{flex-wrap:wrap}
+ .study-clock-foot b{width:100%;margin-left:0}
+ .continuation-card{padding:18px 16px}
+ .study-goal-settings .row{display:block}
+ .study-goal-settings label{margin-top:12px}
+}
