@@ -167,8 +167,39 @@ function renderErrorReview(){
   $('#reviewTransfer').textContent=similar?'Testar em uma questão relacionada':'Agendar lembrança para amanhã';
   $('#reviewTransfer').onclick=()=>{if(!similar){store.program.reviews||={};store.program.reviews[q.id]=nextReview(null,false);save();reviewState=null;renderErrorReview();toast('Leitura registrada, sem marcar domínio. Amanhã tente lembrar antes de ver a resposta.');return}r.phase='test';renderErrorReview()};return;
  }
- $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>`<button class="option ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span>${esc(o)}</button>`).join('')}</div>${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
- document.querySelectorAll('[data-review-answer]').forEach(btn=>btn.onclick=()=>{if(r.answered)return;r.selected=Number(btn.dataset.reviewAnswer);r.answered=true;const correct=r.selected===test.answer;store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id});markErrorMastered(q.id,correct);renderErrorReview()});
+ const reviewStrikeKey=`review:${test.id}`,reviewStrikes=manualStrikes(reviewStrikeKey);
+ $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<button class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</button>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Pressione e segure uma alternativa para riscar ou desfazer o risco.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
+ document.querySelectorAll('[data-review-answer]').forEach(btn=>{
+  let holdTimer=null,longPressed=false,startX=0,startY=0;
+  const idx=()=>Number(btn.dataset.reviewAnswer);
+  const clearHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null}};
+  btn.onpointerdown=e=>{
+   if(r.answered||btn.disabled)return;
+   if(e.pointerType==='mouse'&&e.button!==0)return;
+   longPressed=false;startX=e.clientX;startY=e.clientY;
+   holdTimer=setTimeout(()=>{
+    holdTimer=null;longPressed=true;
+    const i=idx(),strikes=manualStrikes(reviewStrikeKey),pos=strikes.indexOf(i);
+    if(pos>=0)strikes.splice(pos,1);else strikes.push(i);
+    btn.classList.toggle('struck',pos<0);
+    btn.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${pos<0?', riscada':''}`);
+    btn.querySelector('.strike-label')?.remove();
+    if(pos<0)btn.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
+    if(navigator.vibrate)navigator.vibrate(20);
+   },550);
+  };
+  btn.onpointermove=e=>{if(Math.abs(e.clientX-startX)>9||Math.abs(e.clientY-startY)>9)clearHold()};
+  btn.onpointerup=clearHold;btn.onpointercancel=clearHold;btn.onpointerleave=clearHold;
+  btn.oncontextmenu=e=>e.preventDefault();
+  btn.onclick=e=>{
+   if(longPressed){e.preventDefault();longPressed=false;return}
+   if(r.answered||btn.classList.contains('struck'))return;
+   r.selected=idx();r.answered=true;
+   const correct=r.selected===test.answer;
+   store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id});
+   markErrorMastered(q.id,correct);renderErrorReview();
+  };
+ });
  $('#reviewNext')?.addEventListener('click',()=>{reviewState=null;renderErrorReview()});
 }
 
