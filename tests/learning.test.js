@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {minutesFor,dueReviews,nextReview,learningMetrics,selectLearningQuestions} from '../learning.js';
+import {findSimilar} from '../help.js';
+test('12x36 alternates across month boundaries, including dates before anchor',()=>{const p={schedule:'shift',anchor:'2026-10-31',workMinutes:10,freeMinutes:30};assert.equal(minutesFor(p,new Date('2026-11-01T12:00:00')),30);assert.equal(minutesFor(p,new Date('2026-10-30T12:00:00')),30);assert.equal(minutesFor(p,new Date('2026-11-02T12:00:00')),10)});
+test('weekly plan respects rest days and a small beginner goal',()=>{assert.equal(minutesFor(null),20);assert.equal(minutesFor({schedule:'weekly',days:[1],minutes:10},new Date('2026-10-06T12:00:00')),0)});
+test('guessed correct answers remain due; reading and old mastery do not erase errors',()=>{assert.deepEqual(dueReviews([{id:'a',correct:true,guessed:true,at:'2026-10-07T10:00:00Z'}]),['a'])});
+test('review is postponed and returns after its due date; later mistakes override schedule',()=>{const now=Date.parse('2026-10-07T12:00:00Z'),a=[{id:'a',correct:false,at:'2026-10-07T10:00:00Z'}],r={a:nextReview(null,true,now)};assert.deepEqual(dueReviews(a,r,now),[]);assert.deepEqual(dueReviews(a,r,now+86400000),['a']);assert.deepEqual(dueReviews([...a,{id:'a',correct:false,at:'2026-10-07T13:00:00Z'}],r,now+3600000),['a'])});
+test('new-question accuracy does not inflate on repetitions, assistance, or guesses',()=>{const m=learningMetrics([{id:'a',correct:false},{id:'a',correct:true},{id:'b',correct:true,guessed:true},{id:'c',correct:true,assists:['help']}]);assert.equal(m.newRate,0);assert.equal(m.newCount,1)});
+test('related question never falls back to an unrelated subject',()=>assert.equal(findSimilar({id:'a',subject:'Português',topic:'Concessão',statement:'embora oposição concessiva'},[{id:'b',subject:'Penal',topic:'Crime',statement:'embora oposição concessiva'}]),null));
+test('new material is prioritized over repeated questions',()=>{const qs=[{id:'a',subject:'A'},{id:'b',subject:'A'}];assert.equal(selectLearningQuestions(qs,[{id:'a',correct:true}],1)[0].id,'b')});

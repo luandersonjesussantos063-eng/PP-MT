@@ -63,3 +63,19 @@ Conta, sincronização e cache local são mantidos pela implementação existent
 Os módulos básicos são armazenados para acesso offline; imagens e PDFs ficam disponíveis offline depois de abertos e armazenados pelo navegador. A autenticação inicial pode exigir internet. O cache não baixa todo o acervo de imagens e PDFs antecipadamente.
 
 Projeto independente, sem vínculo com órgãos públicos. Provas históricas não representam o conteúdo de um edital futuro.
+
+## Atualização 26 — rotina e aprendizagem
+
+- Navegação principal: Hoje, Estudar, Revisar, Simulado e Progresso.
+- Configuração por dias da semana ou escala 12×36, duração de plantão/folga, horário e data de prova opcional. Sessão curta de 10 minutos; faltas não geram dívida acumulada.
+- Blocos com orientação, exemplo e prática. O bloco e as respostas ficam no estado da conta, permitindo retomada. Chutes entram na revisão.
+- Revisões espaçadas em 1, 3, 7 e 14 dias, com tentativa antes da explicação nas revisões posteriores. Sem equivalente, leitura apenas agenda recuperação da questão original; não marca domínio.
+- Simulados não revelam respostas durante a sessão e permitem trocar alternativas. Explicações básicas são gratuitas no treino; ajuda fica indisponível no simulado.
+- Relatório distingue primeiras respostas sem ajuda, revisões posteriores e cobertura do acervo. Não estima chance de aprovação ou cobertura de edital futuro.
+- Publicação inclui os ícones PNG necessários ao manifesto e ao iPhone.
+
+### Auditoria e limites
+
+Mantidos: fontes, questões históricas, textos de apoio, favoritos, backup e armazenamento por conta. Retirados do fluxo principal: missão obrigatória, bloqueios de treino e progresso fictício calculado por dias corridos.
+
+O acervo ainda não é um curso completo: parte dos comentários é apenas orientação de resolução ou indicação do gabarito histórico. Não há revisão jurídica atualizada de todas as questões, explicação individual de todos os distratores, notificações de horário ou mapa validado de edital futuro. A seleção de questões relacionadas é aproximada e exige matéria, assunto e termos em comum. O cronômetro não mede atenção: conta apenas em estudo visível com interação recente e pausa manual. Sessões de estudo guiado são retomáveis; simulados ainda precisam ser concluídos antes de fechar a página.

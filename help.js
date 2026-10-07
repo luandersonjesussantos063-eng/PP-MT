@@ -65,8 +65,9 @@ export function findSimilar(q,all){
   const base=new Set(words(q?.statement));
   let best=null,bestScore=-1;
   for(const other of all||[]){
-    if(!other||other.id===q?.id||other.displayMode==='source-pdf') continue;
+    if(!other||other.id===q?.id||other.displayMode==='source-pdf'||other.subject!==q.subject||other.topic!==q.topic) continue;
     const ow=words(other.statement), common=ow.filter(w=>base.has(w)).length;
+    if(common<3)continue;
     let score=common*3;
     if(other.subject===q.subject) score+=8;
     if(other.topic===q.topic) score+=5;
