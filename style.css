@@ -325,3 +325,13 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 @media(max-width:640px){
  .mobile-app-brand .app-version-badge{font-size:8px;padding:3px 6px;margin-left:2px}
 }
+
+
+/* v33: riscar alternativa arrastando para o lado */
+.option{transition:transform .16s ease,border-color .16s ease,background .16s ease;will-change:transform}
+.option.swiping{transform:translateX(var(--swipe-x,0));transition:none;box-shadow:0 7px 18px #0006}
+.option.swiping::after{content:'RIScar';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:8px;letter-spacing:1px;color:#d7b663;opacity:.85;pointer-events:none}
+.option.struck.swiping::after{content:'DESFAZER'}
+@media(max-width:640px){
+ .option.swiping{box-shadow:0 8px 22px #0008}
+}
