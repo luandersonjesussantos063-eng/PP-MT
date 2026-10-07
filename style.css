@@ -224,3 +224,15 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
   .layout,.main,main,#content{height:auto!important;min-height:0}
   .question,.options,.option{touch-action:pan-y}
 }
+
+
+/* v23: texto-base compartilhado de questões de interpretação */
+.source-text-context{border-color:#51462f;background:#121414}
+.source-text-context summary{color:#e2c77f}
+.source-text-frame-wrap{width:100%;height:min(62vh,620px);margin:12px 0;border:1px solid #444238;border-radius:10px;overflow:hidden;background:#202223}
+.source-text-frame{width:100%;height:100%;border:0;background:#fff}
+.source-text-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:640px){
+ .source-text-frame-wrap{height:52vh;min-height:360px}
+ .source-text-actions .button{width:100%;text-align:center}
+}
