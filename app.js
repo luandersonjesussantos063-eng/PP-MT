@@ -226,13 +226,13 @@ function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a
 function bindOptions(q,fn){
  const buttons=[...document.querySelectorAll('[data-option]')];
  buttons.forEach(b=>{
-  let holdTimer=null,longPressed=false;
+  let holdTimer=null,longPressed=false,startX=0,startY=0;
   const index=()=>Number(b.dataset.option);
   const clearHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null}};
   b.onpointerdown=e=>{
    if(b.disabled||runAnswered(q.id))return;
    if(e.pointerType==='mouse'&&e.button!==0)return;
-   longPressed=false;
+   longPressed=false;startX=e.clientX;startY=e.clientY;
    holdTimer=setTimeout(()=>{
     holdTimer=null;longPressed=true;
     const i=index(),strikes=manualStrikes(q.id),pos=strikes.indexOf(i);
@@ -244,6 +244,7 @@ function bindOptions(q,fn){
     if(navigator.vibrate)navigator.vibrate(20);
    },550);
   };
+  b.onpointermove=e=>{if(Math.abs(e.clientX-startX)>9||Math.abs(e.clientY-startY)>9)clearHold()};
   b.onpointerup=clearHold;b.onpointercancel=clearHold;b.onpointerleave=clearHold;
   b.oncontextmenu=e=>e.preventDefault();
   b.onclick=e=>{
