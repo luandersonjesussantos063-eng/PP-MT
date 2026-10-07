@@ -27,3 +27,10 @@ test('versão runtime e arquivos publicados permanecem alinhados',()=>{
   assert.equal(runtime,js);
   assert.equal(style,js);
 });
+
+
+test('fluxo Estudar criado no Work também recebe swipe',()=>{
+  assert.match(app,/data-learning-answer="\$\{i\}" data-strike-index="\$\{i\}" data-strike-key="\$\{esc\(learningStrikeKey\)\}"/);
+  assert.match(app,/learningStrikeKey=\`learning:\$\{q\.id\}\`/);
+  assert.match(app,/btn\.dataset\.learningAnswer/);
+});
