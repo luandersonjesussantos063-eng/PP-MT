@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: node --check app.js && node --check help.js && node --check auth.js
       - run: npm test
       - uses: actions/configure-pages@v5
       - name: Preparar arquivos públicos
