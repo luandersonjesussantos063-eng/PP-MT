@@ -34,3 +34,11 @@ test('fluxo Estudar criado no Work também recebe swipe',()=>{
   assert.match(app,/learningStrikeKey=\`learning:\$\{q\.id\}\`/);
   assert.match(app,/btn\.dataset\.learningAnswer/);
 });
+
+
+test('fluxo Estudar corrige imediatamente ao tocar',()=>{
+  assert.doesNotMatch(app,/learningCheck/);
+  assert.match(app,/l\.selected=Number\(b\.dataset\.learningAnswer\);[\s\S]*l\.phase='feedback';save\(\);renderLearn\(\)/);
+  assert.match(app,/i===q\.answer\?'correct':l\.selected===i\?'wrong'/);
+  assert.match(app,/Próxima questão/);
+});
