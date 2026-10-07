@@ -364,3 +364,18 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
  .question .option{padding:12px;min-height:62px}
  .question .option.swiping{box-shadow:0 8px 22px #0008}
 }
+
+
+/* v40: estados de correção acima da camada canônica */
+.question .option.correct{
+  border-color:#a9e976;
+  background:#243c2c;
+  color:#f3f7ef;
+}
+.question .option.wrong{
+  border-color:#ef8a91;
+  background:#442b37;
+  color:#fff1f3;
+}
+.question .option.correct .letter{border-color:#a9e976;color:#d9ffc4}
+.question .option.wrong .letter{border-color:#ef8a91;color:#ffd6da}
