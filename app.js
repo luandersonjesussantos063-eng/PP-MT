@@ -17,7 +17,7 @@ function normalizeStore(s){return validStore(s)?{...emptyStore(),...s,program:s.
 function userKey(id=currentUser?.id){return id?`${KEY}:${id}`:KEY}
 function localDay(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 function ensureProgram(){if(!store.program||typeof store.program!=='object')store.program={startDate:localDay(),completed:{},xp:0};if(!store.program.startDate)store.program.startDate=localDay();if(!store.program.completed)store.program.completed={};if(!Number.isFinite(store.program.xp))store.program.xp=0}
-let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null),strikeState=Object.create(null);
+let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null),strikeState=Object.create(null),deferredInstallPrompt=null;
 const pages=[['inicio','⌂','Hoje'],['missao','◆','Missão'],['desempenho','▥','Progresso'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['simulados','◷','Simulados'],['erros','↺','Erros'],['favoritos','☆','Favoritos'],['dados','⚙','Meus dados']];
 function normalizedSubject(q){
  if(!q||q.subject!=='Administração')return q;
@@ -39,6 +39,42 @@ function renderAuth(){currentUser=null;$('#nav').innerHTML='';accountUI();const 
  $('#authForm').onsubmit=async e=>{e.preventDefault();const email=$('#authEmail').value.trim(),password=$('#authPassword').value,btn=$('.auth-submit');btn.disabled=true;btn.textContent='Aguarde...';try{if(mode==='login'){const user=await signIn(email,password);await loadAccount(user)}else{const data=await signUp(email,password);if(data.session&&data.user){await loadAccount(data.user)}else{setMode('login');$('#authHint').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}}}catch(err){$('#authHint').textContent=err.message||'Não foi possível autenticar.'}finally{btn.disabled=false;btn.textContent=mode==='login'?'Entrar':'Criar conta'}}}
 async function bootstrap(){const user=await getCurrentUser();if(user)await loadAccount(user);else renderAuth()}
 function title(t,d){return `<h1>${t}</h1><p class="muted">${d}</p>`}
+function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+function isIOSDevice(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}
+function closeInstallGuide(){document.querySelector('.install-overlay')?.remove()}
+function installGuide(){
+ closeInstallGuide();
+ const ios=isIOSDevice();
+ const body=ios
+  ? '<ol><li>Abra o PP MT no Safari.</li><li>Toque em <b>Compartilhar</b> (quadrado com seta para cima).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>.</li></ol><p>Depois ele abre em tela cheia, como um aplicativo comum.</p>'
+  : '<ol><li>Abra o menu do navegador.</li><li>Toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.</li><li>Confirme a instalação.</li></ol><p>No Android, quando o navegador liberar a instalação automática, o botão “Instalar” faz isso direto.</p>';
+ document.body.insertAdjacentHTML('beforeend',`<div class="install-overlay" role="dialog" aria-modal="true" aria-label="Instalar PP MT"><div class="install-sheet"><div class="install-sheet-head"><div><span class="eyebrow">PP MT NO CELULAR</span><h2>${ios?'Instalar no iPhone/iPad':'Instalar no Android'}</h2></div><button id="closeInstallGuide" class="secondary">✕</button></div>${body}</div></div>`);
+ $('#closeInstallGuide').onclick=closeInstallGuide;
+ document.querySelector('.install-overlay').onclick=e=>{if(e.target.classList.contains('install-overlay'))closeInstallGuide()}
+}
+async function installApp(){
+ if(isStandalone()){toast('O PP MT já está instalado neste aparelho.');return}
+ if(deferredInstallPrompt){
+  deferredInstallPrompt.prompt();
+  const choice=await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt=null;
+  if(choice.outcome==='accepted')toast('Instalação do PP MT iniciada.');
+  syncInstallUI();
+  return;
+ }
+ installGuide();
+}
+function installCardHTML(){
+ if(isStandalone())return '<section class="card install-card installed"><div class="install-app-icon"><img src="./icon.svg" alt=""></div><div><span class="eyebrow">APLICATIVO INSTALADO</span><h2>PP MT já está no seu celular</h2><p class="muted">Abra pelo ícone da tela inicial para usar em modo aplicativo.</p></div></section>';
+ return `<section class="card install-card"><div class="install-app-icon"><img src="./icon.svg" alt=""></div><div><span class="eyebrow">USAR COMO APP</span><h2>Instale o PP MT no celular</h2><p class="muted">Sem Play Store e sem App Store: ele entra na tela inicial e abre em tela cheia. Compatível com Android e iPhone/iPad.</p><button class="primary" data-install-app>${isIOSDevice()?'Como instalar no iPhone':'⇩ Instalar aplicativo'}</button></div></section>`
+}
+function syncInstallUI(){
+ const top=$('#installTop');
+ if(top){top.hidden=isStandalone();top.onclick=installApp}
+ document.querySelectorAll('[data-install-app]').forEach(b=>b.onclick=installApp)
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;syncInstallUI()});
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;syncInstallUI();toast('PP MT instalado. Agora ele pode ser aberto pela tela inicial.');if(tab==='mais')renderMore()});
 const HELP_COSTS={armadilhas:5,comando:10,similar:15,aula60:20,eliminacao:30};
 function questionWeight(q){const n=Number(q?.weight);return Number.isFinite(n)&&n>0?Math.min(3,n):1}
 function questionDifficulty(q){
@@ -139,7 +175,7 @@ function missionSpec(){const day=programDay(),cycle=(day-1)%7,weak=weakestSubjec
  ];
  return {...plans[cycle],day,phase:phase.name,target:phase.target}}
 function missionDisplayTitle(spec){if(spec.type==='subject')return `OPERAÇÃO: ${spec.subject}`;if(spec.type==='weak')return `OPERAÇÃO RECUPERAÇÃO: ${spec.subject}`;if(spec.type==='dual')return 'MISSÃO DUPLA';if(spec.type==='errors')return 'ACERTO DE CONTAS';if(spec.type==='full')return 'PROVA DE COMBATE';return 'TESTE DE COMBATE'}
-function renderMore(){const items=[['provas','▧','Acervo de provas','Consulte e refaça provas completas.'],['materias','▦','Matérias','Treino livre por disciplina após cumprir a missão.'],['questoes','▤','Banco de questões','Pesquise e filtre o banco completo.'],['simulados','◷','Simulados','Monte treinos extras depois da missão.'],['erros','↺','Revisar erros','Volte às questões que você errou.'],['favoritos','☆','Favoritos','Acesse suas questões salvas.'],['dados','⚙','Meus dados','Backup e configurações locais.']];$('#content').innerHTML=title('Mais','Ferramentas extras do preparatório.')+`<div class="more-grid">${items.map(([id,icon,name,desc])=>{const locked=lockStudy(id);return `<a class="card more-item ${locked?'locked-card':''}" href="#${locked?'missao':id}"><span class="more-icon">${locked?'🔒':icon}</span><div><h2>${name}</h2><p class="muted">${locked?'Conclua a missão de hoje para liberar.':desc}</p></div></a>`}).join('')}</div>`}
+function renderMore(){const items=[['provas','▧','Acervo de provas','Consulte e refaça provas completas.'],['materias','▦','Matérias','Treino livre por disciplina após cumprir a missão.'],['questoes','▤','Banco de questões','Pesquise e filtre o banco completo.'],['simulados','◷','Simulados','Monte treinos extras depois da missão.'],['erros','↺','Revisar erros','Volte às questões que você errou.'],['favoritos','☆','Favoritos','Acesse suas questões salvas.'],['dados','⚙','Meus dados','Backup e configurações locais.']];$('#content').innerHTML=title('Mais','Ferramentas extras do preparatório.')+installCardHTML()+`<div class="more-grid">${items.map(([id,icon,name,desc])=>{const locked=lockStudy(id);return `<a class="card more-item ${locked?'locked-card':''}" href="#${locked?'missao':id}"><span class="more-icon">${locked?'🔒':icon}</span><div><h2>${name}</h2><p class="muted">${locked?'Conclua a missão de hoje para liberar.':desc}</p></div></a>`}).join('')}</div>`;syncInstallUI()}
 function missionQuestions(spec){const all=realBank();let qs=[];if(spec.type==='subject'||spec.type==='weak')qs=all.filter(q=>q.subject===spec.subject);else if(spec.type==='dual')qs=all.filter(q=>spec.subjects.includes(q.subject));else if(spec.type==='errors'){const ids=latestErrors(store.attempts);qs=all.filter(q=>ids.has(q.id));if(qs.length<spec.count){const fill=all.filter(q=>q.subject===spec.subject&&!qs.includes(q));qs=[...qs,...fill]}}else qs=all.slice();if(spec.type==='full')return MT_QUESTIONS.slice().sort((a,b)=>Number(a.source?.number||0)-Number(b.source?.number||0));return shuffle(qs).slice(0,Math.min(spec.count,qs.length))}
 function missionHeader(){const d=programDay(),pct=Math.max(1,Math.round(d/90*100)),p=phaseInfo(d);return `<section class="mission-status"><div><span class="eyebrow">PROJETO APROVAÇÃO • ${p.name}</span><div class="mission-progress-row"><h2>Dia ${d} de 90</h2><b>${pct}% concluído</b></div><div class="track"><i style="width:${pct}%"></i></div></div><div class="mission-kpis"><span><b>${streak()}</b>dias seguidos</span><span><b>${store.program.xp}</b>XP</span><span><b>${rankName()}</b>patente</span></div></section>`}
 function renderMission(){
@@ -261,6 +297,7 @@ function renderArchive(){
  const e=MT_EXAM;$('#content').innerHTML=title('Acervo de provas','Provas reais localizadas para ampliar o banco nacional de Polícia Penal.')+`<section class="card archive-card"><div class="archive-head"><img class="archive-seal" src="./icon.svg" alt="Escudo do preparatório PP MT"><div><div class="eyebrow">ACERVO DE PROVAS / MATO GROSSO</div><h2>Agente Penitenciário · SEJUDH/MT</h2><span class="muted">IBADE · Edital 001/2016 · Prova aplicada em ${e.date}</span></div></div><div class="exam-facts"><div><b>S05 T</b><small>Caderno cadastrado</small></div><div><b>60</b><small>Questões na prova</small></div><div><b>57</b><small>Válidas para treinar</small></div><div><b>3</b><small>Anuladas, fora do treino</small></div></div><p class="muted">O objetivo do banco é resolver tudo dentro do aplicativo: enunciado e alternativas completos. O PDF original fica apenas como fonte de conferência. As questões ainda pendentes de transcrição não entram no treino.</p><div class="source-links"><button class="primary" id="fullOfficial">Responder prova completa →</button><button class="secondary" id="trainOfficial">Estudar questões desta prova →</button><a class="button secondary" href="${e.examUrl}" target="_blank" rel="noopener noreferrer">Prova original ↗</a><a class="button secondary" href="${e.answerUrl}#page=13" target="_blank" rel="noopener noreferrer">Gabarito final ↗</a><a class="button secondary" href="${e.landingUrl}" target="_blank" rel="noopener noreferrer">Página da banca ↗</a></div><div class="notice warning-historical"><b>Acervo histórico de 2017.</b> As questões 16, 41 e 56 foram anuladas e não entram no treino nem nas estatísticas. Respostas jurídicas refletem o gabarito da época; não houve revisão de vigência legislativa. Este material não define o conteúdo de um próximo edital.</div><h3>Matérias do caderno</h3><div class="exam-reference-list">${e.sections.map(x=>`<div>${esc(x.subject)} · Q${x.from}–${x.to}</div>`).join('')}</div><details class="source-reader"><summary>Consultar o caderno completo nesta tela</summary><iframe class="pdf-view" src="${e.examUrl}#page=1" title="Caderno oficial S05 T completo" loading="lazy" referrerpolicy="no-referrer"></iframe></details><p class="source-note">Conferência documental: 07/10/2026 (UTC). Os PDFs são carregados diretamente da IBADE. Leitura integrada depende do navegador; os botões abrem o documento separadamente.</p></section>${importedArchiveHTML()}<section class="card spaced"><div class="row"><div><div class="eyebrow">EXPANSÃO NACIONAL</div><h2>Fila de importação</h2></div><span class="tag">${OFFICIAL_QUESTIONS.length} QUESTÕES DISPONÍVEIS</span></div><p class="muted">Já localizamos provas que somam ${SOURCE_TOTAL} questões. Só entram no treino depois de verificação de fonte, gabarito e situação de cada questão.</p><div class="exam-source-grid">${EXAM_SOURCES.filter(x=>x.id!==e.id&&x.status!=='imported').map(x=>`<a class="exam-source-card" href="${x.sourcePage}" target="_blank" rel="noopener noreferrer"><div><b>${esc(x.state)} • ${esc(x.year)} • ${esc(x.board)}</b><span>${esc(x.exam)}</span></div><strong>${x.questionCount}</strong><small>${x.verifiedOfficialSource?'FONTE OFICIAL VERIFICADA':'FONTE EM VERIFICAÇÃO'}</small></a>`).join('')}</div></section>`;bindImportedArchive();$('#trainOfficial').onclick=()=>{filter={search:'',subject:'',kind:'prova',exam:MT_EXAM.id};location.hash='questoes'};$('#fullOfficial').onclick=()=>{const qs=MT_QUESTIONS.slice().sort((a,b)=>Number(a.source.number)-Number(b.source.number));examResult=null;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+270*60000,originTab:'provas',label:'Prova completa'};showExamQuestion()}}
 
 if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+syncInstallUI();
 bootstrap();
 
 function examId(q){return q.source?.examId||(q.source?.examUrl===MT_EXAM.examUrl?MT_EXAM.id:'')}
