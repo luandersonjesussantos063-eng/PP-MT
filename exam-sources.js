@@ -79,8 +79,8 @@ export const EXAM_SOURCES = [
   },
   {
     id:'seris-al-2021', state:'AL', year:2021, board:'CEBRASPE',
-    exam:'SERIS/AL — Agente Penitenciário', questionCount:120,
-    status:'queued', verifiedOfficialSource:false,
+    exam:'SERIS/AL — Agente Penitenciário', questionCount:120, usableQuestionCount:118, annulled:[2,118], importedQuestionCount:9,
+    status:'partial-import', verifiedOfficialSource:true,
     sourcePage:'https://www.qconcursos.com/questoes-de-concursos/provas/cespe-cebraspe-2021-seris-al-agente-penitenciario'
   },
   {
