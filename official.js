@@ -1067,11 +1067,11 @@ export const OFFICIAL_QUESTIONS = [
     "topic": "Atos administrativos • anulação",
     "statement": "O desfazimento de um ato administrativo, ilegal ou ilegítimo pela Administração ou pelo Judiciário, denomina-se:",
     "options": [
-      "revogação.",
+      "suspensão.",
       "caducidade.",
+      "revogação.",
       "cassação.",
-      "anulação.",
-      "suspensão."
+      "anulação."
     ],
     "answer": 4,
     "explanation": "O gabarito final do caderno S05 T indica a alternativa E para a questão 35. A fonte original continua disponível para conferência.",
