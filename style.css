@@ -309,16 +309,6 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 .deep-explanation{margin:20px 0;line-height:1.65}.deep-explanation h3{font-size:17px;font-weight:700;line-height:1.4;margin:24px 0 8px}.deep-explanation p{white-space:normal}.lesson-notice{display:block;width:100%;height:auto;position:static;padding:16px;margin:16px 0;border:1px solid #b89149;border-radius:8px;background:#30291b;font-size:13px}.lesson-notice p{margin:8px 0}.deep-explanation details{padding:14px;margin:16px 0;border:1px solid var(--line);border-radius:8px}.deep-explanation summary,.lesson-library-item>summary{cursor:pointer;line-height:1.6;color:var(--accent)}.alternative-reasons{list-style:none;padding:0}.alternative-reasons li{padding:14px 0;border-bottom:1px solid var(--line)}.alternative-reasons li p{margin:6px 0}.recall-card{padding:18px;border-left:3px solid var(--accent);background:#22261f;margin:22px 0}.lesson-sources li{margin:12px 0;overflow-wrap:anywhere}.lesson-library-item>summary>span{display:block;color:var(--muted);font-size:12px}.lesson-library-item>ol li{padding:8px 0;line-height:1.6}
 
 
-/* v31: controle visível de risco como fallback confiável no celular */
-.option{position:relative;padding-right:48px}
-.strike-control{margin-left:auto;min-width:32px;height:32px;border:1px solid #5a5140;border-radius:8px;display:inline-grid;place-items:center;color:#cdb674;background:#171713;font-size:19px;line-height:1;flex-shrink:0}
-.option.struck .strike-control{color:#ddd4c0;border-color:#75684c;background:#252116}
-@media(max-width:640px){
- .strike-control{min-width:36px;height:36px;font-size:21px}
- .option{padding-right:12px}
-}
-
-
 /* v32: versão visível para conferir atualização */
 .app-version-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;padding:3px 6px;border:1px solid #6a5732;border-radius:999px;background:#211e17;color:#e5c77e;font-size:8px;line-height:1;letter-spacing:.6px;font-weight:800;vertical-align:middle}
 .brand small .app-version-badge{margin-left:3px;font-size:7px;padding:2px 5px}
@@ -334,4 +324,43 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 .option.struck.swiping::after{content:'DESFAZER'}
 @media(max-width:640px){
  .option.swiping{box-shadow:0 8px 22px #0008}
+}
+
+
+/* v37: camada canônica de interação das alternativas */
+.question .option{
+  display:flex;
+  align-items:center;
+  width:100%;
+  min-height:60px;
+  gap:15px;
+  padding:12px 16px;
+  border:1px solid #4a453a;
+  border-radius:12px;
+  background:#1b1d1e;
+  color:#eeeae0;
+  text-align:left;
+  line-height:1.6;
+  font-weight:400;
+  cursor:pointer;
+  position:relative;
+  touch-action:pan-y;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none;
+  overscroll-behavior-x:contain;
+}
+.question .option *{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  pointer-events:none;
+}
+.question .option[aria-disabled="true"]{cursor:default}
+.question .option:focus-visible{outline:3px solid #d5b36a;outline-offset:3px}
+.question .option.swiping{transform:translateX(var(--swipe-x,0));transition:none;box-shadow:0 7px 18px #0006;z-index:3}
+.question .option.struck:not(.correct):not(.wrong){opacity:.55;border-style:dashed}
+.question .option.struck>span:nth-child(2){text-decoration:line-through;text-decoration-thickness:2px}
+@media(max-width:640px){
+ .question .option{padding:12px;min-height:62px}
+ .question .option.swiping{box-shadow:0 8px 22px #0008}
 }
