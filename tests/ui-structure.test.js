@@ -42,3 +42,13 @@ test('fluxo Estudar corrige imediatamente ao tocar',()=>{
   assert.match(app,/i===q\.answer\?'correct':l\.selected===i\?'wrong'/);
   assert.match(app,/Próxima questão/);
 });
+
+
+test('estados corrigidos permanecem visíveis após a camada canônica',()=>{
+  const canonical=css.indexOf('/* v37: camada canônica de interação das alternativas */');
+  const correct=css.lastIndexOf('.question .option.correct{');
+  const wrong=css.lastIndexOf('.question .option.wrong{');
+  assert.ok(canonical>=0&&correct>canonical&&wrong>canonical);
+  assert.match(css.slice(correct),/background:#243c2c/);
+  assert.match(css.slice(wrong),/background:#442b37/);
+});
