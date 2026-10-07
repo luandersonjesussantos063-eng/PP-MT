@@ -2,6 +2,7 @@ import {OFFICIAL_QUESTIONS_1} from './official-1.js';
 import {OFFICIAL_QUESTIONS_2} from './official-2.js';
 import {OFFICIAL_QUESTIONS_3} from './official-3.js';
 import {OFFICIAL_QUESTIONS_4} from './official-4.js';
+import {OFFICIAL_QUESTIONS_AL_2021} from './official-al-2021.js';
 
 export const MT_EXAM={
   id:'sejudh-mt-2017-s05-t',
@@ -38,5 +39,6 @@ export const OFFICIAL_QUESTIONS=[
   ...OFFICIAL_QUESTIONS_1,
   ...OFFICIAL_QUESTIONS_2,
   ...OFFICIAL_QUESTIONS_3,
-  ...OFFICIAL_QUESTIONS_4
+  ...OFFICIAL_QUESTIONS_4,
+  ...OFFICIAL_QUESTIONS_AL_2021
 ];
