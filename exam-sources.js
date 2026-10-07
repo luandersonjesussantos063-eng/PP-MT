@@ -25,6 +25,17 @@ export const EXAM_SOURCES = [
     importNote:'Fonte oficial validada. Questões não transcritas automaticamente sem base clara de reutilização.'
   },
   {
+    id:'agepen-ms-2016-seguranca-custodia', state:'MS', year:2016, board:'FAPEMS',
+    exam:'AGEPEN/MS — Agente Penitenciário Estadual — Segurança e Custódia', questionCount:80,
+    usableQuestionCount:75, annulled:[19,21,23,52,53],
+    status:'verified-source', verifiedOfficialSource:true,
+    sourcePage:'https://www.agepen.ms.gov.br/governo-de-ms-divulga-gabarito-final-com-questoes-anuladas-de-concurso-publico-para-agente-penitenciario/',
+    preliminaryAnswerUrl:'https://assets.imprensaoficial.ms.gov.br/public/prd/Diario%20Oficial/2016/04/11/DO9142_11_04_2016.pdf',
+    examDate:'2016-04-03', definitiveAnswerPublished:'2016-05-04',
+    verification:'AGEPEN/MS oficial: concurso organizado pela FAPEMS; gabarito preliminar oficial registra 80 questões para Segurança e Custódia. A AGEPEN publicou o gabarito final em 04/05/2016 e confirmou anulação das questões 19, 21, 23, 52 e 53 nessa área, restando 75 válidas.',
+    importNote:'Fonte e anulações validadas em fontes oficiais. Texto integral da prova não importado automaticamente sem base clara de reutilização.'
+  },
+  {
     id:'pp-rs-2026', state:'RS', year:2026, board:'FUNDATEC',
     exam:'Polícia Penal do Rio Grande do Sul — Policial Penal', questionCount:80,
     status:'queued', verifiedOfficialSource:false,
