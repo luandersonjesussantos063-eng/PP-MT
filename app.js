@@ -9,7 +9,7 @@ import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=15';
 import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=27';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='v36';
+const APP_VERSION='v37';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent=APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
