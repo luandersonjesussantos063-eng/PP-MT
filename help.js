@@ -26,6 +26,8 @@ export function trapWords(q){
 export function microLesson(q){
   const text=(String(q?.statement||'')+' '+String(q?.subject||'')).toLocaleLowerCase('pt-BR');
   const lessons=[
+    [/diagnóstico estratégico externo|diagnostico estrategico externo|rastreamento|mapeamento ambiental/,
+      '<b>Diagnóstico estratégico externo em 60s:</b> pense em uma sequência: <b>rastreamento</b> identifica sinais e tendências; <b>monitoramento</b> acompanha esses sinais ao longo do tempo; <b>previsão</b> projeta possíveis desdobramentos futuros; <b>avaliação</b> mede o impacto provável dessas mudanças para a organização. Se a alternativa troca “previsão” por análise contínua do presente, desconfie.'],
     [/retroaliment|processador|parâmetros de sistemas|parametros de sistemas/,
       '<b>Teoria de sistemas em 60s:</b> entrada é o que o sistema recebe; processamento é a transformação das entradas; saída é o resultado; retroalimentação (feedback) compara o resultado com o objetivo/padrão e devolve informação para correção. Cuidado: processador é o mecanismo que transforma entradas em saídas — não simplesmente “o modo como elementos interagem”.'],
     [/embora|concessiv/,
@@ -53,6 +55,8 @@ export function microLesson(q){
     'Direito Penal e Processual Penal':'<b>Penal/Processual em 60s:</b> identifique o tipo penal ou instituto, seus elementos e a consequência jurídica. Cuidado com detalhes de dolo, consumação, competência e procedimento.',
     'Direitos Humanos':'<b>Direitos Humanos em 60s:</b> diferencie princípios, tratados, garantias e mecanismos de proteção. Leia com atenção expressões universais ou restritivas.',
     'Administração':'<b>Administração em 60s:</b> transforme o conceito em um fluxo simples: entrada → processo → resultado → controle. Depois compare cada afirmativa com esse modelo.',
+    'Administração Geral':'<b>Administração Geral em 60s:</b> identifique primeiro o processo ou conceito cobrado e organize mentalmente suas etapas. Muitas alternativas erram ao trocar a função de uma etapa pela de outra.',
+    'Noções de Administração':'<b>Noções de Administração em 60s:</b> identifique primeiro o processo ou conceito cobrado e organize mentalmente suas etapas. Muitas alternativas erram ao trocar a função de uma etapa pela de outra.',
   };
   return generic[q?.subject]||'<b>Estratégia de 60s:</b> descubra o conceito central, elimine afirmações claramente incompatíveis e só então compare as alternativas. Se ainda estiver em dúvida, use “Eliminar 1” e faça uma questão parecida.';
 }
