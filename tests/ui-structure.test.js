@@ -52,3 +52,31 @@ test('estados corrigidos permanecem visíveis após a camada canônica',()=>{
   assert.match(css.slice(correct),/background:#243c2c/);
   assert.match(css.slice(wrong),/background:#442b37/);
 });
+
+
+test('treino ativo segue apenas as nove áreas do último edital de MT',()=>{
+  const block=app.slice(app.indexOf('const LAST_EDITAL_SUBJECTS='),app.indexOf('function save()'));
+  for(const subject of [
+    'Língua Portuguesa',
+    'História e Geografia de Mato Grosso',
+    'Ética e Filosofia',
+    'Direito Constitucional',
+    'Administração Geral',
+    'Direito Administrativo',
+    'Direito Penal e Processual Penal',
+    'Direitos Humanos',
+    'Legislação Básica'
+  ]) assert.ok(block.includes(subject),subject);
+  for(const extra of ['Informática','Raciocínio Lógico e Matemática','Atualidades','Segurança Pública','Conhecimentos Gerais','Legislação Estadual']){
+    assert.ok(!block.includes(`'${extra}'`),extra);
+  }
+  assert.match(block,/const bank=\(\)=>rawBank\(\)\.filter\(isLastEditalQuestion\)/);
+  assert.match(block,/'Direito Penal':'Direito Penal e Processual Penal'/);
+  assert.match(block,/'Direito Processual Penal':'Direito Penal e Processual Penal'/);
+  assert.match(block,/'Legislação Penal':'Legislação Básica'/);
+});
+
+test('erros e métricas ignoram matérias fora do foco atual',()=>{
+  assert.match(app,/function pendingErrorIds\(\)\{[\s\S]*active\.has\(id\)/);
+  assert.match(app,/const activeIds=new Set\(bank\(\)\.filter\(q=>!q\.historicalOnly\)/);
+});
