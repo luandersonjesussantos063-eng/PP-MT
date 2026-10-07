@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {QUESTIONS} from '../data.js';
+import {validateBank,summary,latestErrors,shuffle} from '../core.js';
+test('banco demonstrativo é válido e não atribui banca ou concurso falso',()=>{assert.equal(validateBank(QUESTIONS).length,18);assert.ok(QUESTIONS.every(q=>q.origin==='autoral'&&q.source===null))});
+test('gabarito fora das alternativas é recusado',()=>assert.throws(()=>validateBank([{...QUESTIONS[0],answer:8}])));
+test('IDs duplicados são recusados',()=>assert.throws(()=>validateBank([QUESTIONS[0],QUESTIONS[0]])));
+test('prova sem origem documentada é recusada',()=>assert.throws(()=>validateBank([{...QUESTIONS[0],origin:'prova'}])));
+test('links executáveis de fonte são recusados',()=>assert.throws(()=>validateBank([{...QUESTIONS[0],origin:'prova',source:{board:'B',exam:'E',year:'2020',number:'1',examUrl:'javascript:alert(1)',answerUrl:'https://example.com',reviewedAt:'2026-10-07'}}])));
+test('erro revisado com acerto sai do caderno de erros',()=>{const a=[{id:'a',correct:false},{id:'b',correct:false},{id:'a',correct:true}];assert.deepEqual([...latestErrors(a)],['b']);assert.deepEqual(summary(a),{total:3,correct:1,rate:33})});
+test('embaralhamento não perde ou duplica questões',()=>{const r=shuffle(QUESTIONS);assert.notEqual(r,QUESTIONS);assert.deepEqual(r.map(q=>q.id).sort(),QUESTIONS.map(q=>q.id).sort())});
