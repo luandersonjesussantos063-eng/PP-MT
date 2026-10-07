@@ -144,12 +144,26 @@ function toggleStrike(btn,indexFn,strikeKey,blockedFn=()=>false){
 }
 const strikeSwipe={btn:null,pointerId:null,startX:0,startY:0,lastX:0,lastY:0,horizontal:false,guardUntil:0};
 function strikeBlocked(btn){
- return !!(btn.disabled||btn.classList.contains('locked-answer')||btn.getAttribute('aria-disabled')==='true');
+ return !!(!btn||btn.getAttribute('aria-disabled')==='true'||btn.classList.contains('locked-answer')||btn.classList.contains('eliminated'));
 }
 function strikeReset(){
  const btn=strikeSwipe.btn;
  if(btn){btn.classList.remove('swiping');btn.style.removeProperty('--swipe-x')}
  strikeSwipe.btn=null;strikeSwipe.pointerId=null;strikeSwipe.horizontal=false;
+}
+function strikeFinish(x=strikeSwipe.lastX,y=strikeSwipe.lastY){
+ const btn=strikeSwipe.btn;
+ if(!btn)return false;
+ const dx=x-strikeSwipe.startX,dy=y-strikeSwipe.startY,ax=Math.abs(dx),ay=Math.abs(dy);
+ let changed=false;
+ if(strikeSwipe.horizontal&&ax>=32&&ax>ay*1.02&&!strikeBlocked(btn)){
+  const key=btn.dataset.strikeKey,index=Number(btn.dataset.option??btn.dataset.reviewAnswer);
+  if(key&&Number.isInteger(index)&&toggleStrike(btn,()=>index,key,()=>strikeBlocked(btn))){
+   strikeSwipe.guardUntil=Date.now()+750;changed=true;
+  }
+ }
+ strikeReset();
+ return changed;
 }
 document.addEventListener('pointerdown',e=>{
  const btn=e.target.closest?.('.option[data-strike-key]');
@@ -158,33 +172,29 @@ document.addEventListener('pointerdown',e=>{
  strikeSwipe.startX=strikeSwipe.lastX=e.clientX;
  strikeSwipe.startY=strikeSwipe.lastY=e.clientY;
  strikeSwipe.horizontal=false;
+ try{btn.setPointerCapture?.(e.pointerId)}catch{}
 },{capture:true});
 document.addEventListener('pointermove',e=>{
  const btn=strikeSwipe.btn;
  if(!btn||e.pointerId!==strikeSwipe.pointerId)return;
  strikeSwipe.lastX=e.clientX;strikeSwipe.lastY=e.clientY;
  const dx=e.clientX-strikeSwipe.startX,dy=e.clientY-strikeSwipe.startY,ax=Math.abs(dx),ay=Math.abs(dy);
- if(!strikeSwipe.horizontal&&ay>18&&ay>ax*1.25){strikeReset();return}
- if(ax>8&&ax>ay){
+ if(!strikeSwipe.horizontal&&ay>20&&ay>ax*1.35){strikeReset();return}
+ if(ax>6&&ax>ay*.9){
   strikeSwipe.horizontal=true;
   btn.classList.add('swiping');
-  btn.style.setProperty('--swipe-x',Math.max(-96,Math.min(96,dx))+'px');
+  btn.style.setProperty('--swipe-x',Math.max(-88,Math.min(88,dx))+'px');
   if(e.cancelable)e.preventDefault();
  }
 },{capture:true});
 document.addEventListener('pointerup',e=>{
- const btn=strikeSwipe.btn;
- if(!btn||e.pointerId!==strikeSwipe.pointerId)return;
- const dx=e.clientX-strikeSwipe.startX,dy=e.clientY-strikeSwipe.startY,ax=Math.abs(dx),ay=Math.abs(dy);
- if(strikeSwipe.horizontal&&ax>=34&&ax>ay*1.05&&!strikeBlocked(btn)){
-  const key=btn.dataset.strikeKey,index=Number(btn.dataset.option??btn.dataset.reviewAnswer);
-  if(key&&Number.isInteger(index)&&toggleStrike(btn,()=>index,key,()=>strikeBlocked(btn))){
-   strikeSwipe.guardUntil=Date.now()+700;
-  }
- }
- strikeReset();
+ if(!strikeSwipe.btn||e.pointerId!==strikeSwipe.pointerId)return;
+ strikeFinish(e.clientX,e.clientY);
 },{capture:true});
-document.addEventListener('pointercancel',strikeReset,{capture:true});
+document.addEventListener('pointercancel',e=>{
+ if(!strikeSwipe.btn||e.pointerId!==strikeSwipe.pointerId)return;
+ strikeFinish(strikeSwipe.lastX,strikeSwipe.lastY);
+},{capture:true});
 document.addEventListener('click',e=>{
  const btn=e.target.closest?.('.option[data-strike-key]');
  if(btn&&(Date.now()<strikeSwipe.guardUntil||btn.classList.contains('struck'))){e.preventDefault();e.stopPropagation()}
@@ -229,17 +239,18 @@ function renderErrorReview(){
   $('#reviewTransfer').onclick=()=>{if(!similar){store.program.reviews||={};store.program.reviews[q.id]=nextReview(null,false);save();reviewState=null;renderErrorReview();toast('Leitura registrada, sem marcar domínio. Amanhã tente lembrar antes de ver a resposta.');return}r.phase='test';renderErrorReview()};return;
  }
  const reviewStrikeKey=`review:${test.id}`,reviewStrikes=manualStrikes(reviewStrikeKey);
- $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<button class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" data-strike-key="${esc(reviewStrikeKey)}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</button>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
+ $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<div class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" data-strike-key="${esc(reviewStrikeKey)}" role="button" tabindex="${r.answered?'-1':'0'}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-disabled="${r.answered}"><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</div>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
  document.querySelectorAll('[data-review-answer]').forEach(btn=>{
   const idx=()=>Number(btn.dataset.reviewAnswer);
-  const reviewBlocked=()=>r.answered||btn.disabled;
-  btn.onclick=e=>{
-   if(r.answered)return;
+  const activate=()=>{
+   if(r.answered||btn.getAttribute('aria-disabled')==='true'||btn.classList.contains('struck'))return;
    r.selected=idx();r.answered=true;
    const correct=r.selected===test.answer;
    store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id});
    markErrorMastered(q.id,correct);renderErrorReview();
   };
+  btn.onclick=e=>{e.preventDefault();activate()};
+  btn.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}};
  });
  $('#reviewNext')?.addEventListener('click',()=>{reviewState=null;renderErrorReview()});
 }
@@ -346,15 +357,15 @@ function showQuestion(){
  $('#respond').onclick=()=>{if(selection===null||answered)return;answered=true;const correct=selection===q.answer,gain=applyQuestionXP(q,correct);store.attempts.push({id:q.id,selected:selection,correct,at:new Date().toISOString(),mode:'practice',assists:[...assistFor(q.id).used],assistXp:assistFor(q.id).spent||0,xpAwarded:gain,difficulty:questionDifficulty(q).key,weight:questionWeight(q)});save();showQuestion();if(gain)toast(`+${gain} XP ${correct?'pelo acerto':'pela tentativa'}.`)};
  for(const [id,delta] of [['prev',-1],['next',1]])$('#'+id).onclick=()=>{index+=delta;selection=null;answered=false;showQuestion()};
 }
-function questionHTML(q,exam){const inline=q.displayMode!=='source-pdf',assist=assistFor(q.id),strikes=manualStrikes(q.id),examAnswered=exam&&run?.originTab==='missao'&&runAnswered(q.id),diff=questionDifficulty(q),reward=questionXP(q),weight=questionWeight(q),xp=store.program.xp||0;return `<article class="card question">${historicalNotice(q)}<div class="row"><div class="meta">${esc(q.subject)} / ${esc(q.topic)}<br>${q.origin==='autoral'?'AUTORAL • DEMONSTRAÇÃO':esc(q.source.board)+' • '+esc(q.source.year)+' • '+esc(q.source.exam)+' • Q'+esc(q.source.number)+(q.source.version?' • Caderno '+esc(q.source.version):'')}<div class="question-xp-meta"><span>${diff.label}</span><span>Peso ${weight}</span><span>+${reward} XP se acertar</span></div></div>${!exam?`<button id="favorite" class="secondary" aria-label="${store.favorites.includes(q.id)?'Remover dos':'Adicionar aos'} favoritos">${store.favorites.includes(q.id)?'★ Salva':'☆ Salvar'}</button>`:''}</div>${supportHTML(q)}<p class="statement">${esc(q.statement)}</p>${originalHTML(q)}${inline?'':referenceReader(q)}<div class="options" role="group" aria-label="Alternativas">${q.options.map((o,i)=>{const eliminated=assist.eliminated.includes(i),struck=strikes.includes(i),instant=examAnswered?(i===q.answer?'correct':i===selection&&selection!==q.answer?'wrong':''):'';return `<button class="option ${selection===i?'selected':''} ${eliminated?'eliminated':''} ${struck?'struck':''} ${examAnswered?'locked-answer':''} ${instant||answered&&!exam?(instant||(i===q.answer?'correct':i===selection?'wrong':'')):''}" data-option="${i}" data-strike-key="${esc(q.id)}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-pressed="${selection===i}" aria-disabled="${examAnswered}" ${eliminated||answered&&!exam?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${inline?esc(o):'Alternativa '+String.fromCharCode(65+i)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${eliminated?'<small class="elim-label">ELIMINADA</small>':''}</button>`}).join('')}</div>${!examAnswered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}<div class="question-tools"><button id="tacticalHelp" class="tactical-help ${xp<=0?'xp-locked':''}" ${exam?'disabled':''}>💡 Entender o conteúdo · grátis</button>${assist.spent?`<span class="assist-used">-${assist.spent} XP em ajuda nesta questão</span>`:''}</div>${q.origin==='prova'&&inline?`<div class="question-source"><a href="${esc(q.source.examUrl)}#page=${Number(q.source.page)||1}" target="_blank" rel="noopener noreferrer">Ver questão na prova original ↗</a></div>`:''}${answered&&!exam?feedback(q,selection):''}${answered&&!exam?'<button id=guessed class=secondary>Acertei, mas chutei / fiquei em dúvida</button>':''}</article>`}
+function questionHTML(q,exam){const inline=q.displayMode!=='source-pdf',assist=assistFor(q.id),strikes=manualStrikes(q.id),examAnswered=exam&&run?.originTab==='missao'&&runAnswered(q.id),diff=questionDifficulty(q),reward=questionXP(q),weight=questionWeight(q),xp=store.program.xp||0;return `<article class="card question">${historicalNotice(q)}<div class="row"><div class="meta">${esc(q.subject)} / ${esc(q.topic)}<br>${q.origin==='autoral'?'AUTORAL • DEMONSTRAÇÃO':esc(q.source.board)+' • '+esc(q.source.year)+' • '+esc(q.source.exam)+' • Q'+esc(q.source.number)+(q.source.version?' • Caderno '+esc(q.source.version):'')}<div class="question-xp-meta"><span>${diff.label}</span><span>Peso ${weight}</span><span>+${reward} XP se acertar</span></div></div>${!exam?`<button id="favorite" class="secondary" aria-label="${store.favorites.includes(q.id)?'Remover dos':'Adicionar aos'} favoritos">${store.favorites.includes(q.id)?'★ Salva':'☆ Salvar'}</button>`:''}</div>${supportHTML(q)}<p class="statement">${esc(q.statement)}</p>${originalHTML(q)}${inline?'':referenceReader(q)}<div class="options" role="group" aria-label="Alternativas">${q.options.map((o,i)=>{const eliminated=assist.eliminated.includes(i),struck=strikes.includes(i),instant=examAnswered?(i===q.answer?'correct':i===selection&&selection!==q.answer?'wrong':''):'';return `<div class="option ${selection===i?'selected':''} ${eliminated?'eliminated':''} ${struck?'struck':''} ${examAnswered?'locked-answer':''} ${instant||answered&&!exam?(instant||(i===q.answer?'correct':i===selection?'wrong':'')):''}" data-option="${i}" data-strike-key="${esc(q.id)}" role="button" tabindex="${eliminated||answered&&!exam||examAnswered?'-1':'0'}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-pressed="${selection===i}" aria-disabled="${eliminated||answered&&!exam||examAnswered}"><span class="letter">${String.fromCharCode(65+i)}</span><span>${inline?esc(o):'Alternativa '+String.fromCharCode(65+i)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${eliminated?'<small class="elim-label">ELIMINADA</small>':''}</div>`}).join('')}</div>${!examAnswered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}<div class="question-tools"><button id="tacticalHelp" class="tactical-help ${xp<=0?'xp-locked':''}" ${exam?'disabled':''}>💡 Entender o conteúdo · grátis</button>${assist.spent?`<span class="assist-used">-${assist.spent} XP em ajuda nesta questão</span>`:''}</div>${q.origin==='prova'&&inline?`<div class="question-source"><a href="${esc(q.source.examUrl)}#page=${Number(q.source.page)||1}" target="_blank" rel="noopener noreferrer">Ver questão na prova original ↗</a></div>`:''}${answered&&!exam?feedback(q,selection):''}${answered&&!exam?'<button id=guessed class=secondary>Acertei, mas chutei / fiquei em dúvida</button>':''}</article>`}
 function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a.id===q.id),gain=last?.xpAwarded||0,xpNote=last?`<div class="xp-earned">${gain>0?`+${gain} XP nesta questão`:'XP desta questão já coletado hoje'}</div>`:'';const diagnosis=selected!==undefined&&selected!==q.answer?`<div class="error-diagnosis"><b>Onde você caiu?</b><p class="muted">Marque o motivo. O app pode usar isso para ajustar missões futuras.</p><div class="reason-buttons"><button data-error-reason="conteudo">Não sabia o conteúdo</button><button data-error-reason="interpretacao">Interpretei errado</button><button data-error-reason="duvida">Fiquei entre duas</button><button data-error-reason="chute">Chutei</button></div></div>`:'';return `<div class="feedback ${selected!==q.answer?'bad':''}" role="status"><b>${selected===q.answer?'Resposta correta!':selected===undefined?'Não respondida.':'Ainda não foi dessa vez.'} Gabarito: ${q.options.length===2?esc(q.options[q.answer]):String.fromCharCode(65+q.answer)}.</b>${xpNote}${explanationHTML(q)}${diagnosis}${q.origin==='prova'?`<a href="${esc(q.source.examUrl)}" target="_blank" rel="noopener noreferrer">Consultar prova</a> · <a href="${esc(q.source.answerUrl)}${q.source.answerPage?'#page='+Number(q.source.answerPage):''}" target="_blank" rel="noopener noreferrer">Consultar gabarito</a><p>${q.displayMode==='source-pdf'?'Conferência documental do gabarito histórico':'Revisão declarada na importação'}: ${esc(q.source.reviewedAt)}.</p>`:'<small>Questão autoral para demonstração da plataforma.</small>'}</div>`}
 function bindOptions(q,fn){
  const buttons=[...document.querySelectorAll('[data-option]')];
  buttons.forEach(b=>{
   const index=()=>Number(b.dataset.option);
-  const blocked=()=>b.disabled||(run?.originTab==='missao'&&runAnswered(q.id));
-  b.onclick=e=>{
-   if(answered&&!run||(run?.originTab==='missao'&&runAnswered(q.id)))return;
+  const blocked=()=>b.getAttribute('aria-disabled')==='true'||(run?.originTab==='missao'&&runAnswered(q.id));
+  const activate=()=>{
+   if(blocked()||b.classList.contains('struck')||answered&&!run)return;
    selection=index();
    if(run)run.answers[q.id]=selection;
    buttons.forEach(el=>{
@@ -367,11 +378,14 @@ function bindOptions(q,fn){
      el.classList.toggle('wrong',yes&&selection!==q.answer);
      el.classList.add('locked-answer');
      el.setAttribute('aria-disabled','true');
+     el.setAttribute('tabindex','-1');
     }
    });
    if($('#respond'))$('#respond').disabled=false;
    if($('#answeredCount')&&run)$('#answeredCount').textContent=Object.keys(run.answers).length;
   };
+  b.onclick=e=>{e.preventDefault();activate()};
+  b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}};
  });
 }
 function toggleFavorite(id){store.favorites=store.favorites.includes(id)?store.favorites.filter(x=>x!==id):[...store.favorites,id];save()}
