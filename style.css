@@ -317,3 +317,11 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
  .strike-control{min-width:36px;height:36px;font-size:21px}
  .option{padding-right:12px}
 }
+
+
+/* v32: versão visível para conferir atualização */
+.app-version-badge{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;padding:3px 6px;border:1px solid #6a5732;border-radius:999px;background:#211e17;color:#e5c77e;font-size:8px;line-height:1;letter-spacing:.6px;font-weight:800;vertical-align:middle}
+.brand small .app-version-badge{margin-left:3px;font-size:7px;padding:2px 5px}
+@media(max-width:640px){
+ .mobile-app-brand .app-version-badge{font-size:8px;padding:3px 6px;margin-left:2px}
+}
