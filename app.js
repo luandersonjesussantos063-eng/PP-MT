@@ -128,38 +128,46 @@ function manualStrikes(id){
  const bag=run?(run.strikes||(run.strikes=Object.create(null))):strikeState;
  return bag[id]||(bag[id]=[]);
 }
+function toggleStrike(btn,indexFn,strikeKey,blockedFn=()=>false){
+ if(blockedFn())return false;
+ const i=indexFn(),strikes=manualStrikes(strikeKey),pos=strikes.indexOf(i),adding=pos<0;
+ if(adding)strikes.push(i);else strikes.splice(pos,1);
+ btn.classList.toggle('struck',adding);
+ btn.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${adding?', riscada':''}`);
+ btn.querySelector('.strike-label')?.remove();
+ if(adding)btn.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
+ const control=btn.querySelector('[data-strike-control]');
+ if(control){control.textContent=adding?'↩':'╱';control.setAttribute('aria-label',adding?'Desfazer risco':'Riscar alternativa')}
+ if(navigator.vibrate)navigator.vibrate(25);
+ toast(`Alternativa ${String.fromCharCode(65+i)} ${adding?'riscada':'restaurada'}.`);
+ return true;
+}
 function attachStrikeGesture(btn,indexFn,strikeKey,blockedFn=()=>false){
  let timer=null,startX=0,startY=0,suppressClickUntil=0;
  const clear=()=>{if(timer){clearTimeout(timer);timer=null}};
- const toggle=()=>{
-  if(blockedFn())return;
-  const i=indexFn(),strikes=manualStrikes(strikeKey),pos=strikes.indexOf(i),adding=pos<0;
-  if(adding)strikes.push(i);else strikes.splice(pos,1);
-  btn.classList.toggle('struck',adding);
-  btn.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${adding?', riscada':''}`);
-  btn.querySelector('.strike-label')?.remove();
-  if(adding)btn.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
-  suppressClickUntil=Date.now()+900;
-  if(navigator.vibrate)navigator.vibrate(25);
-  toast(`Alternativa ${String.fromCharCode(65+i)} ${adding?'riscada':'restaurada'}.`);
- };
- const start=(x,y)=>{if(blockedFn())return;clear();startX=x;startY=y;timer=setTimeout(()=>{timer=null;toggle()},430)};
- const move=(x,y)=>{if(Math.abs(x-startX)>18||Math.abs(y-startY)>18)clear()};
- btn.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)start(t.clientX,t.clientY)},{passive:true});
+ const fire=()=>{if(toggleStrike(btn,indexFn,strikeKey,blockedFn))suppressClickUntil=Date.now()+900};
+ const start=(x,y)=>{if(blockedFn())return;clear();startX=x;startY=y;timer=setTimeout(()=>{timer=null;fire()},430)};
+ const move=(x,y)=>{if(Math.abs(x-startX)>20||Math.abs(y-startY)>20)clear()};
+ btn.addEventListener('touchstart',e=>{if(e.target.closest('[data-strike-control]'))return;const t=e.touches[0];if(t)start(t.clientX,t.clientY)},{passive:true});
  btn.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)move(t.clientX,t.clientY)},{passive:true});
  btn.addEventListener('touchend',clear,{passive:true});
  btn.addEventListener('touchcancel',clear,{passive:true});
- btn.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')return;if(e.button!==0)return;start(e.clientX,e.clientY)});
+ btn.addEventListener('pointerdown',e=>{if(e.target.closest('[data-strike-control]')||e.pointerType==='touch'||e.button!==0)return;start(e.clientX,e.clientY)});
  btn.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;move(e.clientX,e.clientY)});
- btn.addEventListener('pointerup',clear);
- btn.addEventListener('pointercancel',clear);
- btn.addEventListener('pointerleave',clear);
+ btn.addEventListener('pointerup',clear);btn.addEventListener('pointercancel',clear);btn.addEventListener('pointerleave',clear);
  btn.addEventListener('contextmenu',e=>e.preventDefault());
  return e=>{
-  if(Date.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();return true}
-  if(btn.classList.contains('struck')){e.preventDefault();e.stopPropagation();return true}
+  if(Date.now()<suppressClickUntil||btn.classList.contains('struck')){e.preventDefault();e.stopPropagation();return true}
   return false;
  };
+}
+function bindStrikeControl(btn,indexFn,strikeKey,blockedFn=()=>false){
+ const control=btn.querySelector('[data-strike-control]');
+ if(!control)return;
+ const act=e=>{e.preventDefault();e.stopPropagation();toggleStrike(btn,indexFn,strikeKey,blockedFn)};
+ control.addEventListener('click',act);
+ control.addEventListener('pointerdown',e=>{e.stopPropagation()});
+ control.addEventListener('touchstart',e=>{e.stopPropagation()},{passive:true});
 }
 function runAnswered(id){return !!(run&&Object.prototype.hasOwnProperty.call(run.answers,id))}
 function noteAssist(q,type){const a=assistFor(q.id);if(!a.used.includes(type))a.used.push(type);if(run){run.assists=run.assists||{};run.assists[q.id]=[...a.used]}}
@@ -201,10 +209,12 @@ function renderErrorReview(){
   $('#reviewTransfer').onclick=()=>{if(!similar){store.program.reviews||={};store.program.reviews[q.id]=nextReview(null,false);save();reviewState=null;renderErrorReview();toast('Leitura registrada, sem marcar domínio. Amanhã tente lembrar antes de ver a resposta.');return}r.phase='test';renderErrorReview()};return;
  }
  const reviewStrikeKey=`review:${test.id}`,reviewStrikes=manualStrikes(reviewStrikeKey);
- $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<button class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</button>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Pressione e segure uma alternativa para riscar ou desfazer o risco.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
+ $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<button class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${!r.answered?'<span class="strike-control" data-strike-control="'+i+'" role="button" aria-label="'+(struck?'Desfazer risco':'Riscar alternativa')+'">'+(struck?'↩':'╱')+'</span>':''}</button>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Segure a alternativa para riscar. Se o gesto não responder no seu celular, toque no símbolo ╱ à direita.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
  document.querySelectorAll('[data-review-answer]').forEach(btn=>{
   const idx=()=>Number(btn.dataset.reviewAnswer);
-  const consumeStrikeClick=attachStrikeGesture(btn,idx,reviewStrikeKey,()=>r.answered||btn.disabled);
+  const reviewBlocked=()=>r.answered||btn.disabled;
+  const consumeStrikeClick=attachStrikeGesture(btn,idx,reviewStrikeKey,reviewBlocked);
+  bindStrikeControl(btn,idx,reviewStrikeKey,reviewBlocked);
   btn.onclick=e=>{
    if(consumeStrikeClick(e)||r.answered)return;
    r.selected=idx();r.answered=true;
@@ -318,7 +328,7 @@ function showQuestion(){
  $('#respond').onclick=()=>{if(selection===null||answered)return;answered=true;const correct=selection===q.answer,gain=applyQuestionXP(q,correct);store.attempts.push({id:q.id,selected:selection,correct,at:new Date().toISOString(),mode:'practice',assists:[...assistFor(q.id).used],assistXp:assistFor(q.id).spent||0,xpAwarded:gain,difficulty:questionDifficulty(q).key,weight:questionWeight(q)});save();showQuestion();if(gain)toast(`+${gain} XP ${correct?'pelo acerto':'pela tentativa'}.`)};
  for(const [id,delta] of [['prev',-1],['next',1]])$('#'+id).onclick=()=>{index+=delta;selection=null;answered=false;showQuestion()};
 }
-function questionHTML(q,exam){const inline=q.displayMode!=='source-pdf',assist=assistFor(q.id),strikes=manualStrikes(q.id),examAnswered=exam&&run?.originTab==='missao'&&runAnswered(q.id),diff=questionDifficulty(q),reward=questionXP(q),weight=questionWeight(q),xp=store.program.xp||0;return `<article class="card question">${historicalNotice(q)}<div class="row"><div class="meta">${esc(q.subject)} / ${esc(q.topic)}<br>${q.origin==='autoral'?'AUTORAL • DEMONSTRAÇÃO':esc(q.source.board)+' • '+esc(q.source.year)+' • '+esc(q.source.exam)+' • Q'+esc(q.source.number)+(q.source.version?' • Caderno '+esc(q.source.version):'')}<div class="question-xp-meta"><span>${diff.label}</span><span>Peso ${weight}</span><span>+${reward} XP se acertar</span></div></div>${!exam?`<button id="favorite" class="secondary" aria-label="${store.favorites.includes(q.id)?'Remover dos':'Adicionar aos'} favoritos">${store.favorites.includes(q.id)?'★ Salva':'☆ Salvar'}</button>`:''}</div>${supportHTML(q)}<p class="statement">${esc(q.statement)}</p>${originalHTML(q)}${inline?'':referenceReader(q)}<div class="options" role="group" aria-label="Alternativas">${q.options.map((o,i)=>{const eliminated=assist.eliminated.includes(i),struck=strikes.includes(i),instant=examAnswered?(i===q.answer?'correct':i===selection&&selection!==q.answer?'wrong':''):'';return `<button class="option ${selection===i?'selected':''} ${eliminated?'eliminated':''} ${struck?'struck':''} ${examAnswered?'locked-answer':''} ${instant||answered&&!exam?(instant||(i===q.answer?'correct':i===selection?'wrong':'')):''}" data-option="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-pressed="${selection===i}" aria-disabled="${examAnswered}" ${eliminated||answered&&!exam?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${inline?esc(o):'Alternativa '+String.fromCharCode(65+i)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${eliminated?'<small class="elim-label">ELIMINADA</small>':''}</button>`}).join('')}</div>${!examAnswered?'<p class="strike-hint">Pressione e segure uma alternativa para riscar ou desfazer o risco.</p>':''}<div class="question-tools"><button id="tacticalHelp" class="tactical-help ${xp<=0?'xp-locked':''}" ${exam?'disabled':''}>💡 Entender o conteúdo · grátis</button>${assist.spent?`<span class="assist-used">-${assist.spent} XP em ajuda nesta questão</span>`:''}</div>${q.origin==='prova'&&inline?`<div class="question-source"><a href="${esc(q.source.examUrl)}#page=${Number(q.source.page)||1}" target="_blank" rel="noopener noreferrer">Ver questão na prova original ↗</a></div>`:''}${answered&&!exam?feedback(q,selection):''}${answered&&!exam?'<button id=guessed class=secondary>Acertei, mas chutei / fiquei em dúvida</button>':''}</article>`}
+function questionHTML(q,exam){const inline=q.displayMode!=='source-pdf',assist=assistFor(q.id),strikes=manualStrikes(q.id),examAnswered=exam&&run?.originTab==='missao'&&runAnswered(q.id),diff=questionDifficulty(q),reward=questionXP(q),weight=questionWeight(q),xp=store.program.xp||0;return `<article class="card question">${historicalNotice(q)}<div class="row"><div class="meta">${esc(q.subject)} / ${esc(q.topic)}<br>${q.origin==='autoral'?'AUTORAL • DEMONSTRAÇÃO':esc(q.source.board)+' • '+esc(q.source.year)+' • '+esc(q.source.exam)+' • Q'+esc(q.source.number)+(q.source.version?' • Caderno '+esc(q.source.version):'')}<div class="question-xp-meta"><span>${diff.label}</span><span>Peso ${weight}</span><span>+${reward} XP se acertar</span></div></div>${!exam?`<button id="favorite" class="secondary" aria-label="${store.favorites.includes(q.id)?'Remover dos':'Adicionar aos'} favoritos">${store.favorites.includes(q.id)?'★ Salva':'☆ Salvar'}</button>`:''}</div>${supportHTML(q)}<p class="statement">${esc(q.statement)}</p>${originalHTML(q)}${inline?'':referenceReader(q)}<div class="options" role="group" aria-label="Alternativas">${q.options.map((o,i)=>{const eliminated=assist.eliminated.includes(i),struck=strikes.includes(i),instant=examAnswered?(i===q.answer?'correct':i===selection&&selection!==q.answer?'wrong':''):'';return `<button class="option ${selection===i?'selected':''} ${eliminated?'eliminated':''} ${struck?'struck':''} ${examAnswered?'locked-answer':''} ${instant||answered&&!exam?(instant||(i===q.answer?'correct':i===selection?'wrong':'')):''}" data-option="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-pressed="${selection===i}" aria-disabled="${examAnswered}" ${eliminated||answered&&!exam?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${inline?esc(o):'Alternativa '+String.fromCharCode(65+i)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${eliminated?'<small class="elim-label">ELIMINADA</small>':''}${!examAnswered&&!eliminated?'<span class="strike-control" data-strike-control="'+i+'" role="button" aria-label="'+(struck?'Desfazer risco':'Riscar alternativa')+'">'+(struck?'↩':'╱')+'</span>':''}</button>`}).join('')}</div>${!examAnswered?'<p class="strike-hint">Segure a alternativa para riscar. Se o gesto não responder no seu celular, toque no símbolo ╱ à direita.</p>':''}<div class="question-tools"><button id="tacticalHelp" class="tactical-help ${xp<=0?'xp-locked':''}" ${exam?'disabled':''}>💡 Entender o conteúdo · grátis</button>${assist.spent?`<span class="assist-used">-${assist.spent} XP em ajuda nesta questão</span>`:''}</div>${q.origin==='prova'&&inline?`<div class="question-source"><a href="${esc(q.source.examUrl)}#page=${Number(q.source.page)||1}" target="_blank" rel="noopener noreferrer">Ver questão na prova original ↗</a></div>`:''}${answered&&!exam?feedback(q,selection):''}${answered&&!exam?'<button id=guessed class=secondary>Acertei, mas chutei / fiquei em dúvida</button>':''}</article>`}
 function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a.id===q.id),gain=last?.xpAwarded||0,xpNote=last?`<div class="xp-earned">${gain>0?`+${gain} XP nesta questão`:'XP desta questão já coletado hoje'}</div>`:'';const diagnosis=selected!==undefined&&selected!==q.answer?`<div class="error-diagnosis"><b>Onde você caiu?</b><p class="muted">Marque o motivo. O app pode usar isso para ajustar missões futuras.</p><div class="reason-buttons"><button data-error-reason="conteudo">Não sabia o conteúdo</button><button data-error-reason="interpretacao">Interpretei errado</button><button data-error-reason="duvida">Fiquei entre duas</button><button data-error-reason="chute">Chutei</button></div></div>`:'';return `<div class="feedback ${selected!==q.answer?'bad':''}" role="status"><b>${selected===q.answer?'Resposta correta!':selected===undefined?'Não respondida.':'Ainda não foi dessa vez.'} Gabarito: ${q.options.length===2?esc(q.options[q.answer]):String.fromCharCode(65+q.answer)}.</b>${xpNote}${explanationHTML(q)}${diagnosis}${q.origin==='prova'?`<a href="${esc(q.source.examUrl)}" target="_blank" rel="noopener noreferrer">Consultar prova</a> · <a href="${esc(q.source.answerUrl)}${q.source.answerPage?'#page='+Number(q.source.answerPage):''}" target="_blank" rel="noopener noreferrer">Consultar gabarito</a><p>${q.displayMode==='source-pdf'?'Conferência documental do gabarito histórico':'Revisão declarada na importação'}: ${esc(q.source.reviewedAt)}.</p>`:'<small>Questão autoral para demonstração da plataforma.</small>'}</div>`}
 function bindOptions(q,fn){
  const buttons=[...document.querySelectorAll('[data-option]')];
@@ -326,6 +336,7 @@ function bindOptions(q,fn){
   const index=()=>Number(b.dataset.option);
   const blocked=()=>b.disabled||(run?.originTab==='missao'&&runAnswered(q.id));
   const consumeStrikeClick=attachStrikeGesture(b,index,q.id,blocked);
+  bindStrikeControl(b,index,q.id,blocked);
   b.onclick=e=>{
    if(consumeStrikeClick(e))return;
    if(answered&&!run||(run?.originTab==='missao'&&runAnswered(q.id)))return;
