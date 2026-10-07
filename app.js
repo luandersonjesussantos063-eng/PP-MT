@@ -185,7 +185,7 @@ document.addEventListener('pointerup',e=>{
 document.addEventListener('pointercancel',strikeReset,{capture:true});
 document.addEventListener('click',e=>{
  const btn=e.target.closest?.('.option[data-strike-key]');
- if(btn&&Date.now()<strikeSwipe.guardUntil){e.preventDefault();e.stopPropagation()}
+ if(btn&&(Date.now()<strikeSwipe.guardUntil||btn.classList.contains('struck'))){e.preventDefault();e.stopPropagation()}
 },{capture:true});
 function runAnswered(id){return !!(run&&Object.prototype.hasOwnProperty.call(run.answers,id))}
 function noteAssist(q,type){const a=assistFor(q.id);if(!a.used.includes(type))a.used.push(type);if(run){run.assists=run.assists||{};run.assists[q.id]=[...a.used]}}
