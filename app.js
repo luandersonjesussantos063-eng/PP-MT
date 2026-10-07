@@ -128,6 +128,39 @@ function manualStrikes(id){
  const bag=run?(run.strikes||(run.strikes=Object.create(null))):strikeState;
  return bag[id]||(bag[id]=[]);
 }
+function attachStrikeGesture(btn,indexFn,strikeKey,blockedFn=()=>false){
+ let timer=null,startX=0,startY=0,suppressClickUntil=0;
+ const clear=()=>{if(timer){clearTimeout(timer);timer=null}};
+ const toggle=()=>{
+  if(blockedFn())return;
+  const i=indexFn(),strikes=manualStrikes(strikeKey),pos=strikes.indexOf(i),adding=pos<0;
+  if(adding)strikes.push(i);else strikes.splice(pos,1);
+  btn.classList.toggle('struck',adding);
+  btn.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${adding?', riscada':''}`);
+  btn.querySelector('.strike-label')?.remove();
+  if(adding)btn.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
+  suppressClickUntil=Date.now()+900;
+  if(navigator.vibrate)navigator.vibrate(25);
+  toast(`Alternativa ${String.fromCharCode(65+i)} ${adding?'riscada':'restaurada'}.`);
+ };
+ const start=(x,y)=>{if(blockedFn())return;clear();startX=x;startY=y;timer=setTimeout(()=>{timer=null;toggle()},430)};
+ const move=(x,y)=>{if(Math.abs(x-startX)>18||Math.abs(y-startY)>18)clear()};
+ btn.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)start(t.clientX,t.clientY)},{passive:true});
+ btn.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)move(t.clientX,t.clientY)},{passive:true});
+ btn.addEventListener('touchend',clear,{passive:true});
+ btn.addEventListener('touchcancel',clear,{passive:true});
+ btn.addEventListener('pointerdown',e=>{if(e.pointerType==='touch')return;if(e.button!==0)return;start(e.clientX,e.clientY)});
+ btn.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;move(e.clientX,e.clientY)});
+ btn.addEventListener('pointerup',clear);
+ btn.addEventListener('pointercancel',clear);
+ btn.addEventListener('pointerleave',clear);
+ btn.addEventListener('contextmenu',e=>e.preventDefault());
+ return e=>{
+  if(Date.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();return true}
+  if(btn.classList.contains('struck')){e.preventDefault();e.stopPropagation();return true}
+  return false;
+ };
+}
 function runAnswered(id){return !!(run&&Object.prototype.hasOwnProperty.call(run.answers,id))}
 function noteAssist(q,type){const a=assistFor(q.id);if(!a.used.includes(type))a.used.push(type);if(run){run.assists=run.assists||{};run.assists[q.id]=[...a.used]}}
 function closeTacticalHelp(){document.querySelector('.tactical-overlay')?.remove()}
@@ -170,30 +203,10 @@ function renderErrorReview(){
  const reviewStrikeKey=`review:${test.id}`,reviewStrikes=manualStrikes(reviewStrikeKey);
  $('#content').innerHTML=title(r.retention?'O que ficou na memória?':'Aplicar o conceito.',similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<button class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" ${r.answered?'disabled':''}><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</button>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Pressione e segure uma alternativa para riscar ou desfazer o risco.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b>${explanationHTML(test)}<p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}. Acertar uma vez não comprova domínio.</p></div><button id="reviewNext" class="primary">Próxima revisão</button>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
  document.querySelectorAll('[data-review-answer]').forEach(btn=>{
-  let holdTimer=null,longPressed=false,startX=0,startY=0;
   const idx=()=>Number(btn.dataset.reviewAnswer);
-  const clearHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null}};
-  btn.onpointerdown=e=>{
-   if(r.answered||btn.disabled)return;
-   if(e.pointerType==='mouse'&&e.button!==0)return;
-   longPressed=false;startX=e.clientX;startY=e.clientY;
-   holdTimer=setTimeout(()=>{
-    holdTimer=null;longPressed=true;
-    const i=idx(),strikes=manualStrikes(reviewStrikeKey),pos=strikes.indexOf(i);
-    if(pos>=0)strikes.splice(pos,1);else strikes.push(i);
-    btn.classList.toggle('struck',pos<0);
-    btn.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${pos<0?', riscada':''}`);
-    btn.querySelector('.strike-label')?.remove();
-    if(pos<0)btn.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
-    if(navigator.vibrate)navigator.vibrate(20);
-   },550);
-  };
-  btn.onpointermove=e=>{if(Math.abs(e.clientX-startX)>9||Math.abs(e.clientY-startY)>9)clearHold()};
-  btn.onpointerup=clearHold;btn.onpointercancel=clearHold;btn.onpointerleave=clearHold;
-  btn.oncontextmenu=e=>e.preventDefault();
+  const consumeStrikeClick=attachStrikeGesture(btn,idx,reviewStrikeKey,()=>r.answered||btn.disabled);
   btn.onclick=e=>{
-   if(longPressed){e.preventDefault();longPressed=false;return}
-   if(r.answered||btn.classList.contains('struck'))return;
+   if(consumeStrikeClick(e)||r.answered)return;
    r.selected=idx();r.answered=true;
    const correct=r.selected===test.answer;
    store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id});
@@ -310,30 +323,11 @@ function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a
 function bindOptions(q,fn){
  const buttons=[...document.querySelectorAll('[data-option]')];
  buttons.forEach(b=>{
-  let holdTimer=null,longPressed=false,startX=0,startY=0;
   const index=()=>Number(b.dataset.option);
-  const clearHold=()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null}};
-  b.onpointerdown=e=>{
-   if(b.disabled||(run?.originTab==='missao'&&runAnswered(q.id)))return;
-   if(e.pointerType==='mouse'&&e.button!==0)return;
-   longPressed=false;startX=e.clientX;startY=e.clientY;
-   holdTimer=setTimeout(()=>{
-    holdTimer=null;longPressed=true;
-    const i=index(),strikes=manualStrikes(q.id),pos=strikes.indexOf(i);
-    if(pos>=0)strikes.splice(pos,1);else strikes.push(i);
-    b.classList.toggle('struck',pos<0);
-    b.setAttribute('aria-label',`Alternativa ${String.fromCharCode(65+i)}${pos<0?', riscada':''}`);
-    b.querySelector('.strike-label')?.remove();
-    if(pos<0)b.insertAdjacentHTML('beforeend','<small class="strike-label">RISCADA</small>');
-    if(navigator.vibrate)navigator.vibrate(20);
-   },550);
-  };
-  b.onpointermove=e=>{if(Math.abs(e.clientX-startX)>9||Math.abs(e.clientY-startY)>9)clearHold()};
-  b.onpointerup=clearHold;b.onpointercancel=clearHold;b.onpointerleave=clearHold;
-  b.oncontextmenu=e=>e.preventDefault();
+  const blocked=()=>b.disabled||(run?.originTab==='missao'&&runAnswered(q.id));
+  const consumeStrikeClick=attachStrikeGesture(b,index,q.id,blocked);
   b.onclick=e=>{
-   if(longPressed){e.preventDefault();longPressed=false;return}
-   if(b.classList.contains('struck'))return;
+   if(consumeStrikeClick(e))return;
    if(answered&&!run||(run?.originTab==='missao'&&runAnswered(q.id)))return;
    selection=index();
    if(run)run.answers[q.id]=selection;
