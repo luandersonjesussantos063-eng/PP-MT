@@ -28,7 +28,7 @@ export const MT_EXAM={
     {from:11,to:15,subject:'História e Geografia de Mato Grosso'},
     {from:16,to:20,subject:'Ética e Filosofia'},
     {from:21,to:28,subject:'Direito Constitucional'},
-    {from:29,to:34,subject:'Administração'},
+    {from:29,to:34,subject:'Administração Geral'},
     {from:35,to:40,subject:'Direito Administrativo'},
     {from:41,to:48,subject:'Direito Penal e Processual Penal'},
     {from:49,to:54,subject:'Direitos Humanos'},
