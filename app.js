@@ -1,12 +1,12 @@
-import {IMPORTED_EXAMS} from './imported-exams.js';
-import {QUESTIONS} from './data.js';
-import {MT_EXAM,MT_QUESTIONS,OFFICIAL_QUESTIONS} from './official.js';
-import {EXAM_SOURCES,SOURCE_TOTAL,IMPORTED_SOURCE_TOTAL} from './exam-sources.js';
+import {IMPORTED_EXAMS} from './imported-exams.js?v=15';
+import {QUESTIONS} from './data.js?v=15';
+import {MT_EXAM,MT_QUESTIONS,OFFICIAL_QUESTIONS} from './official.js?v=15';
+import {EXAM_SOURCES,SOURCE_TOTAL,IMPORTED_SOURCE_TOTAL} from './exam-sources.js?v=15';
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
-import {validateBank,shuffle,latestErrors,summary} from './core.js';
-import {getCurrentUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js';
-import {questionCommand,trapWords,microLesson,findSimilar} from './help.js';
+import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
+import {getCurrentUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=15';
+import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=15';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -19,7 +19,11 @@ function localDay(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1)
 function ensureProgram(){if(!store.program||typeof store.program!=='object')store.program={startDate:localDay(),completed:{},xp:0};if(!store.program.startDate)store.program.startDate=localDay();if(!store.program.completed)store.program.completed={};if(!Number.isFinite(store.program.xp))store.program.xp=0}
 let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null);
 const pages=[['inicio','⌂','Hoje'],['missao','◆','Missão'],['desempenho','▥','Progresso'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['simulados','◷','Simulados'],['erros','↺','Erros'],['favoritos','☆','Favoritos'],['dados','⚙','Meus dados']];
-const bank=()=>[...BUILTIN,...store.custom];
+function normalizedSubject(q){
+ if(!q||q.subject!=='Administração')return q;
+ return {...q,subject:'Administração Geral'};
+}
+const bank=()=>[...BUILTIN,...store.custom].map(normalizedSubject);
 function save(){if(!currentUser)return false;try{localStorage.setItem(userKey(),JSON.stringify(store));saveUserState(currentUser.id,store).catch(()=>toast('Seu progresso ficou salvo neste aparelho, mas a sincronização falhou.'));return true}catch{toast('Não foi possível salvar neste navegador. Exporte um backup.');return false}}
 function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',4200)}
 function accountUI(){const el=$('#account');if(!el)return;if(!currentUser){el.innerHTML='';return}el.innerHTML=`<span class="account-email">${esc(currentUser.email||'Usuário')}</span><button id="logout" class="account-logout">Sair</button>`;$('#logout').onclick=async()=>{if(!confirm('Sair da sua conta?'))return;try{await signOut();currentUser=null;store=emptyStore();renderAuth()}catch(e){toast(e.message||'Não foi possível sair.')}}}
