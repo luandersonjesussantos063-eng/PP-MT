@@ -170,7 +170,7 @@ function attachStrikeGesture(btn,indexFn,strikeKey,blockedFn=()=>false){
   const ax=Math.abs(dx),ay=Math.abs(dy);
   if(ax>=58&&ax>ay*1.2&&!blockedFn()){
    swiped=toggleStrike(btn,indexFn,strikeKey,blockedFn);
-   if(swiped)suppressClickUntil=Date.now()+850;
+   if(swiped){suppressClickUntil=Date.now()+850;setTimeout(()=>{swiped=false},900)}
   }
   reset();
  };
