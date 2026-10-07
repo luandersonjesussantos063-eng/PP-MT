@@ -29,6 +29,13 @@ test('mudança no gabarito definitivo BA e itens conhecidos são preservados',()
  assert.equal(at('al-2021-seris-001').answer,1); // E mantém ID e histórico.
  assert.equal(at('al-2021-seris-120').answer,1);
 });
+test('Administração Geral e Direito Administrativo ficam rigidamente separadas em MT 2017',()=>{
+ const nums=(subject)=>MT_QUESTIONS.filter(q=>q.subject===subject).map(q=>Number(q.source.number));
+ assert.deepEqual(nums('Administração Geral'),[29,30,31,32,33,34]);
+ assert.deepEqual(nums('Direito Administrativo'),[35,36,37,38,39,40]);
+ assert.equal(MT_QUESTIONS.filter(q=>q.subject==='Administração').length,0);
+ assert.equal(MT_QUESTIONS.find(q=>q.id==='mt-2017-s05-t-32').subject,'Administração Geral');
+});
 test('figuras, textos de apoio e PDFs estão presentes no pacote publicado',()=>{
  for(const q of OFFICIAL_QUESTIONS.filter(q=>q.source.examId)){
   assert.ok(q.statement.length>10);
