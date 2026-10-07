@@ -27,21 +27,51 @@ function realBank(){return bank().filter(q=>q.origin==='prova')}
 function subjectPerformance(name){const ids=new Set(realBank().filter(q=>q.subject===name).map(q=>q.id));return summary(store.attempts.filter(a=>ids.has(a.id)))}
 function weakestSubject(){const ss=[...new Set(realBank().map(q=>q.subject))];return ss.map(name=>({name,s:subjectPerformance(name)})).sort((a,b)=>{const ar=a.s.total?a.s.rate:-1,br=b.s.total?b.s.rate:-1;return ar-br||a.s.total-b.s.total})[0]?.name||ss[0]}
 function rotateSubject(offset=0){const ss=[...new Set(realBank().map(q=>q.subject))];return ss[(programDay()-1+offset)%ss.length]}
-function missionSpec(){const day=programDay(),cycle=(day-1)%7,weak=weakestSubject(),s1=rotateSubject(0),s2=rotateSubject(3);const plans=[
- {type:'subject',title:'Foco de matéria',desc:`Domine ${s1}. Hoje o app escolheu essa disciplina para você.`,subject:s1,count:10,minutes:18},
- {type:'mixed',title:'Simulado dirigido',desc:'Mistura controlada de matérias para treinar troca rápida de raciocínio.',count:20,minutes:30},
- {type:'errors',title:'Correção de rota',desc:'Hoje é dia de atacar seus erros recentes. Se faltarem erros, o app completa com seu ponto fraco.',subject:weak,count:12,minutes:22},
- {type:'dual',title:'Dupla de matérias',desc:`${s1} + ${s2}. O treino de hoje alterna duas disciplinas.`,subjects:[s1,s2],count:16,minutes:28},
- {type:'mixed',title:'Simulado de pressão',desc:'Ritmo mais forte e menos tempo por questão. Sem escolher matéria.',count:25,minutes:35},
- {type:'weak',title:'Ponto fraco',desc:`Seu desempenho indica prioridade em ${weak}. Hoje a missão é recuperar essa matéria.`,subject:weak,count:15,minutes:25},
- {type:'full',title:'Prova semanal',desc:'Fechamento da semana: prova real completa, em ordem, como no dia do concurso.',count:realBank().length,minutes:270}
-];return {...plans[cycle],day}}
+function phaseInfo(day){if(day<=21)return{name:'FUNDAÇÃO',target:60};if(day<=45)return{name:'CONSOLIDAÇÃO',target:70};if(day<=70)return{name:'FASE DE PROVA',target:75};return{name:'OPERAÇÃO APROVAÇÃO',target:80}}
+function missionSpec(){const day=programDay(),cycle=(day-1)%7,weak=weakestSubject(),s1=rotateSubject(0),s2=rotateSubject(3),phase=phaseInfo(day);let plans;
+ if(day<=21)plans=[
+  {type:'subject',title:'Base do dia',desc:`Construa a base em ${s1}. Leia, responda e aprenda com cada correção.`,subject:s1,count:20,minutes:35},
+  {type:'subject',title:'Base do dia',desc:`Hoje o foco é ${s2}. O objetivo é entender antes de acelerar.`,subject:s2,count:20,minutes:35},
+  {type:'subject',title:'Fundamento essencial',desc:`Treino guiado em ${weak}. O app começa a mapear seus pontos fracos.`,subject:weak,count:20,minutes:35},
+  {type:'dual',title:'Dupla de fundamentos',desc:`${s1} + ${s2}. Duas matérias, sem sobrecarregar o início da jornada.`,subjects:[s1,s2],count:20,minutes:40},
+  {type:'subject',title:'Fixação',desc:`Mais uma rodada em ${rotateSubject(2)} para consolidar o conteúdo da semana.`,subject:rotateSubject(2),count:20,minutes:35},
+  {type:'mixed',title:'Fechamento da base',desc:'Questões de várias matérias para testar a retenção da semana.',count:25,minutes:45},
+  {type:'errors',title:'Acerto de contas',desc:'Hoje não é dia de correr atrás de novidade: revise os erros da semana.',subject:weak,count:20,minutes:40}
+ ];
+ else if(day<=45)plans=[
+  {type:'weak',title:'Matéria fraca',desc:`Prioridade em ${weak}. O app aumenta a carga onde seu desempenho está menor.`,subject:weak,count:30,minutes:45},
+  {type:'mixed',title:'Questões misturadas',desc:'Treino de consolidação com matérias alternadas e maior volume.',count:30,minutes:45},
+  {type:'errors',title:'Revisão obrigatória',desc:'Reveja os erros recentes antes de avançar.',subject:weak,count:25,minutes:40},
+  {type:'dual',title:'Duas matérias',desc:`${s1} + ${s2}. Consolidação cruzada para evitar estudo isolado.`,subjects:[s1,s2],count:30,minutes:50},
+  {type:'mixed',title:'Simulado de consolidação',desc:'Treino cronometrado para transformar conhecimento em desempenho.',count:40,minutes:60},
+  {type:'weak',title:'Recuperação de desempenho',desc:`Volte ao seu ponto mais fraco: ${weak}.`,subject:weak,count:30,minutes:45},
+  {type:'errors',title:'Revisão semanal',desc:'A semana só fecha depois que você enfrentar os erros acumulados.',subject:weak,count:30,minutes:50}
+ ];
+ else if(day<=70)plans=[
+  {type:'mixed',title:'Bloco de prova',desc:'Questões variadas em ritmo de prova.',count:40,minutes:55},
+  {type:'errors',title:'Correção do bloco',desc:'Ataque os erros do treino anterior e reforce o ponto fraco.',subject:weak,count:30,minutes:45},
+  {type:'mixed',title:'Simulado de prova',desc:'Simulado mais longo e cronometrado. O foco agora é desempenho.',count:50,minutes:70},
+  {type:'errors',title:'Correção do simulado',desc:'Sem pular correção: hoje a missão é entender os erros.',subject:weak,count:30,minutes:45},
+  {type:'dual',title:'Duas piores matérias',desc:`${weak} + ${s2}. O app concentra energia onde você mais perde pontos.`,subjects:[weak,s2],count:40,minutes:55},
+  {type:'full',title:'Prova antiga completa',desc:'Resolva a prova real completa, em ordem e com cronômetro.',count:realBank().length,minutes:270},
+  {type:'errors',title:'Revisão inteligente',desc:'Feche a semana revendo erros e questões que precisam reaparecer.',subject:weak,count:30,minutes:45}
+ ];
+ else plans=[
+  {type:'full',title:'Prova completa',desc:'Modo reta final: prova real completa e sem atalhos.',count:realBank().length,minutes:270},
+  {type:'errors',title:'Pós-prova',desc:'Revise os erros da prova e elimine reincidências.',subject:weak,count:35,minutes:50},
+  {type:'weak',title:'Ataque ao ponto fraco',desc:`Sua prioridade hoje é ${weak}.`,subject:weak,count:40,minutes:55},
+  {type:'mixed',title:'Simulado de alta pressão',desc:'Volume alto, tempo controlado e matérias misturadas.',count:50,minutes:65},
+  {type:'errors',title:'Repetição espaçada',desc:'Questões erradas voltam para confirmar se o aprendizado ficou.',subject:weak,count:35,minutes:50},
+  {type:'full',title:'Prova completa',desc:'Segunda prova completa da semana para medir consistência.',count:realBank().length,minutes:270},
+  {type:'errors',title:'Revisão de elite',desc:'Feche a semana atacando erros reincidentes e seus três pontos mais frágeis.',subject:weak,count:40,minutes:55}
+ ];
+ return {...plans[cycle],day,phase:phase.name,target:phase.target}}
 function missionQuestions(spec){const all=realBank();let qs=[];if(spec.type==='subject'||spec.type==='weak')qs=all.filter(q=>q.subject===spec.subject);else if(spec.type==='dual')qs=all.filter(q=>spec.subjects.includes(q.subject));else if(spec.type==='errors'){const ids=latestErrors(store.attempts);qs=all.filter(q=>ids.has(q.id));if(qs.length<spec.count){const fill=all.filter(q=>q.subject===spec.subject&&!qs.includes(q));qs=[...qs,...fill]}}else qs=all.slice();if(spec.type==='full')return qs.slice().sort((a,b)=>Number(a.source?.number||0)-Number(b.source?.number||0));return shuffle(qs).slice(0,Math.min(spec.count,qs.length))}
-function missionHeader(){const d=programDay(),pct=Math.round((d-1)/90*100);return `<section class="mission-status"><div><span class="eyebrow">PROJETO APROVAÇÃO • 90 DIAS</span><h2>Dia ${d} de 90</h2><div class="track"><i style="width:${pct}%"></i></div></div><div class="mission-kpis"><span><b>${streak()}</b>dias seguidos</span><span><b>${store.program.xp}</b>XP</span><span><b>${rankName()}</b>patente</span></div></section>`}
+function missionHeader(){const d=programDay(),pct=Math.round((d-1)/90*100),p=phaseInfo(d);return `<section class="mission-status"><div><span class="eyebrow">PROJETO APROVAÇÃO • ${p.name}</span><h2>Dia ${d} de 90</h2><div class="track"><i style="width:${pct}%"></i></div></div><div class="mission-kpis"><span><b>${streak()}</b>dias seguidos</span><span><b>${store.program.xp}</b>XP</span><span><b>${rankName()}</b>patente</span></div></section>`}
 function renderMission(){
  if(run&&run.originTab==='missao'){showExamQuestion();return}
  const spec=missionSpec(),done=todayDone(),last=store.program.completed[localDay()];
- $('#content').innerHTML=missionHeader()+`<section class="card daily-mission ${done?'done':''}"><div class="mission-badge">${done?'✓':'◆'}</div><div class="eyebrow">${done?'MISSÃO CONCLUÍDA':'MISSÃO DO DIA'}</div><h1>${esc(spec.title)}</h1><p>${esc(spec.desc)}</p><div class="mission-facts"><span><b>${spec.count}</b> questões</span><span><b>${spec.minutes}</b> min</span><span><b>+${100}</b> XP base</span></div>${done?`<div class="mission-result"><b>${last.correct}/${last.total} acertos</b><span>${last.rate}% de aproveitamento</span></div><p class="muted">A próxima missão será liberada amanhã. Você pode consultar seu progresso enquanto isso.</p>`:`<button id="startMission" class="primary mission-cta">INICIAR MISSÃO →</button><p class="muted">As áreas de treino ficam bloqueadas até você concluir a missão de hoje.</p>`}</section><section class="card spaced"><div class="row"><h2>Como funciona</h2><span class="tag">AUTOMÁTICO</span></div><p class="muted">O aplicativo alterna matérias, simulados, revisão de erros, ponto fraco e prova completa. Você não precisa decidir o que estudar: apenas cumprir a missão liberada hoje.</p></section>`;
+ $('#content').innerHTML=missionHeader()+`<section class="card daily-mission ${done?'done':''}"><div class="mission-badge">${done?'✓':'◆'}</div><div class="eyebrow">${done?'MISSÃO CONCLUÍDA':'MISSÃO DO DIA'}</div><h1>${esc(spec.title)}</h1><p>${esc(spec.desc)}</p><div class="mission-facts"><span><b>${spec.count}</b> questões</span><span><b>${spec.minutes}</b> min</span><span><b>${spec.target}%</b> meta</span><span><b>+${100}</b> XP base</span></div>${done?`<div class="mission-result"><b>${last.correct}/${last.total} acertos</b><span>${last.rate}% de aproveitamento</span></div><p class="muted">A próxima missão será liberada amanhã. Você pode consultar seu progresso enquanto isso.</p>`:`<button id="startMission" class="primary mission-cta">INICIAR MISSÃO →</button><p class="muted">As áreas de treino ficam bloqueadas até você concluir a missão de hoje.</p>`}</section><section class="card spaced"><div class="row"><h2>Como funciona</h2><span class="tag">AUTOMÁTICO</span></div><p class="muted">O aplicativo alterna matérias, simulados, revisão de erros, ponto fraco e prova completa. Você não precisa decidir o que estudar: apenas cumprir a missão liberada hoje.</p></section>`;
  if(!done)$('#startMission').onclick=()=>startMission(spec)
 }
 function startMission(spec=missionSpec()){const qs=missionQuestions(spec);if(!qs.length){toast('Ainda não há questões suficientes para esta missão.');return}examResult=null;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+spec.minutes*60000,originTab:'missao',label:spec.title,missionDay:spec.day};showExamQuestion()}
@@ -94,7 +124,7 @@ function renderExam(){
 function showExamQuestion(){const q=run.questions[run.index];selection=run.answers[q.id]??null;answered=false;$('#content').innerHTML=`<div class="row"><h1>${esc(run.label||'Simulado')} em andamento</h1><span class="timer" id="timer"></span></div><p class="muted">Questão ${run.index+1} de ${run.questions.length} • <span id="answeredCount">${Object.keys(run.answers).length}</span> respondidas</p>`+questionHTML(q,true)+`<div class="actions spaced"><button id="examPrev" ${run.index===0?'disabled':''}>← Anterior</button><button id="examNext" ${run.index===run.questions.length-1?'disabled':''}>Próxima →</button><button id="finish" class="primary">Finalizar simulado</button></div>`;bindOptions(q,showExamQuestion);$('#examPrev').onclick=()=>{run.index--;showExamQuestion()};$('#examNext').onclick=()=>{run.index++;showExamQuestion()};$('#finish').onclick=()=>{const missing=run.questions.length-Object.keys(run.answers).length;if(confirm(missing?`Faltam ${missing} respostas. Finalizar mesmo assim?`:'Finalizar e conferir o gabarito?'))finishExam()};tick()}
 function tick(){if(!run)return;const secs=Math.max(0,Math.ceil((run.deadline-Date.now())/1000));if($('#timer'))$('#timer').textContent=`${Math.floor(secs/60).toString().padStart(2,'0')}:${(secs%60).toString().padStart(2,'0')}`;if(!secs)finishExam()}
 setInterval(tick,1000);
-function finishExam(){if(!run)return;const r=run;run=null;const at=new Date().toISOString();let correct=0,unanswered=0;for(const q of r.questions){const selected=r.answers[q.id];if(selected===q.answer)correct++;if(selected===undefined)unanswered++;store.attempts.push({id:q.id,selected:selected??null,correct:selected===q.answer,at,mode:r.originTab==='missao'?'mission':'exam'})}store.sessions.push({at,total:r.questions.length,correct,mode:r.originTab||'simulados'});if(r.originTab==='missao'){const rate=Math.round(correct/r.questions.length*100),xp=100+correct*5;store.program.completed[localDay()]={at,total:r.questions.length,correct,rate,day:r.missionDay,xp};store.program.xp+=xp}save();examResult={...r,correct,unanswered};if(r.originTab==='missao')renderMission();else if(r.originTab==='provas')renderArchive();else renderExam()}
+function finishExam(){if(!run)return;const r=run;run=null;const at=new Date().toISOString();let correct=0,unanswered=0;for(const q of r.questions){const selected=r.answers[q.id];if(selected===q.answer)correct++;if(selected===undefined)unanswered++;store.attempts.push({id:q.id,selected:selected??null,correct:selected===q.answer,at,mode:r.originTab==='missao'?'mission':'exam'})}store.sessions.push({at,total:r.questions.length,correct,mode:r.originTab||'simulados'});if(r.originTab==='missao'){const rate=Math.round(correct/r.questions.length*100),xp=100+correct*5;store.program.completed[localDay()]={at,total:r.questions.length,correct,rate,day:r.missionDay,xp,target:phaseInfo(r.missionDay||programDay()).target};store.program.xp+=xp}save();examResult={...r,correct,unanswered};if(r.originTab==='missao')renderMission();else if(r.originTab==='provas')renderArchive();else renderExam()}
 window.addEventListener('beforeunload',e=>{if(run){e.preventDefault();e.returnValue=''}});
 function download(name,value){const u=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
 function renderData(){
