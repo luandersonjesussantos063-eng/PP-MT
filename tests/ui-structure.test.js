@@ -24,7 +24,7 @@ test('versão exibida e revisão dos arquivos publicados permanecem alinhadas',(
   const js=html.match(/app\.js\?v=([^"&]+)/)?.[1];
   const style=html.match(/style\.css\?v=([^"&]+)/)?.[1];
   assert.equal(runtime,'0.47');
-  assert.equal(js,runtime+'-layout');
+  assert.equal(js,runtime+'-policial');
   assert.equal(style,js);
   assert.ok(html.includes('Versão '+runtime));
 });
