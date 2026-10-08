@@ -19,15 +19,15 @@ test('camada de interação não deixa filhos roubarem o gesto',()=>{
   assert.match(css,/-webkit-user-select:none!important/);
 });
 
-test('versão runtime e arquivos publicados permanecem alinhados',()=>{
-  const runtime=app.match(/const APP_VERSION='v(\d+)'/)?.[1];
-  const js=html.match(/app\.js\?v=(\d+)/)?.[1];
-  const style=html.match(/style\.css\?v=(\d+)/)?.[1];
-  assert.ok(runtime&&js&&style);
-  assert.equal(runtime,js);
+test('versão exibida e revisão dos arquivos publicados permanecem alinhadas',()=>{
+  const runtime=app.match(/const APP_VERSION='([^']+)'/)?.[1];
+  const js=html.match(/app\.js\?v=([^"&]+)/)?.[1];
+  const style=html.match(/style\.css\?v=([^"&]+)/)?.[1];
+  assert.equal(runtime,'0.47');
+  assert.equal(js,runtime+'-layout');
   assert.equal(style,js);
+  assert.ok(html.includes('Versão '+runtime));
 });
-
 
 test('fluxo Estudar criado no Work também recebe swipe',()=>{
   assert.match(app,/data-learning-answer="\$\{i\}" data-strike-index="\$\{i\}" data-strike-key="\$\{esc\(learningStrikeKey\)\}"/);
