@@ -1,43 +1,222 @@
 {
- "exam":{"title":"IBADE — prova S05 T (2017), páginas indicadas em cada questão","url":"https://ibade.org.br/wp-content/uploads/2026/05/S05-T.pdf"},
- "key":{"title":"IBADE — gabarito final, página 13","url":"https://ibade.org.br/wp-content/uploads/2026/05/Gabarito-Final-da-Prova-Objetiva-IBADE-1.pdf"},
- "cf":{"title":"Constituição Federal — arts. 5º, 6º, 12, 14, 37 e 208, conforme o comentário","url":"https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"},
- "cpp":{"title":"Código de Processo Penal — arts. 157, 302, 318 a 318-B e 647 a 654","url":"https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm"},
- "cp":{"title":"Código Penal — arts. 312, 316, 317, 319 e 320","url":"https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm"},
- "lep":{"title":"Lei de Execução Penal — arts. 52 a 60, 82 a 84, 87, 91, 93 e 102","url":"https://www.planalto.gov.br/ccivil_03/leis/l7210compilado.htm"},
- "tortura":{"title":"Lei 9.455/1997 — art. 1º, texto consolidado","url":"https://planalto.gov.br/ccivil_03/leis/l9455.htm"},
- "cndh":{"title":"Lei 12.986/2014 — arts. 2º, 4º e 6º","url":"https://planalto.gov.br/ccivil_03/_ato2011-2014/2014/lei/l12986.htm"},
- "refugio":{"title":"Lei 9.474/1997 — arts. 3º, 12 e 14","url":"https://www.planalto.gov.br/ccivil_03/leis/l9474.htm"},
- "improbidade":{"title":"Lei 8.429/1992 — arts. 1º e 9º, após Lei 14.230/2021","url":"https://www.planalto.gov.br/ccivil_03/leis/l8429compilada.htm"},
- "migracao":{"title":"Lei de Migração — arts. 64 a 66 e 96","url":"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2017/lei/l13445.htm"},
- "naturalizacao":{"title":"Ministério da Justiça — nacionalidade derivada e requisitos","url":"https://www.gov.br/mj/pt-br/assuntos/seus-direitos/migracoes/naturalizacao/o-que-e-naturalizacao"},
- "tse":{"title":"TSE — idade até o primeiro turno e voto facultativo (2026)","url":"https://www.tse.jus.br/comunicacao/noticias/2026/Setembro/faltam-18-dias-quem-vota-quem-pode-votar-e-o-que-muda-aos-18-anos"},
- "adpf54":{"title":"STF — ADPF 54, anencefalia","url":"https://portal.stf.jus.br/peticaoInicial/verPeticaoInicial.asp?base=ADPF&numProcesso=54"},
- "tema990":{"title":"STF — Tema 990, compartilhamento de dados","url":"https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=5213056&numeroProcesso=1055941&numeroTema=990"},
- "fiador":{"title":"STF — Tema 1127, bem de família do fiador","url":"https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=6087183&numeroProcesso=1307334&numeroTema=1127"},
- "educacao":{"title":"STF — Tema 548, creche e pré-escola","url":"https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=5085176&numeroProcesso=1008166&numeroTema=548"},
- "sumula473":{"title":"STF — Súmula 473, anulação e revogação","url":"https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=1602"},
- "sumula603":{"title":"STF — Súmula 603, competência do latrocínio","url":"https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=2683"},
- "sumula70":{"title":"STF — Súmula 70, sanção política tributária","url":"https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=2194"},
- "ctn":{"title":"CTN, art. 78 — redação do Ato Complementar 31/1966","url":"https://www.planalto.gov.br/ccivil_03/acp/acp-31-66.htm"},
- "tema130":{"title":"STF — Tema 130, terceiros não usuários","url":"https://portal.stf.jus.br/jurisprudenciaRepercussao/tema.asp?num=130"},
- "tema592":{"title":"STF — Tema 592, dever de proteção do detento","url":"https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=4645403&numeroProcesso=841526&numeroTema=592"},
- "estatais":{"title":"Lei 13.303/2016 — arts. 4º e 5º","url":"https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/lei/l13303.htm"},
- "sv49":{"title":"STF — Súmula Vinculante 49 e ressalvas de aplicação","url":"https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26&sumula=2506"},
- "sv11":{"title":"STF — Súmula Vinculante 11, algemas","url":"https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26&sumula=1220"},
- "dudh":{"title":"ONU — Declaração Universal, arts. 1º, 18 e 21","url":"https://www.un.org/en/about-us/universal-declaration-of-human-rights"},
- "cadh":{"title":"Convenção Americana — Decreto 678/1992","url":"https://www.planalto.gov.br/ccivil_03/decreto/d0678.htm"},
- "tratados":{"title":"STF — hierarquia dos tratados de direitos humanos","url":"https://portal.stf.jus.br/noticias/verNoticiaDetalhe.asp?idConteudo=100258&ori=1"},
- "decretoMT":{"title":"Diário Oficial de MT — Decreto 1.899/2013 (texto original; consolidação pendente)","url":"https://www.detran.mt.gov.br/documents/d/sejus/decreto-n-1899-2013-1-pdf"},
- "pam":{"title":"IBGE — Produção Agrícola Municipal 2015 (tabela numérica pendente de reconferência)","url":"https://www.ibge.gov.br/biblioteca/visualizacao/periodicos/66/pam_2015_v42_br.pdf"},
- "dante":{"title":"Senado Federal — registro da eleição e reeleição de Dante","url":"https://www25.senado.leg.br/en_US/web/atividade/pronunciamentos/-/p/pronunciamento/363825"},
- "rusga":{"title":"IHGMT — A Rusga em Mato Grosso: as falas silenciadas, Elizabeth M. Siqueira","url":"https://revistaihgmt.com.br/index.php/revistaihgmt/article/view/677"},
- "fusos":{"title":"Observatório Nacional — Hora Legal Brasileira","url":"https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/tempo-e-frequencia/brasil"},
- "roncador":{"title":"Mapas MT — Serra do Roncador","url":"https://mapas.mt.gov.br/espaco/158/"},
- "filosofia":{"title":"CECIERJ — material didático sobre racionalismo e empirismo","url":"https://canal.cecierj.edu.br/012016/1fa1306b315ec50cf7352610a7a83ab2.pdf"},
- "kant":{"title":"Pesquisa acadêmica — Razão e educação prática em Kant","url":"https://revista.unitins.br/index.php/humanidadeseinovacao/article/download/4124/3977"},
- "planejamento":{"title":"Enap — Pensamento estratégico, glossário institucional","url":"https://sites.google.com/enap.gov.br/glossario-enapalavra/gloss%C3%A1rio-enapalavra/pensamento-estrat%C3%A9gico"},
- "cenarios":{"title":"Enap — Prospectiva estratégica e cenários","url":"https://repositorio.enap.gov.br/items/a64bbc08-ad38-4514-a810-2790b40abebc"},
- "sistemas":{"title":"UFRB — estudo dos componentes de sistemas e feedback","url":"https://www.ufrb.edu.br/mpgestaoppss/images/documentos/Artigos/O_SOFTWARE_DE_GESTAO_EDUCACIONAL_PARA_O_PROGRAMA_UPT.pdf"},
- "ibgc":{"title":"IBGC — definição e agentes de governança","url":"https://www.ibgc.org.br/sobre"}
+  "exam": {
+    "title": "IBADE — prova S05 T (2017), páginas indicadas em cada questão",
+    "url": "https://ibade.org.br/wp-content/uploads/2026/05/S05-T.pdf"
+  },
+  "key": {
+    "title": "IBADE — gabarito final, página 13",
+    "url": "https://ibade.org.br/wp-content/uploads/2026/05/Gabarito-Final-da-Prova-Objetiva-IBADE-1.pdf"
+  },
+  "cf": {
+    "title": "Constituição Federal — arts. 5º, 6º, 12, 14, 37 e 208, conforme o comentário",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm"
+  },
+  "cpp": {
+    "title": "Código de Processo Penal — arts. 157, 302, 318 a 318-B e 647 a 654",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm"
+  },
+  "cp": {
+    "title": "Código Penal — arts. 312, 316, 317, 319 e 320",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm"
+  },
+  "lep": {
+    "title": "Lei de Execução Penal — arts. 52 a 60, 82 a 84, 87, 91, 93 e 102",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l7210compilado.htm"
+  },
+  "tortura": {
+    "title": "Lei 9.455/1997 — art. 1º, texto consolidado",
+    "url": "https://planalto.gov.br/ccivil_03/leis/l9455.htm"
+  },
+  "cndh": {
+    "title": "Lei 12.986/2014 — arts. 2º, 4º e 6º",
+    "url": "https://planalto.gov.br/ccivil_03/_ato2011-2014/2014/lei/l12986.htm"
+  },
+  "refugio": {
+    "title": "Lei 9.474/1997 — arts. 3º, 12 e 14",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9474.htm"
+  },
+  "improbidade": {
+    "title": "Lei 8.429/1992 — arts. 1º e 9º, após Lei 14.230/2021",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l8429compilada.htm"
+  },
+  "migracao": {
+    "title": "Lei de Migração — arts. 64 a 66 e 96",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2017/lei/l13445.htm"
+  },
+  "naturalizacao": {
+    "title": "Ministério da Justiça — nacionalidade derivada e requisitos",
+    "url": "https://www.gov.br/mj/pt-br/assuntos/seus-direitos/migracoes/naturalizacao/o-que-e-naturalizacao"
+  },
+  "tse": {
+    "title": "TSE — idade até o primeiro turno e voto facultativo (2026)",
+    "url": "https://www.tse.jus.br/comunicacao/noticias/2026/Setembro/faltam-18-dias-quem-vota-quem-pode-votar-e-o-que-muda-aos-18-anos"
+  },
+  "adpf54": {
+    "title": "STF — ADPF 54, anencefalia",
+    "url": "https://portal.stf.jus.br/peticaoInicial/verPeticaoInicial.asp?base=ADPF&numProcesso=54"
+  },
+  "tema990": {
+    "title": "STF — Tema 990, compartilhamento de dados",
+    "url": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=5213056&numeroProcesso=1055941&numeroTema=990"
+  },
+  "fiador": {
+    "title": "STF — Tema 1127, bem de família do fiador",
+    "url": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=6087183&numeroProcesso=1307334&numeroTema=1127"
+  },
+  "educacao": {
+    "title": "STF — Tema 548, creche e pré-escola",
+    "url": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=5085176&numeroProcesso=1008166&numeroTema=548"
+  },
+  "sumula473": {
+    "title": "STF — Súmula 473, anulação e revogação",
+    "url": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=1602"
+  },
+  "sumula603": {
+    "title": "STF — Súmula 603, competência do latrocínio",
+    "url": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=2683"
+  },
+  "sumula70": {
+    "title": "STF — Súmula 70, sanção política tributária",
+    "url": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=30&sumula=2194"
+  },
+  "ctn": {
+    "title": "CTN, art. 78 — redação do Ato Complementar 31/1966",
+    "url": "https://www.planalto.gov.br/ccivil_03/acp/acp-31-66.htm"
+  },
+  "tema130": {
+    "title": "STF — Tema 130, terceiros não usuários",
+    "url": "https://portal.stf.jus.br/jurisprudenciaRepercussao/tema.asp?num=130"
+  },
+  "tema592": {
+    "title": "STF — Tema 592, dever de proteção do detento",
+    "url": "https://portal.stf.jus.br/jurisprudenciaRepercussao/verAndamentoProcesso.asp?classeProcesso=RE&incidente=4645403&numeroProcesso=841526&numeroTema=592"
+  },
+  "estatais": {
+    "title": "Lei 13.303/2016 — arts. 4º e 5º",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/lei/l13303.htm"
+  },
+  "sv49": {
+    "title": "STF — Súmula Vinculante 49 e ressalvas de aplicação",
+    "url": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26&sumula=2506"
+  },
+  "sv11": {
+    "title": "STF — Súmula Vinculante 11, algemas",
+    "url": "https://portal.stf.jus.br/jurisprudencia/sumariosumulas.asp?base=26&sumula=1220"
+  },
+  "dudh": {
+    "title": "ONU — Declaração Universal, arts. 1º, 18 e 21",
+    "url": "https://www.un.org/en/about-us/universal-declaration-of-human-rights"
+  },
+  "cadh": {
+    "title": "Convenção Americana — Decreto 678/1992",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto/d0678.htm"
+  },
+  "tratados": {
+    "title": "STF — hierarquia dos tratados de direitos humanos",
+    "url": "https://portal.stf.jus.br/noticias/verNoticiaDetalhe.asp?idConteudo=100258&ori=1"
+  },
+  "decretoMT": {
+    "title": "Diário Oficial de MT — Decreto 1.899/2013 (texto original; consolidação pendente)",
+    "url": "https://www.detran.mt.gov.br/documents/d/sejus/decreto-n-1899-2013-1-pdf"
+  },
+  "pam": {
+    "title": "IBGE — Produção Agrícola Municipal 2015 (tabela numérica pendente de reconferência)",
+    "url": "https://www.ibge.gov.br/biblioteca/visualizacao/periodicos/66/pam_2015_v42_br.pdf"
+  },
+  "dante": {
+    "title": "Senado Federal — registro da eleição e reeleição de Dante",
+    "url": "https://www25.senado.leg.br/en_US/web/atividade/pronunciamentos/-/p/pronunciamento/363825"
+  },
+  "rusga": {
+    "title": "IHGMT — A Rusga em Mato Grosso: as falas silenciadas, Elizabeth M. Siqueira",
+    "url": "https://revistaihgmt.com.br/index.php/revistaihgmt/article/view/677"
+  },
+  "fusos": {
+    "title": "Observatório Nacional — Hora Legal Brasileira",
+    "url": "https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/tempo-e-frequencia/brasil"
+  },
+  "roncador": {
+    "title": "Mapas MT — Serra do Roncador",
+    "url": "https://mapas.mt.gov.br/espaco/158/"
+  },
+  "filosofia": {
+    "title": "CECIERJ — material didático sobre racionalismo e empirismo",
+    "url": "https://canal.cecierj.edu.br/012016/1fa1306b315ec50cf7352610a7a83ab2.pdf"
+  },
+  "kant": {
+    "title": "Pesquisa acadêmica — Razão e educação prática em Kant",
+    "url": "https://revista.unitins.br/index.php/humanidadeseinovacao/article/download/4124/3977"
+  },
+  "planejamento": {
+    "title": "Enap — Pensamento estratégico, glossário institucional",
+    "url": "https://sites.google.com/enap.gov.br/glossario-enapalavra/gloss%C3%A1rio-enapalavra/pensamento-estrat%C3%A9gico"
+  },
+  "cenarios": {
+    "title": "Enap — Prospectiva estratégica e cenários",
+    "url": "https://repositorio.enap.gov.br/items/a64bbc08-ad38-4514-a810-2790b40abebc"
+  },
+  "sistemas": {
+    "title": "UFRB — estudo dos componentes de sistemas e feedback",
+    "url": "https://www.ufrb.edu.br/mpgestaoppss/images/documentos/Artigos/O_SOFTWARE_DE_GESTAO_EDUCACIONAL_PARA_O_PROGRAMA_UPT.pdf"
+  },
+  "ibgc": {
+    "title": "IBGC — definição e agentes de governança",
+    "url": "https://www.ibgc.org.br/sobre"
+  },
+  "redacao": {
+    "title": "SETI/PR — Manual de Comunicação Escrita; pontuação e crase, pp. 60–66",
+    "url": "https://www.seti.pr.gov.br/sites/default/arquivos_restritos/files/documento/2026-02/manualcomunicacaoescrita_final.pdf"
+  },
+  "divisao": {
+    "title": "Lei Complementar federal 31/1977 — criação de MS, arts. 1º, 3º, 4º e 6º",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp31.htm"
+  },
+  "biomas": {
+    "title": "IBGE — mapas e informações sobre biomas",
+    "url": "https://www.ibge.gov.br/geociencias/informacoes-ambientais/vegetacao/15842-biomas.html"
+  },
+  "sema": {
+    "title": "SEMA/MT — unidades de conservação e três biomas de MT",
+    "url": "https://www.sema.mt.gov.br/site/index.php/unidades-de-conservacao/unidades-de-conserva%C3%A7%C3%A3o-estaduais"
+  },
+  "ana-paraguai": {
+    "title": "ANA — Região Hidrográfica Paraguai",
+    "url": "https://www.gov.br/ana/pt-br/assuntos/gestao-das-aguas/panorama-das-aguas/regioes-hidrograficas/regiao-hidrografica-paraguai"
+  },
+  "ana-rios": {
+    "title": "ANA — principais cursos da bacia do Paraguai",
+    "url": "https://www.gov.br/ana/pt-br/assuntos/noticias-e-eventos/noticias/estudos-da-ana-na-bacia-do-paraguai-recebem-apoio-do-poder-legislativo-do-mt/"
+  },
+  "capitania": {
+    "title": "Câmara de Cuiabá — criação da Capitania de MT e fundação de Vila Bela",
+    "url": "https://hmg.camaracuiaba.mt.gov.br/criacao-da-capitania-de-mato-grosso-1748-cuiaba-nao-sera-capital"
+  },
+  "bergue": {
+    "title": "Bergue, 2022 — Ética como competência; distinções entre moral e ética, utilitarismo e deontologia",
+    "url": "https://revistas.unifacs.br/index.php/rgb/article/download/7297/4499"
+  },
+  "juizos": {
+    "title": "CECIERJ/UNIRIO — Filosofia e Educação, aula 4: juízos de fato e de valor",
+    "url": "https://canal.cecierj.edu.br/012016/e30f8ca7f3f6454702a87208297df3ee.pdf"
+  },
+  "funcoes": {
+    "title": "CECIERJ — funções da Administração: planejamento, organização, direção e controle",
+    "url": "https://canal.cecierj.edu.br/012016/f8431334c0e11b7515dd60d7c3bf7685.pdf"
+  },
+  "bsc": {
+    "title": "Enap — Etapas do Planejamento Estratégico; missão, visão, diagnóstico e indicadores",
+    "url": "https://repositorio.enap.gov.br/handle/1/1891"
+  },
+  "avaliacao": {
+    "title": "Enap — Monitoramento e avaliação: eficiência, eficácia e efetividade",
+    "url": "https://repositorio.enap.gov.br/handle/1/1006"
+  },
+  "dl200": {
+    "title": "Decreto-Lei 200/1967 — arts. 4º e 5º; organização administrativa federal",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del0200.htm"
+  },
+  "lai": {
+    "title": "Lei 12.527/2011 — arts. 3º, 7º, 8º, 10 e 11",
+    "url": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
+  }
 }

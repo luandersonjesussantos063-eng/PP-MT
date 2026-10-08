@@ -1,5 +1,6 @@
+import {AUTHORIAL_MT_CONCEPTS} from './authorial-mt.js?v=46';
 import {MT_QUESTIONS} from './official.js?v=27';
-export const CONCEPTS=MT_QUESTIONS.filter(q=>!q.historicalOnly).map(q=>({id:q.id,title:q.topic,subject:q.subject,lesson:q.lesson,baseId:q.id}));
+export const CONCEPTS=[...MT_QUESTIONS.filter(q=>!q.historicalOnly).map(q=>({id:q.id,title:q.topic,subject:q.subject,lesson:q.lesson,baseId:q.id})),...AUTHORIAL_MT_CONCEPTS];
 const known=new Set(CONCEPTS.map(c=>c.id));
 export function enrichConcept(q){return known.has(q.id)?{...q,conceptId:q.id}:q}
 export function sameConcept(a,b){return !!a?.conceptId&&a.conceptId===b?.conceptId}

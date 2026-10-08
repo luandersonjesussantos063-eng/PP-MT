@@ -105,3 +105,12 @@ Verificação: testes de coerência dos blocos, equivalências, orçamento de re
 ## Atualização 45 — áudio de acerto e erro
 
 Efeitos extraídos do vídeo fornecido pelo usuário, em `assets/audio/`. O módulo `answer-sounds.js` reproduz no clique que corrige a resposta, interrompe o efeito anterior e trata bloqueio de reprodução sem interromper o estudo. Ativo por padrão; **Mais → Som das respostas** permite desligar e salva a preferência por conta. Selecionar alternativas em simulado não revela o resultado por áudio. Os dois arquivos entram no cache offline.
+
+
+## Atualização 46 — 100 novos exercícios autorais
+
+Lote em `content/authorial-mt-100.json`, compilado por `python3 tools/build_authorial.py` em `authorial-mt.js`. Acrescenta exatamente 100 questões, com IDs novos e estáveis, sem substituir respostas ou questões anteriores. Distribuição: Português 10; História/Geografia de MT 20; Ética/Filosofia 20; Administração 20; Constitucional 10; Administrativo 5; Penal/Processual 5; Direitos Humanos 5; Legislação Básica 5.
+
+20 grupos têm cinco exercícios distintos, lição curta, exemplo, pergunta de recuperação, justificativa específica de cada alternativa e fontes. Entram no banco, filtros autorais, simulados, explicações, estudo guiado e equivalências de revisão. O catálogo passa de 48 para 68 grupos de conceitos; isso não mede cobertura integral do edital nem domínio do aluno. Os grupos novos podem aprofundar temas já presentes em outros comentários.
+
+Vinculação ao Anexo II do Edital 01/2016/SEJUDH, cargo Agente Penitenciário, Diário Oficial de MT de 25/11/2016, pp. 106–107 (PDF do edital, pp. 23–24). Anexo consultado por imagem e OCR. Os exercícios jurídicos novos usam os textos legais consultados em 08/10/2026, não o corte legislativo do concurso histórico. Não representam edital futuro. São exercícios originais com assistência de IA e fontes verificadas, sem atribuição a banca e sem revisão docente independente. Este lote introdutório usa três alternativas; não pretende reproduzir a dificuldade ou o formato completo da prova IBADE.

@@ -1,0 +1,1755 @@
+{
+  "edition": "mt-edital-2016-lote-2026-10",
+  "checkedAt": "2026-10-08",
+  "authorship": "Questão autoral produzida com assistência de IA e conferência das fontes indicadas. Não é questão oficial de banca nem revisão docente independente.",
+  "syllabus": {
+    "title": "Edital 01/2016/SEJUDH — Anexo II, cargo Agente Penitenciário; Diário Oficial de MT de 25/11/2016, páginas 106–107",
+    "url": "https://arquivos.qconcursos.com/regulamento/arquivo/11897/sejudh_mt_2016_edital_n_01-edital.pdf#page=23",
+    "note": "Tópicos vinculados ao anexo do edital-base histórico. Questões novas de Direito consideram os textos legais consultados em 08/10/2026, não o corte legislativo de 2016. Não representa edital futuro nem cobertura integral do anexo."
+  },
+  "groups": [
+    {
+      "slug": "crase",
+      "subject": "Língua Portuguesa",
+      "title": "Crase: regência e artigo",
+      "syllabusTopic": "Uso do sinal indicativo de crase",
+      "sourceKeys": [
+        "redacao"
+      ],
+      "concept": "O acento grave marca, em casos comuns, a fusão da preposição a com o artigo feminino a. Verifique a regência e se o termo seguinte admite artigo. Antes de verbo não há artigo feminino; por isso, não há crase. Locuções como à noite e indicações de horas como às oito usam o acento.",
+      "example": "Encaminhar algo à diretoria corresponde a encaminhar algo ao setor: a troca pelo masculino ajuda a reconhecer preposição e artigo.",
+      "recall": {
+        "prompt": "Quais dois elementos normalmente se unem em à?",
+        "answer": "A preposição a e o artigo feminino a."
+      },
+      "exercises": [
+        {
+          "statement": "Complete segundo a norma-padrão: “O documento foi encaminhado ___ diretoria responsável”.",
+          "options": [
+            "à",
+            "a",
+            "há"
+          ],
+          "answer": 0,
+          "reasons": [
+            "Encaminhar algo a alguém exige preposição; diretoria admite o artigo a.",
+            "Nesta construção, omite o acento que marca a fusão de preposição e artigo.",
+            "Há é forma do verbo haver e não introduz o destino do documento."
+          ]
+        },
+        {
+          "statement": "Qual frase apresenta uso correto do acento indicativo de crase?",
+          "options": [
+            "A equipe começou a estudar.",
+            "A equipe começou à estudar.",
+            "A equipe começou há estudar."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Antes do verbo estudar não há artigo feminino: usa-se apenas a preposição.",
+            "Verbo não admite artigo feminino, logo não ocorre essa crase.",
+            "Há não substitui a preposição exigida por começou a."
+          ]
+        },
+        {
+          "statement": "Complete: “O treinamento terá início ___ oito horas”.",
+          "options": [
+            "às",
+            "as",
+            "há"
+          ],
+          "answer": 0,
+          "reasons": [
+            "Na indicação de horário determinado, ocorre a locução com acento grave.",
+            "Sem acento, não marca a construção de horário introduzida pela preposição.",
+            "Há expressa existência ou tempo decorrido, não o horário de início."
+          ]
+        },
+        {
+          "statement": "Em “Entreguei o formulário a ela”, por que não se usa acento grave?",
+          "options": [
+            "Ela não admite artigo feminino nessa construção.",
+            "Entregar nunca exige preposição.",
+            "Toda palavra feminina exige crase."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Há preposição, mas não artigo a antes do pronome pessoal ela.",
+            "Entregar algo a alguém admite complemento com preposição.",
+            "Gênero feminino, sozinho, não basta para produzir a fusão."
+          ]
+        },
+        {
+          "statement": "Qual alternativa completa corretamente: “A ronda ocorrerá ___ noite”?",
+          "options": [
+            "à",
+            "a",
+            "há"
+          ],
+          "answer": 0,
+          "reasons": [
+            "À noite é uma locução adverbial feminina que indica tempo.",
+            "Nesta locução temporal, a forma normativa usa o acento grave.",
+            "O verbo haver não forma a locução de tempo pedida."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pontuacao",
+      "subject": "Língua Portuguesa",
+      "title": "Pontuação e relações sintáticas",
+      "syllabusTopic": "Emprego dos sinais de pontuação",
+      "sourceKeys": [
+        "redacao"
+      ],
+      "concept": "A vírgula separa vocativo e expressões intercaladas, mas não deve romper a ligação direta entre sujeito e verbo ou entre verbo e complemento. Em orações adjetivas, a pontuação pode mudar o alcance: sem vírgulas, restringe o grupo; entre vírgulas, apresenta uma explicação sobre o grupo referido.",
+      "example": "Em “Agente, confira o registro”, agente é a pessoa chamada, não o sujeito de confira.",
+      "recall": {
+        "prompt": "Por que se usa vírgula para separar um vocativo?",
+        "answer": "Porque o chamamento fica separado dos termos da oração."
+      },
+      "exercises": [
+        {
+          "statement": "Qual frase evita separar indevidamente o sujeito de seu verbo?",
+          "options": [
+            "Os agentes conferiram os registros.",
+            "Os agentes, conferiram os registros.",
+            "Os agentes conferiram, os registros."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O sujeito os agentes permanece ligado ao verbo conferiram.",
+            "A vírgula rompe a ligação direta entre sujeito e verbo.",
+            "A vírgula separa o verbo de seu objeto direto sem justificativa."
+          ]
+        },
+        {
+          "statement": "Em “Marina, verifique a escala”, a vírgula separa:",
+          "options": [
+            "Um vocativo.",
+            "O objeto direto de verifique.",
+            "Uma oração subordinada causal."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Marina é a pessoa a quem se dirige a ordem.",
+            "O objeto direto é a escala, não Marina.",
+            "Marina é um nome usado como chamamento, não uma oração."
+          ]
+        },
+        {
+          "statement": "Qual opção pontua adequadamente a expressão intercalada “segundo o relatório”?",
+          "options": [
+            "A equipe, segundo o relatório, concluiu a tarefa.",
+            "A equipe segundo o relatório, concluiu a tarefa.",
+            "A equipe, segundo o relatório concluiu a tarefa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "As duas vírgulas delimitam a expressão intercalada.",
+            "Falta a primeira vírgula que abre a intercalação.",
+            "Falta fechar a intercalação antes do verbo principal."
+          ]
+        },
+        {
+          "statement": "Em “Os candidatos que chegaram cedo entraram”, a ausência de vírgulas indica que:",
+          "options": [
+            "A afirmação se refere ao grupo de candidatos que chegou cedo.",
+            "Todos os candidatos chegaram cedo necessariamente.",
+            "Chegar cedo é uma ordem dirigida aos candidatos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A oração adjetiva restringe quais candidatos são mencionados.",
+            "A estrutura restritiva não afirma isso sobre todos os candidatos.",
+            "A oração descreve uma característica do grupo, não dá uma ordem."
+          ]
+        },
+        {
+          "statement": "Em “Os agentes, que estavam de serviço, atenderam”, a oração entre vírgulas:",
+          "options": [
+            "Acrescenta uma explicação sobre os agentes referidos.",
+            "Seleciona apenas alguns agentes entre todos os mencionados.",
+            "Funciona como objeto direto de atenderam."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A pontuação apresenta a informação como explicativa.",
+            "Essa restrição seria expressa pela oração sem vírgulas.",
+            "A oração caracteriza agentes; não completa o verbo atenderam."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "divisao-mt",
+      "subject": "História e Geografia de Mato Grosso",
+      "title": "Desmembramento de MT e MS",
+      "syllabusTopic": "Desmembramento do Estado em MT e MS, ocorrido em 1977",
+      "sourceKeys": [
+        "divisao"
+      ],
+      "concept": "A Lei Complementar federal 31, de 11 de outubro de 1977, criou Mato Grosso do Sul pelo desmembramento de Mato Grosso. A instalação administrativa ocorreu em 1º de janeiro de 1979. Separe a criação legal da instalação: são marcos distintos. Campo Grande foi definida como capital do novo estado.",
+      "example": "Uma linha do tempo deve separar 1977, criação por lei, de 1979, instalação do novo estado.",
+      "recall": {
+        "prompt": "Qual é a diferença entre os marcos de 1977 e 1979?",
+        "answer": "1977 é a criação legal; 1979 é a instalação de Mato Grosso do Sul."
+      },
+      "exercises": [
+        {
+          "statement": "Qual ato criou o Estado de Mato Grosso do Sul?",
+          "options": [
+            "Lei Complementar federal 31/1977.",
+            "Constituição Federal de 1988.",
+            "Lei de criação da Capitania de Mato Grosso em 1748."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A LC 31 instituiu o novo estado mediante desmembramento de MT.",
+            "A criação é anterior à Constituição de 1988.",
+            "A capitania colonial é outro processo histórico."
+          ]
+        },
+        {
+          "statement": "Um resumo diz que MS foi criado em 1977 e instalado em 1979. Esse resumo:",
+          "options": [
+            "Distingue corretamente criação legal e instalação.",
+            "Está errado porque criação e instalação ocorreram em 1988.",
+            "Está errado porque instalação significa apenas renomear MT."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Os marcos correspondem a etapas diferentes do processo.",
+            "O processo ocorreu antes de 1988.",
+            "Houve constituição de um novo estado, não simples troca de nome."
+          ]
+        },
+        {
+          "statement": "O território de Mato Grosso do Sul resultou de:",
+          "options": [
+            "Desmembramento de parte do território de Mato Grosso.",
+            "Desmembramento do Distrito Federal.",
+            "União de Mato Grosso com Goiás."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Essa origem está no art. 1º da LC 31/1977.",
+            "O Distrito Federal não foi o território de origem.",
+            "A lei não criou MS mediante essa fusão."
+          ]
+        },
+        {
+          "statement": "Qual cidade a LC 31/1977 definiu como capital de Mato Grosso do Sul?",
+          "options": [
+            "Campo Grande.",
+            "Cuiabá.",
+            "Vila Bela da Santíssima Trindade."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 3º indica Campo Grande.",
+            "Cuiabá não foi definida como capital do novo estado.",
+            "Vila Bela se relaciona à história colonial de MT, não a essa capital."
+          ]
+        },
+        {
+          "statement": "Qual sequência temporal está correta?",
+          "options": [
+            "Criação legal de MS em 1977; instalação em 1979.",
+            "Instalação de MS em 1977; criação legal em 1979.",
+            "Criação de MS em 1988; instalação em 1979."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A sequência separa a norma de criação do início administrativo.",
+            "A alternativa inverte os marcos históricos.",
+            "A criação legal não ocorreu em 1988 e não sucede a instalação."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "biomas-mt",
+      "subject": "História e Geografia de Mato Grosso",
+      "title": "Biomas de Mato Grosso",
+      "syllabusTopic": "Principais unidades de relevos e Biomas do Mato Grosso",
+      "sourceKeys": [
+        "biomas",
+        "sema"
+      ],
+      "concept": "Mato Grosso reúne áreas de Amazônia, Cerrado e Pantanal. O bioma não coincide com o limite de um município ou estado. O Pantanal tem dinâmica marcada pela inundação sazonal; o Cerrado apresenta formações variadas, não apenas um único tipo de vegetação. Não confunda Amazônia como bioma com toda a região administrativa da Amazônia Legal.",
+      "example": "Um mapa ambiental pode mostrar três biomas dentro do mesmo estado, sem que suas fronteiras acompanhem as fronteiras municipais.",
+      "recall": {
+        "prompt": "Quais três biomas ocorrem em Mato Grosso?",
+        "answer": "Amazônia, Cerrado e Pantanal."
+      },
+      "exercises": [
+        {
+          "statement": "Qual conjunto reúne os biomas presentes em Mato Grosso?",
+          "options": [
+            "Amazônia, Cerrado e Pantanal.",
+            "Pampa, Caatinga e Pantanal.",
+            "Amazônia, Pampa e Mata Atlântica."
+          ],
+          "answer": 0,
+          "reasons": [
+            "São os três biomas registrados no território estadual.",
+            "Pampa e Caatinga não compõem esse conjunto em MT.",
+            "A alternativa troca Cerrado e Pantanal por outros biomas."
+          ]
+        },
+        {
+          "statement": "Um estudo sobre o Pantanal deve considerar especialmente:",
+          "options": [
+            "A dinâmica de cheias e vazantes.",
+            "A cobertura permanente de gelo.",
+            "A ausência de relação entre água e vegetação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A inundação sazonal é central para compreender a paisagem pantaneira.",
+            "Essa não é uma característica do Pantanal.",
+            "A dinâmica hídrica influencia fortemente os ambientes do Pantanal."
+          ]
+        },
+        {
+          "statement": "Um município está em uma zona de transição ambiental. Qual procedimento é adequado?",
+          "options": [
+            "Consultar o mapa de biomas e a escala utilizada.",
+            "Concluir que cada município contém obrigatoriamente um único bioma.",
+            "Usar apenas o nome do município para definir o bioma."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Limites ambientais podem atravessar limites políticos; o mapa deve orientar a classificação.",
+            "A divisão municipal não obriga essa correspondência.",
+            "O nome não substitui os dados ambientais e cartográficos."
+          ]
+        },
+        {
+          "statement": "Qual afirmação sobre o Cerrado é adequada?",
+          "options": [
+            "Apresenta diferentes formações de vegetação.",
+            "É formado exclusivamente por floresta densa igual à amazônica.",
+            "Não ocorre em Mato Grosso."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O bioma inclui um mosaico de formações, não uma cobertura única.",
+            "Essa descrição apaga a diversidade característica do Cerrado.",
+            "O Cerrado integra o território mato-grossense."
+          ]
+        },
+        {
+          "statement": "Estar na Amazônia Legal permite concluir que todo o território de MT pertence ao bioma Amazônia?",
+          "options": [
+            "Não, são recortes diferentes.",
+            "Sim, recorte administrativo e bioma são sempre iguais.",
+            "Sim, porque o Pantanal é um município amazônico."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Amazônia Legal é um recorte administrativo; MT também tem Cerrado e Pantanal.",
+            "Os critérios dessas delimitações são distintos.",
+            "Pantanal é um bioma, não um município."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "hidrografia-mt",
+      "subject": "História e Geografia de Mato Grosso",
+      "title": "Hidrografia e bacia do Paraguai",
+      "syllabusTopic": "Hidrografia do Mato Grosso",
+      "sourceKeys": [
+        "ana-paraguai",
+        "ana-rios"
+      ],
+      "concept": "Uma bacia hidrográfica reúne a drenagem de um rio e seus afluentes. A Região Hidrográfica Paraguai abrange áreas de MT e MS e grande parte do Pantanal. O rio Cuiabá integra esse sistema. Limites de drenagem seguem divisores de águas, e não precisam coincidir com as divisas estaduais.",
+      "example": "Uma alteração no fluxo de um rio a montante pode influenciar ambientes a jusante dentro da mesma rede de drenagem.",
+      "recall": {
+        "prompt": "Os limites de uma bacia precisam acompanhar as divisas estaduais?",
+        "answer": "Não. A drenagem e os divisores de águas definem a bacia."
+      },
+      "exercises": [
+        {
+          "statement": "O rio Cuiabá integra qual região hidrográfica?",
+          "options": [
+            "Paraguai.",
+            "São Francisco.",
+            "Uruguai."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A ANA relaciona o rio Cuiabá entre os principais cursos dessa região.",
+            "O Cuiabá não pertence à Região Hidrográfica São Francisco.",
+            "Essa região não corresponde à drenagem do rio Cuiabá."
+          ]
+        },
+        {
+          "statement": "Qual relação entre a Região Hidrográfica Paraguai e o Pantanal está correta?",
+          "options": [
+            "A região abrange grande parte do Pantanal.",
+            "A região fica inteiramente fora do Pantanal.",
+            "O Pantanal não depende de cursos d’água."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O sistema de drenagem do Paraguai é fundamental para a dinâmica pantaneira.",
+            "Isso contradiz a delimitação apresentada pela ANA.",
+            "As cheias e vazantes são componentes centrais de sua dinâmica."
+          ]
+        },
+        {
+          "statement": "Uma bacia hidrográfica pode abranger MT e MS?",
+          "options": [
+            "Sim, limites hidrográficos podem atravessar divisas estaduais.",
+            "Não, cada estado tem necessariamente uma bacia exclusiva.",
+            "Não, rios deixam de ter afluentes ao cruzar uma divisa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A rede de drenagem não se encerra necessariamente numa divisa política.",
+            "Essa correspondência obrigatória não existe.",
+            "Uma divisa estadual não interrompe as relações da rede hidrográfica."
+          ]
+        },
+        {
+          "statement": "Em um mapa, o divisor de águas indica:",
+          "options": [
+            "O limite entre áreas que drenam para sistemas diferentes.",
+            "Uma linha criada apenas para separar municípios.",
+            "O ponto em que todo rio necessariamente seca."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O relevo orienta para onde a água escoa e delimita as bacias.",
+            "Sua definição é física, não apenas administrativa.",
+            "O divisor não significa desaparecimento de todos os rios."
+          ]
+        },
+        {
+          "statement": "Uma equipe avalia impactos de uma barragem na bacia do Paraguai. Qual recorte é mais coerente?",
+          "options": [
+            "Considerar efeitos na rede de drenagem e nos ambientes a jusante.",
+            "Analisar apenas o endereço administrativo da barragem.",
+            "Desconsiderar o Pantanal por estar conectado aos rios."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O fluxo conecta trechos e pode afetar a dinâmica das áreas inundáveis.",
+            "O endereço não abrange os possíveis efeitos hidrológicos.",
+            "A conexão é justamente motivo para considerar os impactos."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "capitania-mt",
+      "subject": "História e Geografia de Mato Grosso",
+      "title": "Capitania e Vila Bela",
+      "syllabusTopic": "A fundação de Vila Bela da Santíssima Trindade e a criação da Capitania de Mato Grosso",
+      "sourceKeys": [
+        "capitania"
+      ],
+      "concept": "A Capitania de Mato Grosso foi criada em 1748, separada de São Paulo. Vila Bela da Santíssima Trindade foi fundada em 1752 por Antônio Rolim de Moura, na região do Guaporé, para sediar a capitania e fortalecer a presença portuguesa na fronteira com os domínios espanhóis. Não misture esse processo colonial com a criação de MS em 1977.",
+      "example": "Para organizar a história, coloque primeiro a criação da capitania e depois a fundação de sua sede no Guaporé.",
+      "recall": {
+        "prompt": "Por que a localização de Vila Bela no Guaporé tinha importância política?",
+        "answer": "A sede ajudava a afirmar e defender a presença portuguesa na fronteira oeste."
+      },
+      "exercises": [
+        {
+          "statement": "A criação da Capitania de Mato Grosso, em 1748, ocorreu por separação de qual capitania?",
+          "options": [
+            "São Paulo.",
+            "Mato Grosso do Sul.",
+            "Distrito Federal."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A região foi desmembrada da Capitania de São Paulo.",
+            "MS só seria criado como estado muito depois, em 1977.",
+            "O Distrito Federal não era a capitania de origem."
+          ]
+        },
+        {
+          "statement": "Qual cidade foi fundada em 1752 para sediar a Capitania de Mato Grosso?",
+          "options": [
+            "Vila Bela da Santíssima Trindade.",
+            "Campo Grande.",
+            "Brasília."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Rolim de Moura fundou Vila Bela na região do Guaporé.",
+            "Campo Grande se relaciona à capital de MS, não à sede criada em 1752.",
+            "Brasília pertence a um período histórico muito posterior."
+          ]
+        },
+        {
+          "statement": "A localização de Vila Bela no vale do Guaporé atendia especialmente à intenção de:",
+          "options": [
+            "Fortalecer a presença portuguesa na fronteira oeste.",
+            "Instalar a capital de Mato Grosso do Sul.",
+            "Transferir a capital do Brasil de Brasília para MT."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A proximidade dos domínios espanhóis orientou a escolha estratégica.",
+            "MS não existia naquele processo colonial.",
+            "Brasília sequer existia no século XVIII."
+          ]
+        },
+        {
+          "statement": "Qual sequência distingue corretamente os eventos coloniais?",
+          "options": [
+            "Criação da capitania em 1748; fundação de Vila Bela em 1752.",
+            "Fundação de Vila Bela em 1977; criação da capitania em 1979.",
+            "Criação da capitania em 1752; fundação de Vila Bela em 1748."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A capitania antecedeu a fundação da sede planejada.",
+            "Essas datas pertencem a outro processo, o de MS.",
+            "A alternativa inverte os marcos."
+          ]
+        },
+        {
+          "statement": "Qual personagem se relaciona diretamente à fundação de Vila Bela em 1752?",
+          "options": [
+            "Antônio Rolim de Moura.",
+            "Dante de Oliveira.",
+            "O presidente da República de 1977."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O primeiro governador da capitania conduziu a fundação de Vila Bela.",
+            "Dante é personagem da política contemporânea, não da administração colonial.",
+            "A fundação ocorreu no período colonial, antes da República."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "etica-moral",
+      "subject": "Ética e Filosofia",
+      "title": "Ética, moral e consciência crítica",
+      "syllabusTopic": "Filosofia moral: Ética ou filosofia moral; valores éticos ou morais e a cultura",
+      "sourceKeys": [
+        "bergue"
+      ],
+      "concept": "Na distinção didática adotada aqui, moral é o conjunto de normas, valores e costumes que orienta condutas num contexto social. Ética é a reflexão crítica sobre esses padrões e suas justificativas. A existência de um costume não demonstra, por si, sua correção moral. Refletir exige apresentar razões e considerar consequências, deveres e pessoas afetadas.",
+      "example": "“Sempre fizemos assim” descreve um costume; discutir se ele é justo exige argumentos.",
+      "recall": {
+        "prompt": "Um costume ser frequente prova que ele é justo?",
+        "answer": "Não. Frequência e aceitação social não substituem uma justificativa ética."
+      },
+      "exercises": [
+        {
+          "statement": "Na distinção didática entre ética e moral, a reflexão sobre os fundamentos das regras pertence sobretudo à:",
+          "options": [
+            "Ética.",
+            "Moral entendida apenas como conjunto de costumes.",
+            "Contagem estatística de comportamentos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A ética examina criticamente normas, valores e justificativas.",
+            "Esse conjunto é o objeto da reflexão, não a própria análise crítica.",
+            "Contar ocorrências não fornece, sozinho, uma justificativa moral."
+          ]
+        },
+        {
+          "statement": "Uma equipe diz: “Esse procedimento é justo porque sempre foi feito assim”. Qual problema existe no argumento?",
+          "options": [
+            "O costume foi tratado como prova suficiente de justiça.",
+            "Toda prática antiga é necessariamente injusta.",
+            "Nenhum costume pode orientar a conduta."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A tradição pode ser examinada e criticada; não encerra a avaliação.",
+            "A antiguidade também não prova injustiça por si só.",
+            "Costumes podem orientar, mas sua validade pode ser questionada."
+          ]
+        },
+        {
+          "statement": "Normas e valores de uma comunidade que orientam comportamentos compõem, nessa distinção:",
+          "options": [
+            "Sua moral.",
+            "Uma medição puramente geográfica.",
+            "Uma conclusão necessariamente universal e imutável."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Moral designa o conjunto de padrões de conduta nesse contexto.",
+            "A descrição não trata de localização espacial.",
+            "Padrões morais têm contextos históricos e podem variar."
+          ]
+        },
+        {
+          "statement": "Qual atitude expressa consciência crítica diante de uma regra de conduta?",
+          "options": [
+            "Examinar seus fundamentos e seus efeitos sobre as pessoas.",
+            "Aceitar a regra apenas porque alguém conhecido a defendeu.",
+            "Rejeitar toda regra antes de compreendê-la."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A análise busca razões, em vez de aceitar a regra sem reflexão.",
+            "Prestígio pessoal não substitui fundamentação.",
+            "A recusa automática também dispensa o exame crítico."
+          ]
+        },
+        {
+          "statement": "Dois grupos têm costumes morais diferentes. Qual conclusão é justificada?",
+          "options": [
+            "Os padrões precisam ser compreendidos em seus contextos e examinados criticamente.",
+            "A diferença impede qualquer discussão ética.",
+            "O costume mais frequente é automaticamente o mais justo."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A diversidade existe e pode ser objeto de reflexão ética.",
+            "É possível discutir fundamentos mesmo com divergência.",
+            "Quantidade de adeptos não basta para estabelecer justiça."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "fato-valor",
+      "subject": "Ética e Filosofia",
+      "title": "Juízos de fato e de valor",
+      "syllabusTopic": "Juízos de fato ou de realidade e juízos de valor",
+      "sourceKeys": [
+        "juizos"
+      ],
+      "concept": "Juízos de fato descrevem como algo é ou ocorreu e podem ser confrontados com evidências. Juízos de valor avaliam algo como justo, bom, ruim ou desejável. Uma mesma frase pode reunir descrição e avaliação. Um juízo de fato pode estar errado: sua classificação depende do tipo de afirmação, não de ela ser verdadeira.",
+      "example": "“A reunião durou duas horas” descreve; “a reunião foi injustamente longa” inclui avaliação.",
+      "recall": {
+        "prompt": "Um juízo de fato é necessariamente verdadeiro?",
+        "answer": "Não. Ele pretende descrever a realidade e pode ser confirmado ou refutado."
+      },
+      "exercises": [
+        {
+          "statement": "Qual frase expressa predominantemente um juízo de fato?",
+          "options": [
+            "O atendimento começou às oito horas.",
+            "O atendimento foi exemplar.",
+            "É injusto atender dessa maneira."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A frase descreve um evento verificável.",
+            "Exemplar é uma avaliação de qualidade.",
+            "Injusto apresenta uma avaliação moral."
+          ]
+        },
+        {
+          "statement": "Em “A decisão foi injusta”, o termo injusta indica:",
+          "options": [
+            "Um juízo de valor.",
+            "Uma medição objetiva de horário.",
+            "Uma informação sem qualquer avaliação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Há avaliação da decisão segundo um critério de justiça.",
+            "A frase não mede tempo.",
+            "O adjetivo explicitamente avalia a decisão."
+          ]
+        },
+        {
+          "statement": "Uma notícia afirma uma data incorreta. A frase continua sendo um juízo de fato?",
+          "options": [
+            "Sim, embora seja falsa.",
+            "Não, toda afirmação falsa se torna juízo de valor.",
+            "Não, juízos de fato não podem ser verificados."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Ela pretende descrever um evento; pode ser refutada por evidências.",
+            "Falsidade e avaliação são critérios diferentes.",
+            "Justamente podem ser confrontados com evidências."
+          ]
+        },
+        {
+          "statement": "Qual frase combina descrição e avaliação?",
+          "options": [
+            "O setor atendeu vinte pessoas e prestou um serviço excelente.",
+            "O setor atendeu vinte pessoas.",
+            "O serviço foi moralmente inadequado."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A quantidade descreve; excelente avalia a qualidade.",
+            "Há apenas a descrição quantitativa apresentada.",
+            "A frase apresenta avaliação, sem a descrição quantitativa do exemplo."
+          ]
+        },
+        {
+          "statement": "Para avaliar “Havia quinze pessoas na sala”, qual verificação é mais direta?",
+          "options": [
+            "Consultar registros ou evidências da presença naquele momento.",
+            "Perguntar apenas se quinze é um número bonito.",
+            "Escolher a opinião moral mais popular sobre reuniões."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A afirmação descritiva pode ser confrontada com dados.",
+            "Essa avaliação estética não verifica a quantidade.",
+            "A popularidade de uma avaliação não confirma a contagem."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "utilitarismo",
+      "subject": "Ética e Filosofia",
+      "title": "Utilitarismo e consequências",
+      "syllabusTopic": "Utilitarismo ético",
+      "sourceKeys": [
+        "bergue"
+      ],
+      "concept": "O utilitarismo avalia moralmente as ações por suas consequências para o bem-estar dos envolvidos, com consideração imparcial dos interesses. Não equivale a fazer o que beneficia apenas o agente nem a seguir a preferência da maioria sem avaliar impactos. Nesta introdução, compare o saldo esperado de benefícios e prejuízos; direitos legais continuam a limitar a atuação do servidor.",
+      "example": "Entre projetos lícitos, uma análise utilitarista compara os efeitos previstos sobre o conjunto das pessoas afetadas.",
+      "recall": {
+        "prompt": "O utilitarismo considera apenas a vantagem pessoal de quem decide?",
+        "answer": "Não. Ele considera o bem-estar dos envolvidos, de forma imparcial."
+      },
+      "exercises": [
+        {
+          "statement": "Qual critério é central numa análise utilitarista introdutória?",
+          "options": [
+            "As consequências da ação para o bem-estar dos envolvidos.",
+            "Somente o prestígio de quem decide.",
+            "A antiguidade do costume, independentemente de efeitos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A teoria atribui papel decisivo aos efeitos sobre o bem-estar.",
+            "Prestígio não é o critério moral central do utilitarismo.",
+            "Tradição não substitui a análise das consequências."
+          ]
+        },
+        {
+          "statement": "Uma pessoa escolhe a opção que lhe dá lucro, ignorando prejuízos aos demais. Isso basta para caracterizar utilitarismo?",
+          "options": [
+            "Não, vantagem privada isolada não é o critério.",
+            "Sim, utilidade significa sempre lucro pessoal.",
+            "Sim, prejuízo coletivo nunca importa nessa teoria."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A avaliação deve considerar imparcialmente os afetados.",
+            "Essa leitura confunde utilitarismo com egoísmo.",
+            "Consequências para os demais são relevantes."
+          ]
+        },
+        {
+          "statement": "Duas medidas lícitas têm custos semelhantes. Uma análise utilitarista deve comparar:",
+          "options": [
+            "Benefícios e prejuízos esperados para os envolvidos.",
+            "Só a medida preferida pelo gestor.",
+            "Só a ordem alfabética dos projetos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O foco é o resultado sobre o bem-estar, e não apenas o nome da medida.",
+            "Preferência individual não basta para essa análise.",
+            "Esse critério não avalia os efeitos morais."
+          ]
+        },
+        {
+          "statement": "Uma medida agrada à maioria, mas causa danos graves a outras pessoas. Qual análise é coerente com o utilitarismo?",
+          "options": [
+            "Examinar também os danos e o bem-estar dos prejudicados.",
+            "Ignorar os danos porque a maioria aprovou.",
+            "Considerar apenas a aparência pública da decisão."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O número de apoiadores não substitui a consideração dos efeitos sobre todos.",
+            "A aprovação não torna os prejuízos irrelevantes.",
+            "Imagem pública não corresponde à avaliação de bem-estar."
+          ]
+        },
+        {
+          "statement": "Uma decisão foi tomada após comparar os efeitos esperados de alternativas para o conjunto dos envolvidos. Esse raciocínio se aproxima de:",
+          "options": [
+            "Uma análise consequencialista utilitarista.",
+            "Um critério baseado exclusivamente na obediência a uma tradição.",
+            "Uma decisão baseada só na vantagem do decisor."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O critério explicitado são os efeitos sobre o bem-estar dos envolvidos.",
+            "O enunciado compara consequências, não apenas costumes.",
+            "O conjunto dos envolvidos foi considerado, não só o agente."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "kant-dever",
+      "subject": "Ética e Filosofia",
+      "title": "Dever e universalização em Kant",
+      "syllabusTopic": "Racionalismo ético; ética e liberdade",
+      "sourceKeys": [
+        "bergue"
+      ],
+      "concept": "Na ética kantiana, o valor moral de agir por dever não depende apenas da vantagem obtida. O imperativo categórico exige examinar se a máxima da ação pode valer como lei universal. Pessoas devem ser tratadas como fins, nunca meramente como instrumentos. Agir conforme o dever por medo de punição não é o mesmo que agir por respeito ao dever.",
+      "example": "Devolver um objeto só para receber uma recompensa não tem a mesma motivação de devolvê-lo por reconhecer o dever.",
+      "recall": {
+        "prompt": "Agir conforme o dever e agir por dever são a mesma coisa?",
+        "answer": "Não. A conduta externa pode coincidir, mas a motivação é diferente."
+      },
+      "exercises": [
+        {
+          "statement": "Na ética kantiana, o teste de universalização pergunta principalmente:",
+          "options": [
+            "Se a máxima da ação pode ser concebida e querida como lei universal.",
+            "Se a ação rende mais lucro ao agente.",
+            "Se apenas os amigos do agente aprovam a ação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O agente deve examinar a regra de sua ação para além da conveniência pessoal.",
+            "Lucro pessoal não define o imperativo categórico.",
+            "A aprovação de um grupo não equivale à universalização."
+          ]
+        },
+        {
+          "statement": "Um servidor devolve um objeto apenas para ganhar recompensa. Qual distinção kantiana é relevante?",
+          "options": [
+            "Agir conforme o dever não implica agir por dever.",
+            "Toda conduta correta tem necessariamente motivação moral idêntica.",
+            "Buscar recompensa prova respeito incondicional ao dever."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A conduta pode ser adequada, mas a motivação apresentada é a recompensa.",
+            "A teoria distingue a ação exterior de sua motivação.",
+            "A motivação é condicionada ao benefício."
+          ]
+        },
+        {
+          "statement": "Tratar uma pessoa nunca meramente como meio significa:",
+          "options": [
+            "Reconhecer sua dignidade e seu valor como fim.",
+            "Impedir qualquer cooperação entre pessoas.",
+            "Permitir manipulação sempre que o resultado for conveniente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A pessoa não se reduz a instrumento dos objetivos alheios.",
+            "Cooperação não é proibida; o problema é a instrumentalização sem respeito.",
+            "Conveniência não afasta o respeito devido à pessoa."
+          ]
+        },
+        {
+          "statement": "Qual formulação expressa uma orientação por dever?",
+          "options": [
+            "Cumprir a obrigação por reconhecer sua exigência moral.",
+            "Cumprir só quando alguém estiver fiscalizando.",
+            "Cumprir apenas se houver vantagem pessoal imediata."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A razão apresentada é o respeito ao dever.",
+            "A conduta depende do controle externo.",
+            "A conduta é condicionada a benefício, não ao dever."
+          ]
+        },
+        {
+          "statement": "Qual afirmação diferencia a abordagem kantiana da análise utilitarista introdutória?",
+          "options": [
+            "Kant destaca dever e universalização; o utilitarismo destaca consequências para o bem-estar.",
+            "As duas teorias usam exclusivamente lucro individual.",
+            "Kant dispensa qualquer exame racional da conduta."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A distinção identifica os critérios centrais estudados.",
+            "Nenhuma das duas se reduz a esse critério.",
+            "A razão prática tem papel central nessa abordagem."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "funcoes-admin",
+      "subject": "Administração Geral",
+      "title": "Planejar, organizar, dirigir e controlar",
+      "syllabusTopic": "Funções administrativas: planejamento, organização, direção e controle",
+      "sourceKeys": [
+        "funcoes"
+      ],
+      "concept": "Planejar define objetivos e meios. Organizar distribui tarefas, responsabilidades e recursos. Dirigir envolve orientar pessoas, comunicar e liderar a execução. Controlar compara resultados com padrões e permite correções. Essas funções se relacionam e podem se repetir ao longo do trabalho; não são etapas isoladas e irreversíveis.",
+      "example": "Uma chefia fixa a meta, distribui equipes, orienta a execução e compara o resultado com o previsto.",
+      "recall": {
+        "prompt": "Qual função compara o realizado com o padrão estabelecido?",
+        "answer": "Controle."
+      },
+      "exercises": [
+        {
+          "statement": "Uma chefia define a meta mensal e escolhe os meios para alcançá-la. Qual função predomina?",
+          "options": [
+            "Planejamento.",
+            "Controle.",
+            "Direção."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Definir o destino e como chegar a ele é planejar.",
+            "Controle compara o realizado com padrões; o enunciado define o que será buscado.",
+            "Direção orienta pessoas na execução, não é o foco desta definição de metas."
+          ]
+        },
+        {
+          "statement": "A chefia distribui tarefas, recursos e responsabilidades entre equipes. Qual função predomina?",
+          "options": [
+            "Organização.",
+            "Planejamento.",
+            "Controle."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A distribuição estrutura os meios de trabalho.",
+            "A meta pode vir do planejamento, mas o foco aqui é distribuir e estruturar.",
+            "Não há comparação entre desempenho e padrão no caso."
+          ]
+        },
+        {
+          "statement": "Uma supervisora comunica orientações e mobiliza a equipe para executar o serviço. Qual função predomina?",
+          "options": [
+            "Direção.",
+            "Organização.",
+            "Controle."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A orientação e a liderança das pessoas caracterizam a direção.",
+            "O foco não é a distribuição da estrutura e dos recursos.",
+            "O caso não apresenta medição do desempenho diante de um padrão."
+          ]
+        },
+        {
+          "statement": "Um gestor compara o número de atendimentos realizados com a meta e corrige desvios. Isso caracteriza:",
+          "options": [
+            "Controle.",
+            "Planejamento exclusivamente.",
+            "Organização exclusivamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Há comparação de resultado e padrão seguida de ação corretiva.",
+            "O gestor não está apenas escolhendo uma meta futura.",
+            "A comparação e a correção do desempenho são próprias do controle."
+          ]
+        },
+        {
+          "statement": "Qual afirmação sobre as funções administrativas é adequada?",
+          "options": [
+            "Elas se relacionam e podem ser retomadas durante a gestão.",
+            "O controle dispensa qualquer padrão de comparação.",
+            "A direção elimina a necessidade de organização."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O controle pode fornecer informações para novo planejamento e outras decisões.",
+            "Sem referência, não se determina o desvio em relação ao esperado.",
+            "Liderar pessoas não substitui estruturar tarefas e recursos."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "swot",
+      "subject": "Administração Geral",
+      "title": "Diagnóstico estratégico: matriz SWOT",
+      "syllabusTopic": "Diagnóstico estratégico externo e da organização",
+      "sourceKeys": [
+        "bsc"
+      ],
+      "concept": "Na matriz SWOT, forças e fraquezas pertencem ao ambiente interno; oportunidades e ameaças, ao externo. A mesma ocorrência pode afetar organizações de modos diferentes. Primeiro localize se a condição é interna ou externa; depois avalie se ajuda ou dificulta a estratégia. A matriz organiza o diagnóstico, mas não prevê o futuro com certeza.",
+      "example": "Equipe capacitada é força interna; indisponibilidade de um fornecedor externo pode ser ameaça.",
+      "recall": {
+        "prompt": "Quais elementos da SWOT se referem ao ambiente externo?",
+        "answer": "Oportunidades e ameaças."
+      },
+      "exercises": [
+        {
+          "statement": "Uma equipe dispõe de servidores treinados e de processos internos bem definidos. Na SWOT, isso tende a representar:",
+          "options": [
+            "Força.",
+            "Oportunidade externa.",
+            "Ameaça."
+          ],
+          "answer": 0,
+          "reasons": [
+            "São condições internas favoráveis ao desempenho.",
+            "A condição descrita pertence à própria organização.",
+            "O enunciado apresenta fatores favoráveis, não um risco externo."
+          ]
+        },
+        {
+          "statement": "Um setor não possui rotina interna para registrar suas demandas. Na SWOT, essa limitação é:",
+          "options": [
+            "Fraqueza.",
+            "Ameaça externa.",
+            "Força."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É uma deficiência interna que prejudica o trabalho.",
+            "A ausência da rotina é interna, não uma condição externa.",
+            "A lacuna compromete a organização em vez de fortalecê-la."
+          ]
+        },
+        {
+          "statement": "Um programa externo oferece formação gratuita compatível com a estratégia do órgão. Isso tende a ser:",
+          "options": [
+            "Oportunidade.",
+            "Força interna já instalada.",
+            "Fraqueza interna."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É uma condição externa favorável que pode ser aproveitada.",
+            "A oferta vem de fora e ainda precisa ser aproveitada.",
+            "Não se descreve deficiência da organização."
+          ]
+        },
+        {
+          "statement": "Um fornecedor externo avisa que pode interromper a entrega de material essencial. Isso tende a ser:",
+          "options": [
+            "Ameaça.",
+            "Fraqueza exclusivamente interna.",
+            "Oportunidade necessariamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O evento externo pode prejudicar o serviço.",
+            "O aviso de interrupção do fornecedor é condição externa.",
+            "O caso aponta risco para a continuidade, não benefício garantido."
+          ]
+        },
+        {
+          "statement": "Qual associação está correta na matriz SWOT?",
+          "options": [
+            "Forças e fraquezas: internas; oportunidades e ameaças: externas.",
+            "Forças e oportunidades: sempre internas.",
+            "Fraquezas e ameaças: sempre externas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A associação separa os dois ambientes do diagnóstico.",
+            "Oportunidades pertencem ao ambiente externo.",
+            "Fraquezas são condições internas."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "missao-visao",
+      "subject": "Administração Geral",
+      "title": "Missão, visão e objetivos",
+      "syllabusTopic": "Intenção estratégica; planejamento estratégico",
+      "sourceKeys": [
+        "bsc"
+      ],
+      "concept": "Missão expressa a razão de existir da organização. Visão descreve uma situação futura desejada. Valores orientam a conduta. Objetivos indicam resultados buscados; metas tornam esses resultados mais específicos e verificáveis, com medida e prazo. Um indicador acompanha um aspecto do desempenho, mas seu valor precisa ser interpretado no contexto.",
+      "example": "“Prestar atendimento seguro” pode expressar missão; “reduzir o tempo médio de atendimento para 15 minutos até dezembro” é uma meta mensurável.",
+      "recall": {
+        "prompt": "Como diferenciar missão e visão?",
+        "answer": "Missão indica a razão de existir; visão indica o futuro desejado."
+      },
+      "exercises": [
+        {
+          "statement": "Uma instituição declara sua razão de existir e a contribuição que oferece à sociedade. Isso expressa:",
+          "options": [
+            "Missão.",
+            "Visão.",
+            "Indicador de desempenho."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A missão explicita a finalidade central da organização.",
+            "A visão descreve a situação futura desejada.",
+            "Um indicador é uma medida de acompanhamento, não a finalidade institucional."
+          ]
+        },
+        {
+          "statement": "Um órgão afirma: “Queremos ser referência em atendimento acessível nos próximos anos”. Essa formulação expressa principalmente:",
+          "options": [
+            "Visão.",
+            "Uma medição já realizada.",
+            "Uma fraqueza interna necessariamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Ela apresenta o futuro desejado para a organização.",
+            "A frase não informa resultado medido.",
+            "Não descreve uma deficiência, mas uma aspiração futura."
+          ]
+        },
+        {
+          "statement": "Qual formulação é uma meta mais verificável?",
+          "options": [
+            "Reduzir o tempo médio de espera para 15 minutos até dezembro.",
+            "Melhorar bastante o atendimento algum dia.",
+            "Ter um serviço ótimo."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Há resultado, medida e prazo para acompanhamento.",
+            "Faltam medida e prazo definidos.",
+            "Ótimo não fornece, sozinho, um critério mensurável."
+          ]
+        },
+        {
+          "statement": "Uma instituição adota respeito e integridade como orientações permanentes de conduta. Esses elementos são:",
+          "options": [
+            "Valores.",
+            "Quantidade de atendimentos.",
+            "Divisas territoriais."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Valores orientam escolhas e comportamentos organizacionais.",
+            "Não se trata de uma medida de produção.",
+            "O enunciado trata de princípios de conduta, não de geografia."
+          ]
+        },
+        {
+          "statement": "A equipe atingiu o número previsto de atendimentos, mas houve muitos erros. Qual análise é adequada?",
+          "options": [
+            "Interpretar quantidade junto com indicadores de qualidade.",
+            "Concluir que todos os objetivos foram atingidos porque a quantidade aumentou.",
+            "Excluir qualquer medida de qualidade do acompanhamento."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Um indicador isolado pode esconder problemas em outras dimensões do serviço.",
+            "Volume não demonstra automaticamente qualidade.",
+            "Qualidade também precisa ser considerada no desempenho."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "desempenho",
+      "subject": "Administração Geral",
+      "title": "Eficiência, eficácia e efetividade",
+      "syllabusTopic": "Qualidade e produtividade; desempenho organizacional; avaliação estratégica",
+      "sourceKeys": [
+        "avaliacao"
+      ],
+      "concept": "Eficiência relaciona recursos empregados e produtos ou serviços entregues. Eficácia verifica o alcance de metas. Efetividade examina os efeitos relevantes da ação na realidade. Mais produção não significa automaticamente melhor impacto. Compare condições equivalentes e preserve a qualidade antes de concluir que houve ganho de eficiência.",
+      "example": "Atender a meta de capacitar 100 pessoas é eficácia; fazê-lo com menos recursos e igual qualidade indica eficiência; melhorar o desempenho no trabalho aponta para efetividade.",
+      "recall": {
+        "prompt": "O que a efetividade procura verificar?",
+        "answer": "Os efeitos relevantes da ação na realidade, além da simples entrega ou meta."
+      },
+      "exercises": [
+        {
+          "statement": "Um setor entrega o mesmo resultado com menos recursos, mantendo a qualidade. Qual dimensão melhor descreve a melhora?",
+          "options": [
+            "Eficiência.",
+            "Eficácia necessariamente maior.",
+            "Efetividade comprovada."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A relação entre recursos consumidos e resultado entregue melhorou.",
+            "A meta atingida pode continuar igual; o ganho informado está nos recursos.",
+            "O caso não informa os efeitos sociais posteriores."
+          ]
+        },
+        {
+          "statement": "Um projeto previa capacitar cem servidores e capacitou os cem. Isso demonstra diretamente:",
+          "options": [
+            "Eficácia em relação à meta de capacitação.",
+            "Efetividade social comprovada.",
+            "Ausência de qualquer resultado."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A entrega alcançou a meta quantitativa definida.",
+            "É preciso examinar os efeitos da capacitação na realidade.",
+            "A entrega prevista foi realizada."
+          ]
+        },
+        {
+          "statement": "Após uma capacitação, os erros no serviço diminuem de modo associado à intervenção. Essa avaliação se aproxima de:",
+          "options": [
+            "Efetividade.",
+            "Contagem exclusiva de participantes.",
+            "Definição da missão institucional."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O foco está nos efeitos relevantes da ação no trabalho.",
+            "O enunciado avalia mudança no serviço, não apenas presenças.",
+            "Não se trata da razão de existir do órgão."
+          ]
+        },
+        {
+          "statement": "Um setor dobra a produção, mas triplica os recursos utilizados, com qualidade equivalente. Pode-se afirmar ganho de eficiência apenas pela produção?",
+          "options": [
+            "Não, é preciso comparar a relação produto e recursos.",
+            "Sim, qualquer aumento de produção garante eficiência.",
+            "Sim, recursos são irrelevantes para eficiência."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O volume cresceu menos que o consumo de recursos; volume isolado não prova eficiência.",
+            "O consumo de recursos também deve ser considerado.",
+            "A eficiência justamente relaciona recursos e produção."
+          ]
+        },
+        {
+          "statement": "Qual associação está correta?",
+          "options": [
+            "Eficiência: recursos e produtos; eficácia: metas; efetividade: efeitos.",
+            "Efetividade: apenas contar entregas, sem examinar efeitos.",
+            "Eficácia: gastar mais recursos sem observar metas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Cada dimensão responde a uma pergunta diferente sobre o desempenho.",
+            "Efetividade vai além da entrega e examina impactos relevantes.",
+            "O alcance das metas é a referência da eficácia."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "remedios",
+      "subject": "Direito Constitucional",
+      "title": "Garantias e remédios constitucionais",
+      "syllabusTopic": "Garantias constitucionais individuais",
+      "sourceKeys": [
+        "cf"
+      ],
+      "concept": "A garantia deve corresponder ao direito afetado. Habeas corpus protege a liberdade de locomoção contra ilegalidade ou abuso. Habeas data trata de acesso ou retificação de dados pessoais em registros governamentais ou de caráter público, observados os requisitos legais. Mandado de segurança protege direito líquido e certo fora dessas duas hipóteses. Mandado de injunção enfrenta omissão regulamentadora que inviabiliza direitos constitucionalmente previstos.",
+      "example": "Antes de escolher uma ação, pergunte qual direito está afetado: locomoção, dados pessoais, outro direito líquido e certo ou direito inviabilizado por omissão.",
+      "recall": {
+        "prompt": "Qual direito o habeas corpus protege diretamente?",
+        "answer": "A liberdade de locomoção, contra ilegalidade ou abuso de poder."
+      },
+      "exercises": [
+        {
+          "statement": "Uma pessoa sofre ameaça ilegal à sua liberdade de locomoção. Qual garantia constitucional corresponde diretamente ao caso?",
+          "options": [
+            "Habeas corpus.",
+            "Habeas data.",
+            "Mandado de injunção por qualquer desagrado."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXVIII, protege a locomoção contra ilegalidade ou abuso.",
+            "Essa garantia se dirige a dados pessoais, não diretamente à locomoção.",
+            "O mandado de injunção exige a omissão regulamentadora que inviabilize o exercício protegido."
+          ]
+        },
+        {
+          "statement": "Atendidos os requisitos legais, qual garantia permite conhecer dados pessoais do impetrante em banco governamental?",
+          "options": [
+            "Habeas data.",
+            "Habeas corpus.",
+            "Ação popular para consultar qualquer dado pessoal."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXXII, trata desse acesso e da retificação de dados.",
+            "Não há questão de liberdade de locomoção no enunciado.",
+            "A ação popular tem finalidade de controle de atos lesivos, não esse objeto específico."
+          ]
+        },
+        {
+          "statement": "Falta de norma regulamentadora inviabiliza o exercício de um direito constitucional. Qual instrumento se relaciona especificamente a essa omissão?",
+          "options": [
+            "Mandado de injunção.",
+            "Habeas data.",
+            "Habeas corpus em qualquer omissão normativa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXXI, prevê o instrumento para essa inviabilidade.",
+            "O objeto do habeas data é informação pessoal nos registros indicados.",
+            "Não basta existir omissão para haver ameaça à locomoção."
+          ]
+        },
+        {
+          "statement": "Um direito líquido e certo foi violado por autoridade pública e não é amparado por habeas corpus ou habeas data. Qual garantia constitucional corresponde?",
+          "options": [
+            "Mandado de segurança.",
+            "Habeas data obrigatoriamente.",
+            "Mandado de injunção automaticamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a hipótese descrita no art. 5º, LXIX, observados os requisitos legais.",
+            "O enunciado exclui o objeto específico de dados pessoais.",
+            "Não foi descrita omissão de norma regulamentadora."
+          ]
+        },
+        {
+          "statement": "Quem a Constituição indica como legitimado para propor ação popular?",
+          "options": [
+            "Qualquer cidadão, nos termos da garantia constitucional.",
+            "Somente o Ministério Público.",
+            "Exclusivamente pessoas jurídicas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXXIII, usa cidadão e indica os bens protegidos contra atos lesivos.",
+            "A garantia constitucional não se limita ao Ministério Público.",
+            "A legitimidade constitucional é atribuída ao cidadão."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "direitos-preso",
+      "subject": "Direito Constitucional",
+      "title": "Direitos fundamentais da pessoa presa",
+      "syllabusTopic": "Direitos e deveres individuais e coletivos; garantias constitucionais individuais",
+      "sourceKeys": [
+        "cf"
+      ],
+      "concept": "A prisão não elimina a dignidade da pessoa. A Constituição protege a integridade física e moral dos presos, assegura informação sobre direitos, inclusive permanecer calado, e assistência de família e advogado. A prisão e seu local devem ser comunicados imediatamente ao juiz e à família ou pessoa indicada. Prisão ilegal deve ser relaxada pela autoridade judiciária.",
+      "example": "Custodiar alguém envolve restrição legal da liberdade, mas não autorização para humilhação ou violência.",
+      "recall": {
+        "prompt": "A prisão elimina o direito à integridade física e moral?",
+        "answer": "Não. A Constituição assegura expressamente essa proteção aos presos."
+      },
+      "exercises": [
+        {
+          "statement": "Segundo a Constituição, à pessoa presa é assegurado:",
+          "options": [
+            "Respeito à integridade física e moral.",
+            "Perda automática de todos os direitos fundamentais.",
+            "Submissão a tratamento degradante por estar condenada."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a proteção expressa do art. 5º, XLIX.",
+            "A restrição da liberdade não elimina todos os direitos.",
+            "A Constituição proíbe tratamento desumano ou degradante."
+          ]
+        },
+        {
+          "statement": "Uma pessoa presa pergunta se pode permanecer calada. A resposta constitucionalmente adequada é:",
+          "options": [
+            "Sim, deve ser informada desse direito.",
+            "Não, a prisão elimina essa garantia.",
+            "Só pode ficar calada se o interrogador concordar."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXIII, assegura informação sobre o direito de permanecer calado.",
+            "A garantia é prevista justamente para a pessoa presa.",
+            "O direito não depende da concordância pessoal do interrogador."
+          ]
+        },
+        {
+          "statement": "A prisão e o local onde o preso se encontra devem ser comunicados:",
+          "options": [
+            "Imediatamente ao juiz competente e à família ou pessoa indicada pelo preso.",
+            "Somente após o término da investigação.",
+            "Apenas ao chefe do estabelecimento."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a regra do art. 5º, LXII.",
+            "A Constituição exige comunicação imediata.",
+            "A comunicação interna não substitui os destinatários constitucionais."
+          ]
+        },
+        {
+          "statement": "Constatada uma prisão ilegal, qual providência a Constituição determina?",
+          "options": [
+            "Relaxamento imediato pela autoridade judiciária.",
+            "Manutenção obrigatória até haver condenação.",
+            "Extinção automática de qualquer investigação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXV, trata do relaxamento da prisão ilegal.",
+            "A ilegalidade não precisa esperar uma condenação para ser corrigida.",
+            "Relaxar a prisão não equivale a extinguir toda investigação."
+          ]
+        },
+        {
+          "statement": "O preso tem direito à identificação de quais responsáveis?",
+          "options": [
+            "Dos responsáveis por sua prisão ou por seu interrogatório policial.",
+            "Apenas dos responsáveis por sua condenação definitiva.",
+            "De ninguém, porque a identificação é sempre proibida."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXIV, prevê esse direito.",
+            "A garantia indicada alcança prisão e interrogatório policial.",
+            "A Constituição assegura expressamente a identificação nessas hipóteses."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "direta-indireta",
+      "subject": "Direito Administrativo",
+      "title": "Administração direta, indireta e descentralização",
+      "syllabusTopic": "Administração pública direta e indireta; centralização e descentralização",
+      "sourceKeys": [
+        "dl200",
+        "cf"
+      ],
+      "concept": "A Administração direta atua por órgãos integrados à pessoa política. A indireta reúne entidades com personalidade jurídica própria, como autarquias. Distribuir competências entre órgãos da mesma pessoa é desconcentração; executar por outra pessoa jurídica caracteriza descentralização. Vinculação para supervisão não é a mesma coisa que subordinação hierárquica. Autarquia é criada por lei específica.",
+      "example": "Criar uma divisão interna de uma secretaria é diferente de criar uma autarquia com personalidade própria.",
+      "recall": {
+        "prompt": "Qual é a diferença central entre desconcentração e descentralização?",
+        "answer": "A primeira distribui competências dentro da mesma pessoa; a segunda envolve outra pessoa."
+      },
+      "exercises": [
+        {
+          "statement": "Uma secretaria integra a estrutura administrativa do próprio estado. Ela pertence à:",
+          "options": [
+            "Administração direta.",
+            "Administração indireta apenas por se chamar secretaria.",
+            "Iniciativa privada obrigatoriamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A atuação ocorre por órgão da pessoa política estadual.",
+            "A denominação não cria uma entidade com personalidade própria.",
+            "O enunciado situa a secretaria na estrutura do estado."
+          ]
+        },
+        {
+          "statement": "Uma autarquia possui personalidade jurídica própria e desempenha atividade típica do Estado. Ela integra a:",
+          "options": [
+            "Administração indireta.",
+            "Administração direta como mera divisão interna.",
+            "Estrutura de uma empresa privada necessariamente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Autarquias são entidades, e não simples órgãos da pessoa política.",
+            "A personalidade própria distingue a entidade de um órgão interno.",
+            "Autarquia é pessoa jurídica de direito público."
+          ]
+        },
+        {
+          "statement": "Uma secretaria divide tarefas entre departamentos internos, sem criar nova pessoa jurídica. Isso exemplifica:",
+          "options": [
+            "Desconcentração.",
+            "Descentralização por criação de nova entidade.",
+            "Privatização obrigatória."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A distribuição ocorre dentro da mesma pessoa jurídica.",
+            "O enunciado expressamente não cria uma nova pessoa.",
+            "Dividir tarefas internas não transfere necessariamente atividade ao setor privado."
+          ]
+        },
+        {
+          "statement": "A execução de atividade estatal por autarquia com personalidade própria é exemplo de:",
+          "options": [
+            "Descentralização administrativa.",
+            "Desconcentração exclusivamente interna.",
+            "Ausência de administração pública."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A atividade é executada por outra pessoa jurídica da estrutura administrativa.",
+            "Não se trata apenas de repartição entre órgãos da mesma pessoa.",
+            "A autarquia integra a Administração Pública indireta."
+          ]
+        },
+        {
+          "statement": "Sobre uma autarquia vinculada a uma secretaria para supervisão, é correto afirmar:",
+          "options": [
+            "Vinculação não equivale a subordinação hierárquica comum entre órgãos.",
+            "Vinculação retira automaticamente sua personalidade jurídica.",
+            "Autarquias podem ser criadas sem lei específica."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A entidade tem personalidade própria; a supervisão deve observar o regime legal.",
+            "A supervisão não transforma a entidade em mero órgão.",
+            "O art. 37, XIX, exige lei específica para a criação de autarquia."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "crimes-funcionais",
+      "subject": "Direito Penal e Processual Penal",
+      "title": "Crimes funcionais: conduta e finalidade",
+      "syllabusTopic": "Crimes contra a Administração Pública",
+      "sourceKeys": [
+        "cp"
+      ],
+      "concept": "Para distinguir crimes funcionais, leia a conduta e sua finalidade. Concussão envolve exigir vantagem indevida em razão da função; corrupção passiva, solicitar, receber ou aceitar promessa dessa vantagem. Peculato pode envolver apropriação de bem de que o servidor tem posse em razão do cargo. Prevaricação exige interesse ou sentimento pessoal na conduta funcional indevida; condescendência criminosa envolve indulgência com subordinado.",
+      "example": "Exigir vantagem e solicitar vantagem são verbos distintos e orientam enquadramentos diferentes.",
+      "recall": {
+        "prompt": "Qual verbo ajuda a distinguir concussão de solicitação em corrupção passiva?",
+        "answer": "Exigir caracteriza a concussão; solicitar é uma das condutas da corrupção passiva."
+      },
+      "exercises": [
+        {
+          "statement": "Um funcionário exige vantagem indevida de um particular em razão de sua função. Qual tipo corresponde à conduta descrita?",
+          "options": [
+            "Concussão.",
+            "Prevaricação apenas por sentimento pessoal.",
+            "Condescendência criminosa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O verbo exigir vantagem indevida em razão da função está no art. 316 do CP.",
+            "O enunciado descreve exigência de vantagem, não a conduta do art. 319.",
+            "Não se descreve indulgência em relação a infração de subordinado."
+          ]
+        },
+        {
+          "statement": "Um funcionário solicita vantagem indevida para si em razão da função, sem exigir seu pagamento. Qual tipo corresponde?",
+          "options": [
+            "Corrupção passiva.",
+            "Concussão pelo simples ato de solicitar.",
+            "Condescendência criminosa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Solicitar vantagem indevida em razão da função é conduta do art. 317.",
+            "O tipo da concussão exige a conduta de exigir.",
+            "O caso não descreve tolerância com infração de subordinado."
+          ]
+        },
+        {
+          "statement": "Um servidor se apropria dolosamente de dinheiro público que possui em razão do cargo. Qual tipo corresponde?",
+          "options": [
+            "Peculato-apropriação.",
+            "Concussão.",
+            "Prevaricação por qualquer irregularidade."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 312 alcança a apropriação nas condições descritas.",
+            "Não há exigência de vantagem a outra pessoa no enunciado.",
+            "O caso descreve apropriação de dinheiro, não apenas a conduta funcional do art. 319."
+          ]
+        },
+        {
+          "statement": "Um servidor retarda indevidamente um ato de ofício para satisfazer sentimento pessoal. Qual tipo corresponde?",
+          "options": [
+            "Prevaricação.",
+            "Corrupção passiva necessariamente.",
+            "Peculato-apropriação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A finalidade de satisfazer interesse ou sentimento pessoal integra o art. 319.",
+            "Não foi narrada solicitação, recebimento ou promessa de vantagem indevida.",
+            "Não houve apropriação de bem sob posse funcional."
+          ]
+        },
+        {
+          "statement": "Um superior, por indulgência, deixa de responsabilizar subordinado por infração no exercício do cargo. Qual tipo corresponde?",
+          "options": [
+            "Condescendência criminosa.",
+            "Concussão.",
+            "Peculato."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a conduta descrita no art. 320 do CP.",
+            "Não houve exigência de vantagem indevida.",
+            "Não foi descrita apropriação ou desvio de bem."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cadh-integridade",
+      "subject": "Direitos Humanos",
+      "title": "Convenção Americana: integridade e custódia",
+      "syllabusTopic": "Sistema Interamericano de direitos humanos; detenção",
+      "sourceKeys": [
+        "cadh"
+      ],
+      "concept": "O art. 5º da Convenção Americana protege a integridade física, psíquica e moral e exige respeito à dignidade de quem está privado de liberdade. Proíbe tortura e tratamentos cruéis, desumanos ou degradantes. A pena não pode passar da pessoa do autor. Processados e condenados devem ficar separados, salvo circunstâncias excepcionais, com tratamento adequado a quem ainda não foi condenado.",
+      "example": "Uma regra de custódia pode restringir liberdade de forma legal, mas não autoriza negar a dignidade da pessoa.",
+      "recall": {
+        "prompt": "Quais dimensões da integridade são protegidas pelo art. 5º da Convenção?",
+        "answer": "Física, psíquica e moral."
+      },
+      "exercises": [
+        {
+          "statement": "A Convenção Americana protege a integridade:",
+          "options": [
+            "Física, psíquica e moral.",
+            "Somente física.",
+            "Apenas patrimonial."
+          ],
+          "answer": 0,
+          "reasons": [
+            "As três dimensões são expressamente previstas no art. 5.1.",
+            "A proteção também alcança aspectos psíquicos e morais.",
+            "O dispositivo estudado trata de integridade pessoal."
+          ]
+        },
+        {
+          "statement": "Uma pessoa está condenada e privada de liberdade. Segundo a Convenção Americana:",
+          "options": [
+            "Deve ser tratada com respeito à dignidade inerente ao ser humano.",
+            "Pode sofrer tratamento degradante como parte da pena.",
+            "Perde automaticamente a proteção contra tortura."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A privação de liberdade não elimina essa proteção.",
+            "O art. 5.2 proíbe esse tratamento.",
+            "A proibição protege também pessoas privadas de liberdade."
+          ]
+        },
+        {
+          "statement": "Sobre a pena, o art. 5.3 da Convenção estabelece que:",
+          "options": [
+            "Não pode passar da pessoa do delinquente.",
+            "Deve ser estendida automaticamente a todos os familiares.",
+            "Depende exclusivamente da situação econômica dos parentes."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A responsabilidade penal não é transferida à família.",
+            "Essa extensão contraria a regra estudada.",
+            "Essa não é a regra do art. 5.3."
+          ]
+        },
+        {
+          "statement": "Como a Convenção trata a separação entre processados e condenados?",
+          "options": [
+            "Prevê separação, salvo circunstâncias excepcionais, e tratamento adequado aos não condenados.",
+            "Exige que todos fiquem juntos em qualquer situação.",
+            "Declara que processado é necessariamente condenado definitivo."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A ressalva e a diferença de tratamento estão no art. 5.4.",
+            "Isso contraria a previsão de separação.",
+            "Processar e condenar definitivamente são situações diferentes."
+          ]
+        },
+        {
+          "statement": "Qual finalidade essencial das penas privativas de liberdade é indicada no art. 5.6 da Convenção?",
+          "options": [
+            "Reforma e readaptação social dos condenados.",
+            "Humilhação pública permanente.",
+            "Transferência da pena aos descendentes."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Essa finalidade consta do dispositivo.",
+            "Humilhação contraria o respeito à dignidade.",
+            "A pena não pode passar da pessoa do autor."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "lai",
+      "subject": "Legislação Básica",
+      "title": "Lei de Acesso à Informação",
+      "syllabusTopic": "Lei 12.527/2011: Acesso a Informações",
+      "sourceKeys": [
+        "lai"
+      ],
+      "concept": "A LAI adota publicidade como regra e sigilo como exceção. Transparência ativa divulga informações de interesse coletivo sem depender de pedido; transparência passiva responde a solicitações. O pedido deve identificar o requerente e especificar a informação, mas não pode exigir os motivos da solicitação. Se não houver acesso imediato, o prazo ordinário é de até 20 dias, prorrogável por 10 com justificativa expressa e ciência do requerente.",
+      "example": "Publicar despesas no portal é transparência ativa; responder a um pedido de informação é transparência passiva.",
+      "recall": {
+        "prompt": "O órgão pode exigir os motivos de um pedido de informação de interesse público?",
+        "answer": "Não. A LAI veda essa exigência."
+      },
+      "exercises": [
+        {
+          "statement": "Qual diretriz corresponde à Lei de Acesso à Informação?",
+          "options": [
+            "Publicidade como regra e sigilo como exceção.",
+            "Sigilo de todas as informações como regra.",
+            "Acesso apenas se a autoridade considerar o requerente simpático."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a diretriz do art. 3º, I, observadas as hipóteses legais de proteção.",
+            "A LAI inverte essa lógica e prioriza o acesso.",
+            "Critério pessoal não integra as condições legais de acesso."
+          ]
+        },
+        {
+          "statement": "Um órgão publica despesas no portal sem esperar pedido. Isso exemplifica:",
+          "options": [
+            "Transparência ativa.",
+            "Transparência passiva exclusivamente.",
+            "Proibição de acesso à informação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A divulgação é realizada por iniciativa do órgão.",
+            "A passiva se relaciona à resposta a solicitações.",
+            "Publicar informação acessível promove, e não proíbe, o acesso."
+          ]
+        },
+        {
+          "statement": "Um cidadão solicita informação de interesse público. O órgão pode exigir que ele explique o motivo do pedido?",
+          "options": [
+            "Não.",
+            "Sim, em todos os pedidos.",
+            "Sim, se o pedido for eletrônico."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 10, §3º, veda exigências relativas aos motivos determinantes.",
+            "Essa exigência geral é expressamente vedada.",
+            "O meio eletrônico não afasta a vedação legal."
+          ]
+        },
+        {
+          "statement": "Se não puder conceder acesso imediato, qual é o prazo ordinário previsto pela LAI para resposta?",
+          "options": [
+            "Até 20 dias, prorrogável por 10 mediante justificativa expressa e ciência do requerente.",
+            "Até 30 dias, sem necessidade de informar qualquer prorrogação.",
+            "Prazo indeterminado escolhido livremente pelo órgão."
+          ],
+          "answer": 0,
+          "reasons": [
+            "É a regra do art. 11 e de seu §2º.",
+            "A regra distingue o prazo inicial e a prorrogação justificada.",
+            "A lei fixa prazos e condições para a resposta."
+          ]
+        },
+        {
+          "statement": "Um documento contém parte protegida por sigilo e parte acessível. Qual providência corresponde à LAI?",
+          "options": [
+            "Assegurar acesso à parte não sigilosa por certidão, extrato ou cópia com ocultação do trecho protegido.",
+            "Negar sempre todo o documento, mesmo quando a separação é possível.",
+            "Divulgar obrigatoriamente o trecho protegido sem análise."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 7º, §2º, permite acesso parcial com proteção do conteúdo sigiloso.",
+            "A existência de trecho protegido não elimina o acesso à parte não sigilosa.",
+            "O acesso parcial deve preservar o conteúdo legalmente protegido."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import {sameConcept} from './curriculum.js?v=44';
+import {sameConcept} from './curriculum.js?v=46';
 const STOP=new Set('a o os as um uma de da do das dos e ou em no na nos nas por para com sem que se ao aos é são foi ser como mais menos sua seu suas seus esta este esse essa isto isso onde qual quais quando entre sobre apenas ainda muito pela pelo pelos pelas'.split(' '));
 
 function words(text){
