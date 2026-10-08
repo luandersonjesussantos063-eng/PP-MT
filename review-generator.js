@@ -1,9 +1,11 @@
 // Offline adaptation: preserve the full source command and its answer key.
 // Never turn an EXCETO/INCORRETA option into an unqualified legal assertion.
-export function createReviewExercise(original, random=Math.random){
+export function createReviewExercise(original, random=Math.random,history=[]){
  if(!original?.options?.length||!Number.isInteger(original.answer))throw new Error('Questão sem gabarito para gerar revisão.');
  const incorrect=original.options.map((_,i)=>i).filter(i=>i!==original.answer);
- const candidate=random()<0.5||!incorrect.length?original.answer:incorrect[Math.min(incorrect.length-1,Math.floor(random()*incorrect.length))];
+ const used=history.filter(a=>a.originalId===original.id&&a.generation?.type==='answer-judgment');
+ const last=i=>Math.max(0,...used.filter(a=>a.generation.candidate===i).map(a=>Date.parse(a.at)||1));
+ const candidate=used.length?original.options.map((_,i)=>i).sort((a,b)=>last(a)-last(b))[0]:random()<0.5||!incorrect.length?original.answer:incorrect[Math.min(incorrect.length-1,Math.floor(random()*incorrect.length))];
  const matches=candidate===original.answer;
  return {...original,id:`generated-review:${original.id}:${candidate}`,generated:true,originalId:original.id,source:undefined,lesson:undefined,
  statement:`Analise a situação: um estudante leu o enunciado abaixo e escolheu a resposta indicada. Essa escolha atende ao que o enunciado pede?\n\n${original.statement}\n\nResposta escolhida pelo estudante:\n${original.options[candidate]}`,

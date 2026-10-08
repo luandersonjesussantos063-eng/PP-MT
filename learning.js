@@ -7,8 +7,25 @@ export function minutesFor(profile,date=new Date()){
  return profile.days.includes(date.getDay())?profile.minutes:0;
 }
 export function dueReviews(attempts,reviews={},now=Date.now()){
- const latest=new Map();for(const a of attempts)latest.set(a.id,a);
- return [...latest].filter(([id,a])=>{const r=reviews[id];if(r&&Date.parse(r.checkedAt)>=Date.parse(a.at))return Date.parse(r.dueAt)<=now;return !a.correct||a.guessed;}).map(([id])=>id);
+ const latest=new Map();for(const a of attempts)if(!a.reviewOf&&a.mode!=='review-transfer')latest.set(a.id,a);
+ return [...latest].filter(([id,a])=>{
+  const r=reviews[id];
+  if(a.guessed&&r?.initial&&Date.parse(r.checkedAt)===Date.parse(a.at))return true;
+  if(r&&Date.parse(r.checkedAt)>=Date.parse(a.at))return Date.parse(r.dueAt)<=now;
+  if(!a.correct||a.guessed)return true;
+  // A correct practice answer must also be checked later. Repeating it today
+  // must not continually postpone an already scheduled retention test.
+  return (r?Date.parse(r.dueAt):Date.parse(a.at)+86400000)<=now;
+ }).sort(([ai,a],[bi,b])=>Number(b.guessed||!b.correct)-Number(a.guessed||!a.correct)||(Date.parse(reviews[ai]?.dueAt||a.at)-Date.parse(reviews[bi]?.dueAt||b.at))).map(([id])=>id);
+}
+export function scheduleCorrectReviews(attempts,reviews={}){
+ const next={...reviews};
+ for(const a of attempts){
+  if(next[a.id]||!a.correct||a.guessed||a.reviewOf||a.mode==='review-transfer'||!Number.isFinite(Date.parse(a.at)))continue;
+  const at=Date.parse(a.at);
+  next[a.id]={...nextReview(null,true,at),initial:true};
+ }
+ return next;
 }
 export function nextReview(previous,correct,now=Date.now()){
  const stage=correct?Math.min(4,(previous?.stage||0)+1):0;

@@ -1,4 +1,4 @@
-import {sameConcept} from './curriculum.js?v=46';
+import {sameConcept} from './curriculum.js?v=47';
 const STOP=new Set('a o os as um uma de da do das dos e ou em no na nos nas por para com sem que se ao aos é são foi ser como mais menos sua seu suas seus esta este esse essa isto isso onde qual quais quando entre sobre apenas ainda muito pela pelo pelos pelas'.split(' '));
 
 function words(text){
@@ -63,14 +63,16 @@ export function microLesson(q){
   return generic[q?.subject]||'<b>Estratégia de 60s:</b> descubra o conceito central, elimine afirmações claramente incompatíveis e só então compare as alternativas. Se ainda estiver em dúvida, use “Eliminar 1” e faça uma questão parecida.';
 }
 
-export function findSimilar(q,all){
-  const curated=(all||[]).find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other)&&other.practiceKind==='application');
+export function findSimilar(q,all,history=[]){
+  const lastUsed=id=>Math.max(0,...history.filter(a=>a.exerciseId===id||a.id===id).map(a=>Date.parse(a.at)||1));
+  const candidates=(all||[]).slice().sort((a,b)=>lastUsed(a.id)-lastUsed(b.id));
+  const curated=candidates.find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other)&&other.practiceKind==='application');
   if(curated)return curated;
-  const mapped=(all||[]).find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other));
+  const mapped=candidates.find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other));
   if(mapped)return mapped;
   const base=new Set(words(q?.statement));
   let best=null,bestScore=-1;
-  for(const other of all||[]){
+  for(const other of candidates){
     if(!other||other.id===q?.id||other.displayMode==='source-pdf'||other.historicalOnly||other.subject!==q.subject||other.topic!==q.topic) continue;
     const ow=words(other.statement), common=ow.filter(w=>base.has(w)).length;
     if(common<3)continue;

@@ -1,37 +1,69 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/+esm';
+import {rememberAccount,cachedAccount,forgetAccount} from './offline.js?v=47';
+import { createClient } from './assets/vendor/supabase-2.117.2.js';
 
 const SUPABASE_URL = 'https://fermfbmhwlafwopwndoj.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN';
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
-});
+let supabase;
+const online=()=>navigator.onLine!==false;
+function client(){return supabase??=createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  global:{fetch:async(input,options={})=>{
+    if(!online())throw new TypeError("Sem conexão");
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+    options.signal?.addEventListener("abort",()=>controller.abort(),{once:true});
+    try{return await fetch(input,{...options,signal:controller.signal})}finally{clearTimeout(timer)}
+  }}
+})}
 
 export async function getCurrentUser() {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) return null;
-  return data.user ?? null;
+  if(!online())return cachedAccount(localStorage);
+  const {data,error}=await client().auth.getUser();
+  if(error){
+    if(error.name==='AuthRetryableFetchError'||error.name==='AbortError'||error instanceof TypeError)return cachedAccount(localStorage);
+    forgetAccount(localStorage);return null;
+  }
+  if(data.user)rememberAccount(localStorage,data.user);else forgetAccount(localStorage);
+  return data.user??null;
+}
+export async function verifiedUser(){
+ if(!online())return null;
+ const {data,error}=await client().auth.getUser();
+ if(error)throw error;
+ if(data.user)rememberAccount(localStorage,data.user);
+ return data.user??null;
 }
 
 export async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await client().auth.signInWithPassword({ email, password });
   if (error) throw error;
+  rememberAccount(localStorage,data.user);
   return data.user;
 }
 
 export async function signUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await client().auth.signUp({ email, password });
   if (error) throw error;
+  if(data.session&&data.user)rememberAccount(localStorage,data.user);
   return data;
 }
 
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  if(online()){
+    const {error}=await client().auth.signOut({scope:'local'});
+    if(error)throw error;
+  }else{
+    // Do not refresh an expired session while the device is offline.
+    localStorage.removeItem('sb-fermfbmhwlafwopwndoj-auth-token');
+    await supabase?.auth.stopAutoRefresh();
+    supabase=null;
+  }
+  forgetAccount(localStorage);
 }
 
 export async function loadUserState(userId) {
-  const { data, error } = await supabase
+  if(!online())return null;
+  const { data, error } = await client()
     .from('user_state')
     .select('state')
     .eq('user_id', userId)
@@ -41,7 +73,7 @@ export async function loadUserState(userId) {
 }
 
 export async function saveUserState(userId, state) {
-  const { error } = await supabase
+  const { error } = await client()
     .from('user_state')
     .upsert({ user_id: userId, state, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
   if (error) throw error;

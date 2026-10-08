@@ -18,13 +18,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm ci
+      - run: npm run build:vendor && npm run build:syllabus && npm run build:offline
       - run: node --check app.js && node --check help.js && node --check auth.js
       - run: npm test
       - uses: actions/configure-pages@v5
       - name: Preparar arquivos públicos
         run: |
           mkdir dist
-          cp authorial-mt.js index.html style.css app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
+          cp authorial-mt.js offline.js syllabus.js syllabus-data.js index.html style.css app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
           cp *.png dist/
           cp -R assets dist/
           touch dist/.nojekyll

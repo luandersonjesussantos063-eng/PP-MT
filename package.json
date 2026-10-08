@@ -1,1 +1,19 @@
-{"name":"pp-mt","version":"0.3.0","private":true,"type":"module","scripts":{"start":"python3 -m http.server 8080","test":"node --test tests/*.test.js"}}
+{
+  "name": "pp-mt",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/*.test.js",
+    "build:vendor": "node tools/build_vendor.mjs",
+    "build:syllabus": "node tools/build_syllabus.mjs",
+    "build:offline": "node tools/build_offline_assets.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.117.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}
