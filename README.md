@@ -101,3 +101,7 @@ Para editar, altere `content/mt-2017-lessons.json` e `content/lesson-sources.jso
 - Filtro adicional de referências explícitas a regras de outros estados no treino MT. É uma proteção parcial: o banco ainda exige classificação temática e revisão legislativa completa. Fontes históricas continuam disponíveis no acervo.
 
 Verificação: testes de coerência dos blocos, equivalências, orçamento de revisão, estados de aprendizagem, serialização/restauração de simulados e fluxo de revisão. Verificação DOM com cadastro da rotina, plano, lição/exercício correspondente, progresso, recarga do simulado e conclusão da revisão. Não substitui avaliação docente ou teste visual em aparelhos reais.
+
+## Atualização 45 — áudio de acerto e erro
+
+Efeitos extraídos do vídeo fornecido pelo usuário, em `assets/audio/`. O módulo `answer-sounds.js` reproduz no clique que corrige a resposta, interrompe o efeito anterior e trata bloqueio de reprodução sem interromper o estudo. Ativo por padrão; **Mais → Som das respostas** permite desligar e salva a preferência por conta. Selecionar alternativas em simulado não revela o resultado por áudio. Os dois arquivos entram no cache offline.

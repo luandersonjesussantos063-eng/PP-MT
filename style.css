@@ -390,3 +390,7 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 .concept-progress summary{cursor:pointer;line-height:1.6;display:flex;justify-content:space-between;gap:12px;align-items:center}
 .concept-progress .tag{white-space:nowrap}
 @media(max-width:640px){.concept-progress summary{align-items:flex-start;flex-direction:column}}
+
+.sound-settings{display:flex;gap:18px;justify-content:space-between;align-items:center;margin-bottom:20px}
+.sound-settings p{margin:0}
+@media(max-width:640px){.sound-settings{align-items:stretch;flex-direction:column}}
