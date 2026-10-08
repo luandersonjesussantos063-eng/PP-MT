@@ -55,7 +55,7 @@ def canonical(url):
 
 def relevant(text):
     t = normalize(text)
-    career = re.search(r'polici(?:a|ais|al) pena(?:l|is)|agentes? penitenciari|sistema (?:penitenciario|prisional)', t)
+    career = re.search(r'polici(?:a|ais|al) pena(?:l|is)|agentes? penitenciari', t) or (re.search(r'sistema (?:penitenciario|prisional)', t) and re.search(r'novo concurso|concurso novo',t))
     event = re.search(r'concurs|edital|convoca|nomea|banca|inscri|comissao|prova|selecao', t)
     return bool(career and event)
 
@@ -115,7 +115,8 @@ def parse_iomat(body, source):
 
 
 def parse_liferay(body, source):
-    if 'journal-content-article' not in body and 'asset-publisher' not in body and 'AssetPublisher' not in body:
+    recognized = any(marker in body for marker in ('journal-content-article','asset-publisher','AssetPublisher')) or ('Liferay.Portlet' in body and 'data-lfr-editable' in body and '/w/' in body)
+    if not recognized:
         raise ValueError('Página oficial não reconhecida')
     items = []
     # Document links inside editorial paragraphs, never global navigation text.
@@ -129,9 +130,12 @@ def parse_liferay(body, source):
     # Headline links on official news indexes; exclude adjacent navigation / other news.
     for href, inner in re.findall(r'<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', body, re.S | re.I):
         if '/w/' not in href and '/-/' not in href: continue
-        title = plain(inner)
+        heading = re.search(r'<h[1-3]\b[^>]*>(.*?)</h[1-3]>', inner, re.S | re.I)
+        title = plain(heading[1]) if heading else plain(inner)
         if len(title) < 18 or len(title) > 300: continue
-        item = make_item(title, '', urljoin(source['url'], href), source)
+        excerpt_match = re.search(r'<div\b[^>]*class=[\"\'][^\"\']*text-5[^\"\']*[\"\'][^>]*>(.*?)</div>',inner,re.S|re.I)
+        excerpt = plain(excerpt_match[1]) if excerpt_match else ''
+        item = make_item(title, excerpt, urljoin(source['url'], href), source, publication_date(plain(inner)))
         if item: items.append(item)
     return items
 

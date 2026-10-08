@@ -15,6 +15,7 @@ class MonitorTests(unittest.TestCase):
         self.assertFalse(m.relevant('Concurso da Polícia Militar de Mato Grosso'))
         self.assertFalse(m.relevant('Polícia Penal realiza operação no presídio'))
         self.assertTrue(m.relevant('Comissão de concurso para policial penal'))
+        self.assertFalse(m.relevant('Governo nomeia 49 assistentes sociais e psicólogos aprovados em concurso para o Sistema Penitenciário'))
 
     def test_old_calls_do_not_become_new_exam(self):
         self.assertEqual(m.kind('Convocação de aprovados no edital 001/2016 de agente penitenciário'),'convocacao')
@@ -30,6 +31,12 @@ class MonitorTests(unittest.TestCase):
     def test_navigation_cannot_pollute_an_unrelated_document(self):
         html='<div class="journal-content-article"><nav>Concurso Polícia Penal</nav><p><a href="/documents/d/test">Edital do concurso professor</a>Secretaria de Educação</p></div>'
         self.assertEqual(m.parse_liferay(html,self.source),[])
+
+    def test_new_liferay_layout_uses_heading_and_scoped_date(self):
+        body='<script>Liferay.Portlet.register()</script><div data-lfr-editable-id="news"><a href="/w/penal-concurso"><span>16/06/2026 | 10h24</span><h3>Governo nomeia agentes penitenciários aprovados em concurso público</h3><div class="text-5 line-clamp-3">Nomeações de aprovados.</div></a></div>'
+        items=m.parse_liferay(body,self.source)
+        self.assertEqual(len(items),1);self.assertEqual(items[0]['publishedAt'],'2026-06-16')
+        self.assertTrue(items[0]['title'].startswith('Governo'));self.assertEqual(items[0]['excerpt'],'Nomeações de aprovados.')
 
     def test_failure_retains_items_and_does_not_advance_success(self):
         old={'items':[self.item], 'lastSuccessAt':'2026-10-07T12:00:00Z','sources':[]}
