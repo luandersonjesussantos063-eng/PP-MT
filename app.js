@@ -1,3 +1,4 @@
+import {createReviewExercise} from './review-generator.js?v=43';
 import {minutesFor,dueReviews,nextReview,learningMetrics,selectLearningQuestions} from './learning.js?v=26';
 import {IMPORTED_EXAMS} from './imported-exams.js?v=15';
 import {QUESTIONS} from './data.js?v=15';
@@ -9,7 +10,7 @@ import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=15';
 import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=27';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='v42';
+const APP_VERSION='v43';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent=APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -250,24 +251,26 @@ function renderErrorReview(){
  const r=reviewState;
  while(r.index<r.ids.length&&!all.some(q=>q.id===r.ids[r.index]))r.index++;
  if(r.index>=r.ids.length){$('#content').innerHTML=title('Revisão concluída.',`${r.ids.length} itens percorridos. As próximas revisões aparecem na data agendada.`)+'<a class="button primary" href="#inicio">Voltar ao plano</a>';return}
- if(!r.originalId){r.originalId=r.ids[r.index];r.retention=!!store.program.reviews?.[r.originalId];r.phase=r.retention?'test':'learn';r.selected=null;r.answered=false}
- const q=all.find(q=>q.id===r.originalId),similar=findSimilar(q,all),test=similar||q;
+ if(!r.originalId){r.originalId=r.ids[r.index];r.retention=!!store.program.reviews?.[r.originalId];r.phase=r.retention?'test':'learn';r.selected=null;r.answered=false;r.exercise=null}
+ const q=all.find(q=>q.id===r.originalId),similar=findSimilar(q,all);
+ if(!r.exercise)r.exercise=similar||createReviewExercise(q);
+ const test=r.exercise;
  const nextLabel=r.index+1<r.ids.length?'Próxima revisão':'Concluir revisão';
  if(r.phase==='learn'){
   $('#content').innerHTML=title('Revisar um ponto por vez.','Leia a ideia principal. Abra os detalhes se precisar.')+reviewLearnHTML(q,r.index,r.ids.length);
-  $('#reviewInstruction').textContent=similar?'Depois da leitura, tente uma questão relacionada.':'Sem questão equivalente disponível. Agende uma tentativa para amanhã e siga para o próximo item. A leitura não conta como acerto.';
-  $('#reviewTransfer').textContent=similar?'Praticar o conceito':`Agendar para amanhã e ${nextLabel.toLowerCase()}`;
-  $('#reviewTransfer').onclick=()=>{if(!similar){markErrorMastered(q.id,false);advanceReview();return}r.phase='test';renderErrorReview();window.scrollTo({top:0,behavior:'auto'})};return;
+  $('#reviewInstruction').textContent=similar?'Depois da leitura, tente uma questão relacionada.':'Depois da leitura, responda uma variação criada pelo app a partir desta questão. Você vai avaliar a escolha de outro estudante.';
+  $('#reviewTransfer').textContent='Responder questão de revisão';
+  $('#reviewTransfer').onclick=()=>{r.phase='test';renderErrorReview();window.scrollTo({top:0,behavior:'auto'})};return;
  }
  const reviewStrikeKey=`review:${test.id}`,reviewStrikes=manualStrikes(reviewStrikeKey);
- $('#content').innerHTML=title(`Revisão ${r.index+1} de ${r.ids.length}`,similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Ainda não há equivalente. Tente explicar a regra antes de responder à questão original.')+`<section class="card question">${supportHTML(test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<div class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" data-strike-key="${esc(reviewStrikeKey)}" role="button" tabindex="${r.answered?'-1':'0'}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-disabled="${r.answered}"><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</div>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b><p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}.</p><button id="reviewNext" class="primary">${nextLabel}</button><details class="spaced"><summary>Entender a resposta</summary>${explanationHTML(test)}</details></div>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
+ $('#content').innerHTML=title(`Revisão ${r.index+1} de ${r.ids.length}`,similar?'Questão relacionada por matéria e assunto; a correspondência é aproximada.':'Treino criado pelo app · variação da questão-base, com o mesmo contexto e gabarito. Não é uma questão oficial nova.')+`<section class="card question">${supportHTML(test.generated?q:test)}<p class="statement">${esc(test.statement)}</p>${originalHTML(test.generated?q:test)}<div class="options">${test.options.map((o,i)=>{const struck=!r.answered&&reviewStrikes.includes(i);return `<div class="option ${struck?'struck':''} ${r.answered?(i===test.answer?'correct':i===r.selected?'wrong':''):''}" data-review-answer="${i}" data-strike-key="${esc(reviewStrikeKey)}" role="button" tabindex="${r.answered?'-1':'0'}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-disabled="${r.answered}"><span class="letter">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}</div>`}).join('')}</div>${!r.answered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}${r.answered?`<div class="feedback"><b>${r.selected===test.answer?'Acertou.':'Vamos reforçar este ponto.'}</b><p>Próxima revisão: ${new Date(store.program.reviews[q.id].dueAt).toLocaleDateString('pt-BR')}.</p><button id="reviewNext" class="primary">${nextLabel}</button><details class="spaced"><summary>Entender a resposta</summary>${explanationHTML(test)}</details></div>`:'<p class="muted">Responda antes de consultar a explicação.</p>'}</section>`;
  document.querySelectorAll('[data-review-answer]').forEach(btn=>{
   const idx=()=>Number(btn.dataset.reviewAnswer);
   const activate=()=>{
    if(r.answered||btn.getAttribute('aria-disabled')==='true'||btn.classList.contains('struck'))return;
    r.selected=idx();r.answered=true;
    const correct=r.selected===test.answer;
-   store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id});
+   if(test.generated){store.program.generatedReviews||=[];store.program.generatedReviews.push({originalId:q.id,selected:r.selected,correct,at:new Date().toISOString(),generation:test.generation})}else{store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id})}
    markErrorMastered(q.id,correct);renderErrorReview();
   };
   btn.onclick=e=>{e.preventDefault();activate()};

@@ -24,7 +24,7 @@ jobs:
       - name: Preparar arquivos públicos
         run: |
           mkdir dist
-          cp index.html style.css app.js lessons.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
+          cp index.html style.css app.js lessons.js review-generator.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
           cp *.png dist/
           cp -R assets dist/
           touch dist/.nojekyll
