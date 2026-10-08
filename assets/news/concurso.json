@@ -1,0 +1,116 @@
+{
+  "items": [
+    {
+      "id": "f95906771996c25e48a1",
+      "title": "Edital de Convocação No 03/2026/GAB-SEJUS/MT:",
+      "excerpt": "Edital de Convocação No 03/2026/GAB-SEJUS/MT: Dispõe sobre concurso público para preenchimento de Cadastro de Reserva para os cargos de Agente Penitenciário do Sistema Penitenciário e Profissionais de Nível Superior do Sistema Penitenciário, ambos da Carreira dos Profissionais do Sistema Penitenciário.",
+      "url": "https://www.sejus.mt.gov.br/documents/d/sejus/edital-03-2026-gab-sejus-mt-edital-de-convocacao-1-pdf",
+      "sourceId": "sejus-editais",
+      "source": "SEJUS · editais",
+      "publishedAt": null,
+      "kind": "convocacao",
+      "firstSeenAt": "2026-10-08T17:49:39+00:00",
+      "lastSeenAt": "2026-10-08T17:49:39+00:00"
+    }
+  ],
+  "sources": [
+    {
+      "id": "sejus-editais",
+      "name": "SEJUS · editais",
+      "url": "https://www.sejus.mt.gov.br/editais",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 1
+    },
+    {
+      "id": "sejus-noticias",
+      "name": "SEJUS · notícias",
+      "url": "https://www.sejus.mt.gov.br/noticias",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "seplag-noticias",
+      "name": "SEPLAG · notícias",
+      "url": "https://www.seplag.mt.gov.br/noticias",
+      "status": "error",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": null,
+      "error": "ValueError",
+      "found": null
+    },
+    {
+      "id": "iomat-2499-2026-10",
+      "name": "Diário Oficial · SEPLAG · concursos · 10/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/2499/2026/10",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "iomat-2499-2026-9",
+      "name": "Diário Oficial · SEPLAG · concursos · 09/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/2499/2026/9",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "iomat-4255-2026-10",
+      "name": "Diário Oficial · SEJUS · editais · 10/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4255/2026/10",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "iomat-4255-2026-9",
+      "name": "Diário Oficial · SEJUS · editais · 09/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4255/2026/9",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "iomat-4239-2026-10",
+      "name": "Diário Oficial · SEJUS · portarias · 10/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4239/2026/10",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    },
+    {
+      "id": "iomat-4239-2026-9",
+      "name": "Diário Oficial · SEJUS · portarias · 09/2026",
+      "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4239/2026/9",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-08T17:49:39+00:00",
+      "lastSuccessAt": "2026-10-08T17:49:39+00:00",
+      "error": null,
+      "found": 0
+    }
+  ],
+  "milestones": [],
+  "events": [],
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-08T17:49:39+00:00",
+  "lastSuccessAt": null,
+  "lastPartialSuccessAt": "2026-10-08T17:49:39+00:00",
+  "checkStatus": "partial",
+  "newCount": 1
+}

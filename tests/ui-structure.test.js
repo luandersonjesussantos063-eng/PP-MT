@@ -23,10 +23,10 @@ test('versão exibida e revisão dos arquivos publicados permanecem alinhadas',(
   const runtime=app.match(/const APP_VERSION='([^']+)'/)?.[1];
   const js=html.match(/app\.js\?v=([^"&]+)/)?.[1];
   const style=html.match(/style\.css\?v=([^"&]+)/)?.[1];
-  assert.equal(runtime,'0.47');
-  assert.equal(js,runtime+'-policial');
+  assert.equal(runtime,'2.10.2');
+  assert.equal(js,runtime);
   assert.equal(style,js);
-  assert.ok(html.includes('Versão '+runtime));
+  assert.ok(html.includes('V '+runtime));
 });
 
 test('fluxo Estudar criado no Work também recebe swipe',()=>{

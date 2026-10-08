@@ -1,0 +1,38 @@
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function officialNewsURL(value){try{const u=new URL(value);return u.protocol==='https:'&&!u.username&&!u.password&&(u.hostname==='mt.gov.br'||u.hostname.endsWith('.mt.gov.br'))?u.href:null}catch{return null}}
+export function validNewsFeed(feed){return !!(feed?.schemaVersion===1&&['ok','partial','error'].includes(feed.checkStatus)&&Number.isFinite(Date.parse(feed.checkedAt))&&Array.isArray(feed.items)&&Array.isArray(feed.sources)&&feed.items.every(i=>typeof i.id==='string'&&typeof i.title==='string'&&officialNewsURL(i.url))&&feed.sources.every(s=>typeof s.id==='string'&&typeof s.name==='string'&&['ok','error'].includes(s.status)&&officialNewsURL(s.url)))}
+export function newsTime(value,dateOnly=false){if(!value||!Number.isFinite(Date.parse(value)))return 'Não informada';const d=new Date(dateOnly?value+'T12:00:00Z':value);return d.toLocaleString('pt-BR',{timeZone:'America/Cuiaba',day:'2-digit',month:'2-digit',year:'numeric',...(dateOnly?{}:{hour:'2-digit',minute:'2-digit'})})}
+export function newsCheckMessage(feed,now=Date.now()){
+ if(!feed)return 'Ainda não foi possível carregar as atualizações.';
+ if(now-Date.parse(feed.checkedAt)>48*3600000)return 'A checagem está atrasada. Consulte também as fontes oficiais.';
+ if(feed.checkStatus==='error')return 'A última busca falhou. As publicações anteriores foram mantidas.';
+ if(feed.checkStatus==='partial')return 'Checagem parcial: algumas fontes estão indisponíveis. As publicações anteriores foram mantidas.';
+ return feed.newCount?'Novas publicações oficiais encontradas.':'Nenhuma nova publicação encontrada nos índices monitorados.';
+}
+export async function loadNewsFeed({fetcher=globalThis.fetch,storage=globalThis.localStorage}={}){
+ let saved=null;try{saved=JSON.parse(storage.getItem('ppmt-concurso-news'));if(!validNewsFeed(saved))saved=null}catch{}
+ try{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);let response;
+  try{response=await fetcher('./assets/news/concurso.json',{cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}
+  if(!response.ok)throw Error('Notícias indisponíveis');
+  const feed=await response.json();if(!validNewsFeed(feed))throw Error('Dados inválidos');
+  const selected=saved&&Date.parse(saved.checkedAt)>Date.parse(feed.checkedAt)?saved:feed;
+  try{storage.setItem('ppmt-concurso-news',JSON.stringify(selected))}catch{}
+  return {feed:selected,offline:false};
+ }catch{return {feed:saved,offline:true}}
+}
+const kinds={'novo-concurso':'Novo concurso','convocacao':'Convocação / nomeação','seletivo':'Seleção temporária','publicacao':'Publicação oficial'};
+export function newsItemsHTML(feed,filter='all'){
+ const items=(feed?.items||[]).filter(i=>filter==='all'||i.kind===filter);
+ return items.length?items.map(i=>`<article class="card news-item"><div class="news-item-meta"><span class="tag">${esc(kinds[i.kind]||kinds.publicacao)}</span><span>${i.publishedAt?'Publicado em '+newsTime(i.publishedAt,true):'Data da publicação não informada'}</span></div><h2>${esc(i.title)}</h2>${i.excerpt?`<p class="news-excerpt"><span class="muted">Trecho da fonte:</span> ${esc(i.excerpt)}</p>`:''}<p class="muted">${esc(i.source)} · Detectado em ${newsTime(i.firstSeenAt)}</p>${i.kind==='convocacao'?'<p class="notice">Uma convocação pode se referir a concurso anterior. Confira o edital de origem na publicação.</p>':''}<a class="button secondary" href="${esc(officialNewsURL(i.url))}" target="_blank" rel="noopener noreferrer">Abrir fonte oficial ↗</a></article>`).join(''):'<div class="card empty"><p>Nenhuma publicação nesta categoria foi encontrada nos índices monitorados.</p></div>';
+}
+export function newsEventsHTML(feed){
+ const events=(feed?.items||[]).flatMap(i=>(i.events||[]).filter(e=>typeof e.label==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)&&Number.isFinite(Date.parse(e.date))&&officialNewsURL(e.url)));
+ const unique=[...new Map(events.map(e=>[e.label+e.date+e.url,e])).values()].sort((a,b)=>a.date.localeCompare(b.date));
+ return unique.length?'<ul class="news-events">'+unique.map(e=>`<li><strong>${esc(e.label)} · ${newsTime(e.date,true)}</strong><span>${esc(e.context)}</span><a href="${esc(officialNewsURL(e.url))}" target="_blank" rel="noopener noreferrer">Conferir data na fonte ↗</a></li>`).join('')+'</ul>':'<p class="muted">Nenhuma data de inscrição ou prova foi identificada com confirmação explícita nas publicações coletadas.</p>';
+}
+export function newsPageHTML({feed,offline=false}){
+ if(!feed)return `<h1>Notícias do concurso</h1><p class="muted">Polícia Penal de Mato Grosso</p><section class="card"><p role="status">Não foi possível carregar as notícias. Conecte-se à internet e tente novamente.</p><button id="refreshNews" class="primary">Tentar novamente</button><p><a href="https://www.sejus.mt.gov.br/editais" target="_blank" rel="noopener noreferrer">Consultar editais da SEJUS ↗</a></p><p><a href="https://iomat.mt.gov.br/" target="_blank" rel="noopener noreferrer">Consultar Diário Oficial ↗</a></p></section>`;
+ const ok=feed.sources.filter(s=>s.status==='ok').length;
+ return `<h1>Notícias do concurso</h1><p class="muted">Polícia Penal de Mato Grosso · checagem automática diária</p><section class="card news-status"><div class="row"><h2>Acompanhamento oficial</h2><button id="refreshNews" class="secondary">Atualizar notícias</button></div><p role="status">${esc(newsCheckMessage(feed))}</p><p class="muted">Última tentativa: ${newsTime(feed.checkedAt)} (MT) · ${ok}/${feed.sources.length} fontes consultadas com sucesso.</p>${offline?'<p class="notice">Exibindo a última cópia disponível no aparelho. Links das fontes precisam de internet.</p>':''}<p class="muted">A busca acontece todos os dias, com o app fechado. O botão carrega o resultado mais recente.</p></section><section class="card spaced"><h2>Situação e datas importantes</h2><p>As publicações abaixo registram o andamento do concurso. Banca, inscrições e prova devem ser conferidas no edital e nas retificações.</p><p class="notice">${feed.items.some(i=>i.kind==='novo-concurso')?'Há publicação sobre novo concurso. Abra a fonte para conferir os detalhes.':'Nenhuma confirmação de novo edital foi identificada pela coleta automática nos índices monitorados.'} Convocações e seleções temporárias aparecem separadamente.</p>${newsEventsHTML(feed)}</section><div class="news-filter spaced"><label for="newsKind">Mostrar publicações</label><select id="newsKind"><option value="all">Todas</option><option value="novo-concurso">Novo concurso</option><option value="publicacao">Outras publicações oficiais</option><option value="convocacao">Convocações e nomeações</option><option value="seletivo">Seleções temporárias</option></select></div><div id="newsItems" class="news-list spaced">${newsItemsHTML(feed)}</div><details class="card compact-details spaced"><summary>Fontes e checagem</summary><p class="muted">Monitoramos os índices de editais e notícias da SEJUS e SEPLAG, além das categorias de concursos, editais e portarias no Diário Oficial, no mês atual e anterior. Os índices podem omitir documentos ou atrasar; confira a íntegra da fonte antes de agir.</p><p class="muted">Última checagem completa: ${newsTime(feed.lastSuccessAt)}. Última checagem com alguma fonte disponível: ${newsTime(feed.lastPartialSuccessAt)}.</p><ul class="news-sources">${feed.sources.map(s=>`<li><a href="${esc(officialNewsURL(s.url))}" target="_blank" rel="noopener noreferrer">${esc(s.name)} ↗</a><span>${s.status==='ok'?'Consultada':'Indisponível nesta tentativa'}</span><small>Último sucesso: ${newsTime(s.lastSuccessAt)}</small></li>`).join('')}</ul></details>`;
+}
