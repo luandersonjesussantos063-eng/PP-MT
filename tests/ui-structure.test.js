@@ -70,7 +70,7 @@ test('treino ativo segue apenas as nove áreas do último edital de MT',()=>{
   for(const extra of ['Informática','Raciocínio Lógico e Matemática','Atualidades','Segurança Pública','Conhecimentos Gerais','Legislação Estadual']){
     assert.ok(!block.includes(`'${extra}'`),extra);
   }
-  assert.match(block,/const bank=\(\)=>rawBank\(\)\.filter\(isLastEditalQuestion\)/);
+  assert.match(block,/const bank=\(\)=>rawBank\(\)\.filter\(q=>isLastEditalQuestion\(q\)&&compatibleWithMT\(q\)\)/);
   assert.match(block,/'Direito Penal':'Direito Penal e Processual Penal'/);
   assert.match(block,/'Direito Processual Penal':'Direito Penal e Processual Penal'/);
   assert.match(block,/'Legislação Penal':'Legislação Básica'/);
@@ -78,5 +78,5 @@ test('treino ativo segue apenas as nove áreas do último edital de MT',()=>{
 
 test('erros e métricas ignoram matérias fora do foco atual',()=>{
   assert.match(app,/function pendingErrorIds\(\)\{[\s\S]*active\.has\(id\)/);
-  assert.match(app,/const activeIds=new Set\(bank\(\)\.filter\(q=>!q\.historicalOnly\)/);
+  assert.match(app,/activeIds=new Set\(official\.map/);
 });

@@ -58,7 +58,7 @@ Fonte complementar da BA: https://conhecimento.fgv.br/concursos/seapba24 e https
 
 ## Progresso e limitações
 
-Conta, sincronização e cache local são mantidos pela implementação existente de `auth.js`. Faça backups em **Meus dados**. A importação JSON pela interface é local ao usuário, não publica para todos. A sessão de simulado em andamento não é recuperada ao fechar a página. Estatísticas são de acertos simples, sem os pesos originais das bancas.
+Conta, sincronização e cache local são mantidos pela implementação existente de `auth.js`. Faça backups em **Meus dados**. A importação JSON pela interface é local ao usuário, não publica para todos. A versão 44 salva a sessão de simulado em andamento por conta, mantendo o prazo original. Estatísticas são de acertos simples, sem os pesos originais das bancas.
 
 Os módulos básicos são armazenados para acesso offline; imagens e PDFs ficam disponíveis offline depois de abertos e armazenados pelo navegador. A autenticação inicial pode exigir internet. O cache não baixa todo o acervo de imagens e PDFs antecipadamente.
 
@@ -78,7 +78,7 @@ Projeto independente, sem vínculo com órgãos públicos. Provas históricas n�
 
 Mantidos: fontes, questões históricas, textos de apoio, favoritos, backup e armazenamento por conta. Retirados do fluxo principal: missão obrigatória, bloqueios de treino e progresso fictício calculado por dias corridos.
 
-O acervo ainda não é um curso completo: parte dos comentários é apenas orientação de resolução ou indicação do gabarito histórico. Não há revisão jurídica atualizada de todas as questões, explicação individual de todos os distratores, notificações de horário ou mapa validado de edital futuro. A seleção de questões relacionadas é aproximada e exige matéria, assunto e termos em comum. O cronômetro não mede atenção: conta apenas em estudo visível com interação recente e pausa manual. Sessões de estudo guiado são retomáveis; simulados ainda precisam ser concluídos antes de fechar a página.
+O acervo ainda não é um curso completo: parte dos comentários é apenas orientação de resolução ou indicação do gabarito histórico. Não há revisão jurídica atualizada de todas as questões, explicação individual de todos os distratores, notificações de horário ou mapa validado de edital futuro. A seleção de questões relacionadas é aproximada e exige matéria, assunto e termos em comum. O cronômetro não mede atenção: conta apenas em estudo visível com interação recente e pausa manual. Sessões de estudo guiado e simulados são retomáveis; o relógio de prova continua correndo enquanto o app está fechado.
 
 ## Atualização 27 — comentários aprofundados de MT
 
@@ -89,3 +89,15 @@ As 57 questões válidas da prova MT/2017 têm conceito, raciocínio, análise i
 Comentários produzidos com assistência de IA; não são justificativas oficiais da banca nem revisão docente independente. A conferência das fontes não equivale a uma auditoria jurídica completa do acervo. Os demais estados ainda usam os comentários anteriores.
 
 Para editar, altere `content/mt-2017-lessons.json` e `content/lesson-sources.json`, execute `python3 tools/build_lessons.py` e `npm test`. O módulo gerado `lessons.js` é publicado e armazenado no cache offline. Os testes verificam cobertura, integração, gabaritos e exclusão dos itens com ressalvas; não certificam a correção pedagógica do texto.
+
+## Atualização 44 — conceitos, aplicação e continuidade
+
+- 48 conceitos regulares de MT ligados explicitamente a 48 exercícios autorais de aplicação (`practice.js`), com situações diferentes, três alternativas, comentário e fontes herdadas da lição-base. Conteúdo com assistência de IA; exige revisão docente independente. As nove questões históricas com ressalvas não geram esses exercícios.
+- O estudo guiado (`curriculum.js`) escolhe uma matéria pouco estudada e um conceito ainda não praticado ou menos recente. Explicação e prática ficam no mesmo conceito. Questões importadas sem classificação permanecem no banco livre, sem entrar nesses blocos. Não é um mapa completo do edital.
+- Equivalências por conceito têm precedência sobre a busca textual aproximada. Sem equivalência, continua disponível a adaptação automática da versão 43, claramente identificada.
+- Plano do dia mostra conceito, matéria, número de exercícios e orçamento de revisão: até cinco itens, reservando minutos para estudo. Uma revisão já percorrida no dia não prende o aluno no botão principal; o restante pode ser feito em outra rodada.
+- Progresso por conceito apresenta estados de aprendizagem com contagem de respostas e tentativas posteriores. Leitura não marca domínio. Os exercícios autorais e adaptações são separados dos indicadores de respostas oficiais.
+- Simulados são salvos por IDs, respostas, posição e prazo (`exam-session.js`). Ao sair ou recarregar, o tempo de prova continua correndo. Sessão com dados inválidos não é retomada. O descarte exige confirmação.
+- Filtro adicional de referências explícitas a regras de outros estados no treino MT. É uma proteção parcial: o banco ainda exige classificação temática e revisão legislativa completa. Fontes históricas continuam disponíveis no acervo.
+
+Verificação: testes de coerência dos blocos, equivalências, orçamento de revisão, estados de aprendizagem, serialização/restauração de simulados e fluxo de revisão. Verificação DOM com cadastro da rotina, plano, lição/exercício correspondente, progresso, recarga do simulado e conclusão da revisão. Não substitui avaliação docente ou teste visual em aparelhos reais.

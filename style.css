@@ -384,3 +384,9 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 .review-learning-card>details{padding:14px 0;border-top:1px solid var(--line)}
 .review-learning-card>details summary{cursor:pointer;color:var(--accent);line-height:1.5}
 @media(max-width:640px){#reviewTransfer,#reviewNext{width:100%;min-height:48px}}
+
+/* Concept coverage: compact rows with evidence available on demand. */
+.concept-progress>details{padding:14px 0;border-bottom:1px solid var(--line)}
+.concept-progress summary{cursor:pointer;line-height:1.6;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.concept-progress .tag{white-space:nowrap}
+@media(max-width:640px){.concept-progress summary{align-items:flex-start;flex-direction:column}}

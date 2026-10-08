@@ -1,3 +1,4 @@
+import {sameConcept} from './curriculum.js?v=44';
 const STOP=new Set('a o os as um uma de da do das dos e ou em no na nos nas por para com sem que se ao aos é são foi ser como mais menos sua seu suas seus esta este esse essa isto isso onde qual quais quando entre sobre apenas ainda muito pela pelo pelos pelas'.split(' '));
 
 function words(text){
@@ -63,6 +64,10 @@ export function microLesson(q){
 }
 
 export function findSimilar(q,all){
+  const curated=(all||[]).find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other)&&other.practiceKind==='application');
+  if(curated)return curated;
+  const mapped=(all||[]).find(other=>other.id!==q?.id&&!other.historicalOnly&&sameConcept(q,other));
+  if(mapped)return mapped;
   const base=new Set(words(q?.statement));
   let best=null,bestScore=-1;
   for(const other of all||[]){
