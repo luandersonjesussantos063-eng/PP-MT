@@ -218,5 +218,33 @@
   "lai": {
     "title": "Lei 12.527/2011 — arts. 3º, 7º, 8º, 10 e 11",
     "url": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2011/lei/l12527.htm"
+  },
+  "redacao-completa": {
+    "title": "SETI/PR — Manual de Comunicação Escrita, clareza e coesão; concordância, pp. 71–72",
+    "url": "https://www.seti.pr.gov.br/sites/default/arquivos_restritos/files/documento/2026-02/manualcomunicacaoescrita_final.pdf"
+  },
+  "indicadores-enap": {
+    "title": "Enap — Guia referencial para construção e análise de indicadores",
+    "url": "https://repositorio.enap.gov.br/items/2a3bf3bf-936b-45b5-9605-9cfa871e996e"
+  },
+  "cf-garantias-lote2": {
+    "title": "Constituição Federal — art. 5º, XLV a XLIX e LV a LXV",
+    "url": "https://www.planalto.gov.br/ccivil_03/constituicao/constituicaocompilado.htm"
+  },
+  "cp-excludentes-lote2": {
+    "title": "Código Penal — arts. 23 a 25: exclusão da ilicitude, necessidade, legítima defesa e excesso",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del2848compilado.htm"
+  },
+  "cpp-flagrante-lote2": {
+    "title": "Código de Processo Penal — arts. 301 a 303: prisão em flagrante",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto-lei/del3689compilado.htm"
+  },
+  "cadh-detencao-lote2": {
+    "title": "Convenção Americana sobre Direitos Humanos — arts. 5º e 7º; Decreto 678/1992",
+    "url": "https://www.planalto.gov.br/ccivil_03/decreto/d0678.htm"
+  },
+  "processo-federal-lote2": {
+    "title": "Lei federal 9.784/1999 — arts. 11 a 15: competência, delegação e avocação",
+    "url": "https://www.planalto.gov.br/ccivil_03/leis/l9784.htm"
   }
 }

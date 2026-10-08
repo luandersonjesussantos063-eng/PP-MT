@@ -984,6 +984,39 @@
     ],
     "mt-autoral-202610-lai-01": [
       "lb-lai"
+    ],
+    "mt-autoral-202610-interpretacao-relatorios-01": [
+      "pt-texto"
+    ],
+    "mt-autoral-202610-concordancia-servico-01": [
+      "pt-concordancia"
+    ],
+    "mt-autoral-202610-indicadores-controle-01": [
+      "adm-funcoes",
+      "adm-auditoria"
+    ],
+    "mt-autoral-202610-delegacao-gerencial-01": [
+      "adm-delegacao"
+    ],
+    "mt-autoral-202610-garantias-penais-01": [
+      "cf-garantias"
+    ],
+    "mt-autoral-202610-penas-integridade-01": [
+      "cf-individuais"
+    ],
+    "mt-autoral-202610-excludentes-ilicitude-01": [
+      "pp-teoria"
+    ],
+    "mt-autoral-202610-flagrante-modalidades-01": [
+      "lb-cpp"
+    ],
+    "mt-autoral-202610-cadh-detencao-01": [
+      "dh-interamericano",
+      "dh-forca"
+    ],
+    "mt-autoral-202610-competencia-delegacao-federal-01": [
+      "da-competencia",
+      "da-processo"
     ]
   },
   "authorialSlugTopics": {
@@ -1048,6 +1081,39 @@
     ],
     "direta-indireta": [
       "da-organizacao"
+    ],
+    "interpretacao-relatorios": [
+      "pt-texto"
+    ],
+    "concordancia-servico": [
+      "pt-concordancia"
+    ],
+    "indicadores-controle": [
+      "adm-funcoes",
+      "adm-auditoria"
+    ],
+    "delegacao-gerencial": [
+      "adm-delegacao"
+    ],
+    "garantias-penais": [
+      "cf-garantias"
+    ],
+    "penas-integridade": [
+      "cf-individuais"
+    ],
+    "excludentes-ilicitude": [
+      "pp-teoria"
+    ],
+    "flagrante-modalidades": [
+      "lb-cpp"
+    ],
+    "cadh-detencao": [
+      "dh-interamericano",
+      "dh-forca"
+    ],
+    "competencia-delegacao-federal": [
+      "da-competencia",
+      "da-processo"
     ]
   }
 }

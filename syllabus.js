@@ -1,4 +1,4 @@
-import {SYLLABUS} from './syllabus-data.js?v=47';
+import {SYLLABUS} from './syllabus-data.js?v=2.12.1';
 export const EDITAL_SOURCE=SYLLABUS.source;
 export const EDITAL_TOPICS=SYLLABUS.topics;
 export function questionTopicIds(q){return q.historicalOnly?[]:SYLLABUS.conceptTopics[q.conceptId||q.id]||[]}

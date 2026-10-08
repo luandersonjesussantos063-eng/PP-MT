@@ -1,0 +1,984 @@
+{
+  "edition": "mt-edital-2016-lote-2026-10-02",
+  "checkedAt": "2026-10-08",
+  "authorship": "Questão autoral produzida com assistência de IA e conferência das fontes indicadas. Não é questão oficial de banca nem revisão docente independente.",
+  "syllabus": {
+    "title": "Edital 01/2016/SEJUDH — Anexo II, cargo Agente Penitenciário; Diário Oficial de MT de 25/11/2016, páginas 106–107",
+    "url": "https://arquivos.qconcursos.com/regulamento/arquivo/11897/sejudh_mt_2016_edital_n_01-edital.pdf#page=23",
+    "note": "Tópicos vinculados ao anexo do edital-base histórico. Questões novas de Direito consideram os textos legais consultados em 08/10/2026, não o corte legislativo de 2016. Não representa edital futuro nem cobertura integral do anexo."
+  },
+  "expectedCount": 50,
+  "groups": [
+    {
+      "slug": "interpretacao-relatorios",
+      "subject": "Língua Portuguesa",
+      "title": "Interpretação de relatórios e inferência",
+      "syllabusTopic": "Compreensão e interpretação de textos",
+      "sourceKeys": [
+        "redacao-completa"
+      ],
+      "concept": "Interpretar exige distinguir o que o texto afirma, o que se pode inferir e o que seria uma suposição externa. Conectivos indicam relações como oposição e conclusão. Palavras como alguns e todos mudam o alcance de uma afirmação. A coincidência temporal de fatos não basta para provar uma relação causal.",
+      "example": "“Algumas câmeras falharam, mas o registro manual foi mantido” informa uma falha parcial e uma medida preservada; não permite concluir que todas as câmeras falharam.",
+      "recall": {
+        "prompt": "Uma sequência de acontecimentos prova, sozinha, que o primeiro causou o segundo?",
+        "answer": "Não. Uma associação temporal não demonstra, por si só, causalidade."
+      },
+      "exercises": [
+        {
+          "statement": "Leia: “Após a troca de turno, a equipe conferiu os registros. Foram identificadas duas divergências, ambas corrigidas antes do encerramento da conferência”. Qual informação está expressa no trecho?",
+          "options": [
+            "As duas divergências encontradas foram corrigidas durante a conferência.",
+            "O turno anterior foi responsabilizado pelas duas divergências.",
+            "Todos os registros continham divergências.",
+            "A correção só ocorreu depois do encerramento da conferência."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O trecho delimita o número de divergências e informa sua correção antes do encerramento; esta é uma informação explícita.",
+            "O texto não identifica responsáveis; atribuir culpa ao turno anterior acrescenta uma informação.",
+            "Duas divergências não significam falha em todos os registros.",
+            "A expressão antes do encerramento contradiz a correção somente posterior."
+          ]
+        },
+        {
+          "statement": "Leia: “O protocolo foi simplificado; entretanto, a conferência de identidade permaneceu obrigatória”. O conectivo entretanto introduz:",
+          "options": [
+            "Uma oposição à expectativa de que a simplificação eliminaria essa exigência.",
+            "Uma causa que explica por que o protocolo foi simplificado.",
+            "Uma conclusão de que a conferência se tornou facultativa.",
+            "Uma condição necessária para que a identidade possa ser conferida."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Entretanto tem valor adversativo: contrapõe a simplificação à manutenção da obrigatoriedade.",
+            "O conectivo não apresenta uma causa; estabelece contraste.",
+            "O texto afirma obrigatoriedade, não facultatividade, e entretanto não é conclusivo.",
+            "A relação é de contraste, não de condição como em se ou caso."
+          ]
+        },
+        {
+          "statement": "Leia: “Alguns servidores participaram do curso de atualização”. Considerando apenas essa frase, qual conclusão é autorizada?",
+          "options": [
+            "Houve participação de servidores, sem que a frase determine a participação de toda a equipe.",
+            "Todos os servidores da unidade participaram.",
+            "Nenhum servidor que faltou ao curso recebeu outra formação.",
+            "Somente servidores do turno noturno participaram."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Alguns indica participação de parte indeterminada do conjunto; não identifica turnos nem comprova participação universal.",
+            "O quantificador alguns não sustenta a conclusão todos.",
+            "A formação de quem não participou não é tratada na frase.",
+            "O turno dos participantes não foi informado."
+          ]
+        },
+        {
+          "statement": "Leia: “No mês em que o formulário digital foi implantado, o número de erros de registro caiu. O relatório não avaliou outras mudanças realizadas nesse período”. Qual análise é mais fiel ao texto?",
+          "options": [
+            "A queda coincide com a implantação, mas o trecho não demonstra que o formulário foi sua única causa.",
+            "A implantação foi comprovadamente a única causa da queda.",
+            "O relatório demonstra que outras mudanças não ocorreram.",
+            "O número de erros aumentou após a implantação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Há associação temporal; a ausência de análise de outros fatores impede afirmar causalidade exclusiva.",
+            "A exclusividade causal não foi demonstrada.",
+            "Não avaliar outras mudanças é diferente de afirmar que elas não existiram.",
+            "O trecho informa queda, não aumento."
+          ]
+        },
+        {
+          "statement": "Leia: “A equipe realizou a contagem e comparou o resultado com o registro anterior. Essa medida permitiu localizar a divergência”. A expressão essa medida retoma:",
+          "options": [
+            "O procedimento de contagem e comparação descrito na frase anterior.",
+            "A divergência como um procedimento adotado pela equipe.",
+            "A substituição do registro anterior por um novo documento.",
+            "A realização de um curso de treinamento não mencionado no trecho."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A expressão demonstrativa estabelece coesão ao retomar a ação de contar e comparar.",
+            "A divergência é o problema localizado, não a medida adotada.",
+            "O texto descreve comparação, sem informar substituição de documento.",
+            "Não há referência a curso no trecho."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "concordancia-servico",
+      "subject": "Língua Portuguesa",
+      "title": "Concordância em registros de serviço",
+      "syllabusTopic": "Concordância nominal e verbal",
+      "sourceKeys": [
+        "redacao-completa"
+      ],
+      "concept": "Na concordância verbal, identifique o núcleo do sujeito antes de escolher a flexão. Haver com sentido de existir é impessoal e fica no singular, inclusive em locução verbal. Fazer indicando tempo decorrido também é impessoal. Na voz passiva sintética com sujeito paciente, o verbo concorda com esse sujeito. Anexo, como adjetivo, concorda com o substantivo.",
+      "example": "“Houve ocorrências” usa haver impessoal; “Existiram ocorrências” usa existir com sujeito plural. O mesmo sentido não produz a mesma estrutura sintática.",
+      "recall": {
+        "prompt": "Em deve haver divergências, o plural de divergências exige devem?",
+        "answer": "Não. Haver existencial é impessoal e transmite essa impessoalidade ao auxiliar."
+      },
+      "exercises": [
+        {
+          "statement": "Em um relatório, pretende-se empregar haver com sentido de existir. Qual redação atende à norma-padrão?",
+          "options": [
+            "Houve três ocorrências durante o plantão.",
+            "Houveram três ocorrências durante o plantão.",
+            "Haviam três ocorrências durante o plantão.",
+            "Deviam haver três ocorrências durante o plantão."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Haver existencial é impessoal e permanece na terceira pessoa do singular; três ocorrências não é sujeito.",
+            "A flexão houveram não cabe para haver existencial nesta construção.",
+            "Com sentido de existir, o verbo deve ser havia, não haviam.",
+            "Na locução com haver existencial, o auxiliar deve ficar no singular: devia haver."
+          ]
+        },
+        {
+          "statement": "Assinale a redação correta para indicar tempo decorrido sem sujeito expresso.",
+          "options": [
+            "Faz dois meses que o procedimento foi atualizado.",
+            "Fazem dois meses que o procedimento foi atualizado.",
+            "Fizeram dois meses que o procedimento foi atualizado.",
+            "Faziam dois meses que o procedimento foi atualizado."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Fazer indicando tempo decorrido é impessoal; faz dois meses mantém o singular.",
+            "Dois meses é expressão de tempo, não sujeito que imponha plural.",
+            "A flexão plural não cabe no uso impessoal pretendido.",
+            "Mesmo no passado, fazer temporal seria fazia, no singular."
+          ]
+        },
+        {
+          "statement": "Complete: “A lista de materiais ___ na sala da chefia”. Qual forma mantém a concordância com o sujeito?",
+          "options": [
+            "permanece",
+            "permanecem",
+            "permaneceram disponíveis",
+            "permanecem arquivados"
+          ],
+          "answer": 0,
+          "reasons": [
+            "O núcleo do sujeito é lista, singular; de materiais é termo dependente e não determina a flexão.",
+            "A flexão plural concorda indevidamente com materiais.",
+            "Verbo e predicativo plurais não concordam com a lista.",
+            "A estrutura toma materiais como sujeito, embora o núcleo seja lista."
+          ]
+        },
+        {
+          "statement": "Na frase “Conferem-se os documentos antes da entrada”, o emprego do plural no verbo se justifica porque:",
+          "options": [
+            "Os documentos é sujeito paciente de uma construção passiva sintética.",
+            "O se sempre exige verbo no plural.",
+            "Antes da entrada é o sujeito da oração.",
+            "Conferir é impessoal e concorda com seu complemento."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A construção equivale a os documentos são conferidos; o verbo concorda com esse sujeito plural.",
+            "O se tem diferentes funções e não impõe, por si só, flexão plural.",
+            "Antes da entrada é expressão adverbial, não sujeito.",
+            "Conferir não é impessoal nessa oração; documentos funciona como sujeito paciente."
+          ]
+        },
+        {
+          "statement": "Um servidor encaminha duas cópias e emprega anexo como adjetivo. Qual frase está correta?",
+          "options": [
+            "Seguem anexas as cópias solicitadas.",
+            "Segue anexas as cópias solicitadas.",
+            "Seguem anexo as cópias solicitadas.",
+            "Segue anexa as cópias solicitadas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Cópias é o sujeito plural e feminino: seguem concorda em número e anexas em gênero e número.",
+            "O verbo singular não concorda com as cópias.",
+            "Anexo, como adjetivo, deve ser anexas para concordar com cópias.",
+            "Verbo e adjetivo estão no singular diante do sujeito plural."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "indicadores-controle",
+      "subject": "Administração Geral",
+      "title": "Controle e leitura de indicadores",
+      "syllabusTopic": "Planejamento, organização, direção e controle",
+      "sourceKeys": [
+        "indicadores-enap",
+        "funcoes"
+      ],
+      "concept": "O controle compara resultados observados com padrões ou metas, identifica desvios e orienta correções. Um indicador deve ter definição operacional: o que mede, como se calcula e de onde vêm os dados. Quantidade de atividades não é automaticamente qualidade ou impacto. Comparações exigem bases compatíveis e, quando o volume de trabalho varia, pode ser necessário usar taxas.",
+      "example": "Dez erros em cem registros representam 10%; dez erros em mil registros representam 1%. O número absoluto igual não significa a mesma proporção de falhas.",
+      "recall": {
+        "prompt": "Por que um indicador precisa de fórmula e fonte de dados definidas?",
+        "answer": "Para permitir medição consistente, verificação e comparação dos resultados."
+      },
+      "exercises": [
+        {
+          "statement": "Uma unidade fixou a meta de conferir 95% dos registros no mesmo dia. Ao final da semana, o gestor compara a taxa efetiva com a meta e investiga os desvios. Qual função administrativa predomina nessa etapa?",
+          "options": [
+            "Controle.",
+            "Organização da estrutura.",
+            "Definição inicial da missão.",
+            "Previsão sem verificação de resultados."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Comparar realizado e padrão e investigar desvios caracteriza controle.",
+            "Organização distribui recursos e responsabilidades; o caso enfatiza avaliação do realizado.",
+            "Missão indica a razão de existir da organização, não a comparação semanal.",
+            "Há verificação de resultados já ocorridos, não apenas previsão."
+          ]
+        },
+        {
+          "statement": "Uma equipe propõe o indicador qualidade do atendimento, sem definir fórmula nem fonte dos dados. Qual providência melhora a possibilidade de medir esse indicador?",
+          "options": [
+            "Definir o aspecto avaliado, a forma de cálculo e a fonte dos dados.",
+            "Manter o termo amplo e permitir que cada servidor escolha um cálculo.",
+            "Substituir todos os registros pela impressão pessoal do chefe.",
+            "Alterar a fórmula a cada mês sem registrar a mudança."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A definição operacional permite reproduzir e conferir a medição.",
+            "Cálculos diferentes impedem comparação consistente.",
+            "Impressão não documentada reduz verificabilidade e não operacionaliza o indicador.",
+            "Mudanças não registradas comprometem a comparabilidade da série."
+          ]
+        },
+        {
+          "statement": "Duas unidades apresentam dez registros com erro. A primeira produziu cem registros; a segunda, mil. Considerando exclusivamente a taxa de erro, qual análise está correta?",
+          "options": [
+            "A primeira tem taxa de 10%, e a segunda, de 1%.",
+            "As duas têm taxa de 10%, porque o número de erros é igual.",
+            "A primeira tem taxa de 1%, e a segunda, de 10%.",
+            "Não é possível calcular taxas com os dados apresentados."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Taxa é erros divididos pelo total: 10/100 e 10/1000, multiplicados por cem.",
+            "O denominador altera a taxa; números absolutos iguais não bastam.",
+            "As proporções foram invertidas.",
+            "O total de erros e o total de registros foram informados."
+          ]
+        },
+        {
+          "statement": "Uma chefia considera concluído o controle apenas porque recebeu um painel com números. Identificado um desvio relevante, qual próxima ação completa melhor o uso gerencial desse instrumento?",
+          "options": [
+            "Analisar a causa do desvio e definir ação corretiva compatível.",
+            "Arquivar o painel sem relacioná-lo às metas.",
+            "Eliminar a meta para que o desvio deixe de aparecer.",
+            "Trocar o nome do indicador, mantendo o mesmo problema."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O controle deve apoiar correções; registrar o desvio não equivale a solucioná-lo.",
+            "Arquivamento isolado não usa a informação para decidir.",
+            "Retirar a meta para esconder o problema não corrige sua causa.",
+            "Mudança de nome não representa intervenção sobre o desvio."
+          ]
+        },
+        {
+          "statement": "Uma unidade informa que realizou vinte treinamentos no semestre. Sem outros dados, esse número permite medir diretamente:",
+          "options": [
+            "O volume de treinamentos realizados, não a redução de falhas no serviço.",
+            "A eliminação de todas as falhas operacionais.",
+            "A aprendizagem efetiva de todos os participantes.",
+            "O impacto causal dos treinamentos sobre a segurança."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A contagem mede uma entrega ou atividade; aprendizagem e impacto exigem indicadores e evidências próprios.",
+            "A realização de cursos não demonstra eliminação de falhas.",
+            "Não foram apresentados resultados de aprendizagem.",
+            "A causalidade exige análise além da contagem de treinamentos."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "delegacao-gerencial",
+      "subject": "Administração Geral",
+      "title": "Delegação, autoridade e prestação de contas",
+      "syllabusTopic": "Descentralização e delegação",
+      "sourceKeys": [
+        "funcoes"
+      ],
+      "concept": "Na gestão, delegar envolve atribuir uma tarefa e a autoridade necessária para executá-la, dentro de limites definidos. O colaborador assume deveres e presta contas; o gestor mantém acompanhamento e responsabilidade por sua atuação gerencial. Delegar não é abandonar o controle nem transferir poder ilimitado. Autoridade é o direito formal de decidir; responsabilidade é a obrigação de cumprir o que foi atribuído.",
+      "example": "A chefia atribui a conferência semanal de estoque, define o que o servidor pode decidir e combina um relatório de resultados. A distribuição da tarefa vem acompanhada de autoridade e acompanhamento.",
+      "recall": {
+        "prompt": "Delegar uma tarefa dispensa o gestor de acompanhar sua execução?",
+        "answer": "Não. Delegação exige limites, recursos adequados e prestação de contas."
+      },
+      "exercises": [
+        {
+          "statement": "A chefia encarrega um servidor de organizar o inventário, mas impede qualquer acesso aos registros e qualquer solicitação de informações. Qual problema gerencial aparece nessa delegação?",
+          "options": [
+            "A responsabilidade atribuída não veio acompanhada das condições e da autoridade necessárias.",
+            "Toda delegação exige transferência definitiva do cargo de chefia.",
+            "O servidor recebeu autoridade ilimitada.",
+            "O inventário deixou de precisar de prestação de contas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Sem meios e autoridade compatíveis, a responsabilidade se torna difícil de cumprir; delegação deve combinar esses elementos.",
+            "Delegar tarefas não transfere definitivamente o cargo.",
+            "O caso relata restrições, não poder ilimitado.",
+            "Prestação de contas continua relevante após a delegação."
+          ]
+        },
+        {
+          "statement": "Ao delegar a preparação de um relatório, a chefia afirma que nunca mais precisará acompanhar a tarefa. Segundo os fundamentos da delegação gerencial, essa afirmação:",
+          "options": [
+            "Confunde delegação com abandono do acompanhamento.",
+            "Está correta porque delegar elimina qualquer dever gerencial.",
+            "Está correta porque a chefia transfere toda a sua responsabilidade organizacional.",
+            "É exigência necessária para que o servidor adquira autoridade."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A chefia pode distribuir a execução, mas mantém acompanhamento e deveres de gestão.",
+            "Delegação não elimina deveres gerenciais.",
+            "A responsabilidade por sua própria atuação não desaparece por atribuir uma tarefa.",
+            "Autoridade delegada pode coexistir com acompanhamento e prestação de contas."
+          ]
+        },
+        {
+          "statement": "Uma delegação bem delimitada para organizar documentos deve informar principalmente:",
+          "options": [
+            "A tarefa, os limites de decisão, os recursos e a forma de prestar contas.",
+            "Somente o nome do servidor, sem explicar o resultado esperado.",
+            "A liberdade para descumprir procedimentos sempre que julgar conveniente.",
+            "A proibição de comunicar dificuldades durante a execução."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Esses elementos alinham resultado esperado, autoridade e verificação.",
+            "Sem definição da tarefa, a execução e sua avaliação ficam ambíguas.",
+            "Delegação não autoriza desconsiderar limites e normas aplicáveis.",
+            "Comunicar dificuldades permite ajustar recursos e decisões."
+          ]
+        },
+        {
+          "statement": "Um servidor entrega à chefia os resultados da tarefa recebida e explica os desvios em relação ao combinado. Esse procedimento corresponde a:",
+          "options": [
+            "Prestação de contas.",
+            "Renúncia à autoridade da organização.",
+            "Extinção do planejamento.",
+            "Transferência da missão institucional."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Prestar contas significa responder pelo cumprimento das responsabilidades atribuídas.",
+            "Apresentar resultados não equivale a renunciar à autoridade institucional.",
+            "A avaliação usa referências planejadas; não extingue o planejamento.",
+            "A missão institucional não é transferida pela apresentação de um relatório."
+          ]
+        },
+        {
+          "statement": "Uma chefia concentra decisões rotineiras e acumula atrasos. Ao distribuir tarefas com limites claros e acompanhamento, qual benefício gerencial pode buscar?",
+          "options": [
+            "Liberar atenção para tarefas prioritárias e ampliar a capacidade de execução da equipe.",
+            "Eliminar toda necessidade de coordenação.",
+            "Garantir que nenhuma decisão futura precise de avaliação.",
+            "Transformar qualquer tarefa em competência exclusiva do colaborador."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A delegação pode reduzir concentração e permitir foco gerencial sem excluir acompanhamento.",
+            "Tarefas distribuídas continuam exigindo coordenação.",
+            "A qualidade das decisões continua sujeita a avaliação.",
+            "Atribuir execução não cria automaticamente competência exclusiva."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "garantias-penais",
+      "subject": "Direito Constitucional",
+      "title": "Garantias constitucionais na persecução penal",
+      "syllabusTopic": "Garantias constitucionais individuais e coletivas",
+      "sourceKeys": [
+        "cf-garantias-lote2"
+      ],
+      "concept": "A Constituição protege devido processo legal, contraditório e ampla defesa, veda provas ilícitas e assegura direitos específicos à pessoa presa. O direito ao silêncio não elimina a identificação dos responsáveis pela prisão. A prisão ilegal deve ser relaxada pela autoridade judiciária. A presunção de inocência não impede, por si só, uma prisão cautelar legalmente fundamentada.",
+      "example": "Uma prisão sem base legal deve ser relaxada; isso é diferente de conceder liberdade provisória a uma prisão inicialmente legal.",
+      "recall": {
+        "prompt": "Quem deve relaxar uma prisão ilegal segundo o art. 5º, LXV?",
+        "answer": "A autoridade judiciária."
+      },
+      "exercises": [
+        {
+          "statement": "Após ser presa, uma pessoa pede para permanecer em silêncio e comunicar-se com advogado. Considerando o art. 5º, LXIII, da Constituição, qual providência está correta?",
+          "options": [
+            "Informá-la de seus direitos, assegurando o silêncio e a assistência da família e de advogado.",
+            "Condicionar a assistência de advogado à confissão.",
+            "Obrigá-la a responder para que a prisão seja registrada.",
+            "Informar que o silêncio retira a proteção constitucional."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso LXIII assegura informação sobre direitos, silêncio e assistência; o exercício dessas garantias não depende de confessar.",
+            "A Constituição não condiciona assistência jurídica à confissão.",
+            "O registro da prisão não autoriza suprimir o direito ao silêncio.",
+            "O silêncio é exercício de garantia constitucional."
+          ]
+        },
+        {
+          "statement": "Um candidato afirma que a prisão pode ser mantida, mesmo reconhecidamente ilegal, até o encerramento do processo. Qual regra constitucional contraria essa afirmação?",
+          "options": [
+            "A prisão ilegal deve ser imediatamente relaxada pela autoridade judiciária.",
+            "Toda prisão ilegal se converte automaticamente em pena.",
+            "O relaxamento depende de condenação definitiva.",
+            "A ilegalidade somente pode ser examinada após o cumprimento da pena."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LXV, prevê relaxamento imediato de prisão ilegal pela autoridade judiciária.",
+            "Uma prisão ilegal não se transforma automaticamente em pena.",
+            "O relaxamento protege a liberdade diante da ilegalidade atual, sem aguardar condenação.",
+            "A Constituição exige resposta imediata, não posterior ao cumprimento."
+          ]
+        },
+        {
+          "statement": "Durante um processo administrativo sancionador, pretende-se aplicar penalidade sem permitir que o acusado conheça e conteste a imputação. Qual garantia é diretamente atingida?",
+          "options": [
+            "O contraditório e a ampla defesa.",
+            "O direito de anonimato em documentos oficiais.",
+            "A obrigação de confessar antes de produzir provas.",
+            "A dispensa de motivação para qualquer sanção."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, LV, assegura contraditório e ampla defesa aos litigantes em processo judicial ou administrativo e aos acusados em geral.",
+            "A Constituição veda anonimato na manifestação do pensamento; isso não substitui as garantias do processo.",
+            "Não há obrigação constitucional de confessar.",
+            "Dispensar motivação não é garantia constitucional do acusado."
+          ]
+        },
+        {
+          "statement": "Em uma questão sobre prova, a banca pergunta a regra expressa no art. 5º, LVI, da Constituição. Assinale a resposta correta.",
+          "options": [
+            "São inadmissíveis no processo as provas obtidas por meios ilícitos.",
+            "A ilicitude torna a prova obrigatória quando o fato é grave.",
+            "Qualquer prova ilícita é válida se o acusado permanecer em silêncio.",
+            "A vedação alcança somente processos administrativos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso LVI estabelece a inadmissibilidade de provas obtidas por meios ilícitos; a questão cobra a regra constitucional expressa.",
+            "A gravidade não cria essa autorização genérica.",
+            "O silêncio do acusado não convalida a forma ilícita de obtenção.",
+            "A vedação constitucional não fica restrita ao processo administrativo."
+          ]
+        },
+        {
+          "statement": "Uma pessoa presa solicita saber quem realizou sua prisão e quem conduz o interrogatório policial. Segundo o art. 5º, LXIV, ela:",
+          "options": [
+            "Tem direito à identificação dos responsáveis pela prisão ou pelo interrogatório policial.",
+            "Só tem esse direito se confessar.",
+            "Só tem esse direito após sentença condenatória.",
+            "Não tem esse direito porque os atos são necessariamente anônimos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso LXIV garante a identificação dos responsáveis pela prisão ou pelo interrogatório policial.",
+            "A garantia não depende de confissão.",
+            "A garantia incide na condição de pessoa presa, sem esperar sentença.",
+            "A Constituição assegura identificação, não anonimato obrigatório."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "penas-integridade",
+      "subject": "Direito Constitucional",
+      "title": "Limites das penas e proteção da pessoa presa",
+      "syllabusTopic": "Direitos e deveres individuais e coletivos",
+      "sourceKeys": [
+        "cf-garantias-lote2"
+      ],
+      "concept": "A pena deve ser individualizada e não passa da pessoa do condenado. A reparação do dano e o perdimento de bens podem alcançar sucessores nos termos da lei, limitados ao patrimônio transferido. A Constituição proíbe penas perpétuas, de trabalhos forçados, de banimento e cruéis; a pena de morte tem a exceção constitucional de guerra declarada. A prisão não elimina a integridade física e moral.",
+      "example": "Um herdeiro não cumpre a prisão do condenado; a responsabilidade patrimonial legalmente transmissível é questão diferente e tem limite na herança recebida.",
+      "recall": {
+        "prompt": "A condenação retira do preso o direito à integridade física e moral?",
+        "answer": "Não. A Constituição assegura esse respeito às pessoas presas."
+      },
+      "exercises": [
+        {
+          "statement": "Após a morte de um condenado, alguém propõe que seu filho cumpra o tempo restante de prisão. Qual análise corresponde ao art. 5º, XLV?",
+          "options": [
+            "A proposta viola a pessoalidade da pena; prisão não se transfere ao filho.",
+            "A proposta é válida até o valor dos bens herdados.",
+            "A proposta é válida se o filho residia com o condenado.",
+            "A proposta se torna obrigatória quando a vítima concorda."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Nenhuma pena passa da pessoa do condenado; sucessão patrimonial não permite transferir pena privativa de liberdade.",
+            "O limite patrimonial aplica-se às obrigações previstas no inciso, não ao cumprimento de prisão.",
+            "Coabitação não transfere responsabilidade penal.",
+            "A concordância da vítima não afasta a pessoalidade da pena."
+          ]
+        },
+        {
+          "statement": "No âmbito do art. 5º, XLV, a reparação do dano pode alcançar sucessores nos termos da lei. Qual limite constitucional se aplica à execução contra eles?",
+          "options": [
+            "O valor do patrimônio transferido.",
+            "A totalidade do patrimônio pessoal de cada sucessor, sem limite.",
+            "A renda futura de todos os familiares, ainda que não sejam sucessores.",
+            "O tempo da pena privativa de liberdade do condenado."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A Constituição limita a execução ao valor do patrimônio transferido; não impõe responsabilidade patrimonial ilimitada aos sucessores.",
+            "O inciso estabelece limite, afastando a responsabilização ilimitada.",
+            "O dispositivo não cria obrigação geral de todos os familiares.",
+            "Tempo de prisão não é o limite patrimonial previsto."
+          ]
+        },
+        {
+          "statement": "Assinale a pena expressamente vedada pela Constituição sem a exceção que ela prevê para a pena de morte.",
+          "options": [
+            "Pena de caráter perpétuo.",
+            "Multa.",
+            "Perda de bens.",
+            "Suspensão ou interdição de direitos."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, XLVII, b, proíbe penas de caráter perpétuo.",
+            "A multa integra o rol de penas admitidas pelo inciso XLVI.",
+            "A perda de bens é admitida no inciso XLVI.",
+            "A suspensão ou interdição de direitos é admitida no inciso XLVI."
+          ]
+        },
+        {
+          "statement": "Uma ordem interna determina que pessoas condenadas não precisam ter sua integridade moral respeitada. Qual regra constitucional torna essa ordem incompatível com a Constituição?",
+          "options": [
+            "É assegurado aos presos o respeito à integridade física e moral.",
+            "A integridade moral só protege pessoas absolvidas.",
+            "A integridade moral se extingue com o trânsito em julgado.",
+            "A integridade física pode ser preservada em troca da renúncia à integridade moral."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º, XLIX, protege a integridade física e moral dos presos, sem excluir condenados.",
+            "A garantia é expressamente assegurada aos presos.",
+            "A condenação não extingue essa garantia.",
+            "As duas dimensões da integridade são protegidas; uma não substitui a outra."
+          ]
+        },
+        {
+          "statement": "Conforme o art. 5º, XLVIII, o cumprimento da pena deve ocorrer em estabelecimentos distintos segundo quais critérios?",
+          "options": [
+            "A natureza do delito, a idade e o sexo do apenado.",
+            "A preferência partidária, a profissão e a renda familiar.",
+            "A nacionalidade, o grau de publicidade do caso e a religião.",
+            "A vontade exclusiva da vítima, a profissão e a escolaridade."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Esses são os critérios expressamente indicados no inciso XLVIII.",
+            "O inciso não enumera preferência partidária, profissão e renda.",
+            "Não é esse o conjunto de critérios previsto no dispositivo.",
+            "O inciso não atribui essa classificação à vontade exclusiva da vítima."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "excludentes-ilicitude",
+      "subject": "Direito Penal e Processual Penal",
+      "title": "Exclusão da ilicitude e excesso",
+      "syllabusTopic": "Tipicidade, ilicitude, culpabilidade e exclusões",
+      "sourceKeys": [
+        "cp-excludentes-lote2"
+      ],
+      "concept": "As hipóteses do art. 23 do Código Penal incluem estado de necessidade, legítima defesa, estrito cumprimento de dever legal e exercício regular de direito. Legítima defesa exige agressão injusta atual ou iminente e uso moderado dos meios necessários. Estado de necessidade envolve perigo atual e outros requisitos do art. 24. Quem atua sob uma excludente pode responder pelo excesso doloso ou culposo.",
+      "example": "Repelir uma agressão atual com o meio necessário e moderado é diferente de retaliar depois que o perigo cessou. O fim da agressão altera a análise da legítima defesa.",
+      "recall": {
+        "prompt": "Uma excludente de ilicitude afasta qualquer responsabilidade por excesso?",
+        "answer": "Não. O art. 23 prevê responsabilidade pelo excesso doloso ou culposo."
+      },
+      "exercises": [
+        {
+          "statement": "Um agente repele uma agressão injusta que está acontecendo, utilizando moderadamente os meios necessários para proteger outra pessoa. Considerados esses elementos e o art. 25 do Código Penal, a hipótese é de:",
+          "options": [
+            "Legítima defesa de terceiro.",
+            "Estado de necessidade apenas por atuar em favor de outra pessoa.",
+            "Legítima defesa somente se a vítima for o próprio agente.",
+            "Inexigibilidade de conduta diversa automaticamente presumida."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A legítima defesa pode proteger direito próprio ou de outrem; o caso apresenta agressão injusta atual e reação moderada.",
+            "A agressão injusta e a reação descrita caracterizam legítima defesa, não necessidade pela mera presença de terceiro.",
+            "O art. 25 também protege direito de outrem.",
+            "O enunciado descreve requisitos de uma excludente de ilicitude, não a hipótese alternativa."
+          ]
+        },
+        {
+          "statement": "Encerrada uma agressão, sem risco de continuidade ou nova agressão iminente, o agente resolve castigar o agressor. À luz do art. 25, a simples invocação de legítima defesa:",
+          "options": [
+            "Não se sustenta, pois retaliação após cessar a agressão não preenche o requisito de atualidade ou iminência.",
+            "É suficiente sempre que a pessoa castigada iniciou o conflito.",
+            "Dispensa a moderação quando a agressão inicial foi grave.",
+            "Transforma qualquer vingança posterior em reação necessária."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O enunciado afasta agressão atual e iminente; legítima defesa não autoriza punição privada posterior.",
+            "Ter iniciado o conflito não autoriza qualquer conduta futura contra a pessoa.",
+            "A moderação é requisito legal e não desaparece pela gravidade inicial.",
+            "Vingança posterior não equivale a repelir agressão atual ou iminente."
+          ]
+        },
+        {
+          "statement": "Durante um incêndio, um particular sem dever legal de enfrentar o perigo quebra uma porta para salvar alguém de perigo atual, que não provocou voluntariamente e não podia evitar de outro modo; nas circunstâncias, não era razoável exigir o sacrifício da vida ameaçada. Que instituto corresponde aos elementos descritos?",
+          "options": [
+            "Estado de necessidade.",
+            "Legítima defesa, porque toda ameaça é agressão injusta.",
+            "Concurso de pessoas, independentemente de outro participante.",
+            "Erro de proibição necessariamente inevitável."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O caso reúne os requisitos do art. 24: perigo atual, inevitabilidade por outro meio e proteção de direito cujo sacrifício não era razoável exigir.",
+            "Um perigo decorrente de incêndio não é, por si só, agressão injusta de alguém.",
+            "O instituto relevante é a exclusão da ilicitude, não a simples participação de várias pessoas.",
+            "O enunciado descreve perigo e salvamento, não desconhecimento da ilicitude."
+          ]
+        },
+        {
+          "statement": "Um agente inicialmente atua em legítima defesa, mas ultrapassa os limites da reação permitida. Segundo o parágrafo único do art. 23, o excesso:",
+          "options": [
+            "Pode gerar responsabilidade quando doloso ou culposo.",
+            "É sempre irrelevante porque a reação começou de modo legítimo.",
+            "Só gera responsabilidade se doloso, nunca se culposo.",
+            "É automaticamente coberto pelo cargo público do agente."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A norma prevê que o agente responde pelo excesso doloso ou culposo; a análise depende das circunstâncias e do tipo aplicável.",
+            "Uma atuação inicialmente justificada não torna ilimitada a reação.",
+            "O dispositivo menciona expressamente também o excesso culposo.",
+            "Cargo público não concede imunidade geral para excessos."
+          ]
+        },
+        {
+          "statement": "Uma banca pede apenas o reconhecimento das hipóteses do art. 23 do Código Penal. Qual conjunto contém exclusivamente excludentes de ilicitude previstas nesse artigo?",
+          "options": [
+            "Estado de necessidade, legítima defesa, estrito cumprimento de dever legal e exercício regular de direito.",
+            "Legítima defesa, arrependimento posterior e prescrição.",
+            "Estado de necessidade, menoridade e reincidência.",
+            "Exercício regular de direito, erro de proibição e perdão judicial."
+          ],
+          "answer": 0,
+          "reasons": [
+            "Essas são as quatro hipóteses contempladas nos incisos do art. 23.",
+            "Arrependimento posterior e prescrição não são excludentes de ilicitude desse artigo.",
+            "Menoridade e reincidência não integram esse rol.",
+            "Erro de proibição e perdão judicial são institutos distintos do rol de excludentes de ilicitude."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "flagrante-modalidades",
+      "subject": "Legislação Básica",
+      "title": "Prisão em flagrante: hipóteses legais",
+      "syllabusTopic": "CPP: arts. 301 a 307",
+      "sourceKeys": [
+        "cpp-flagrante-lote2"
+      ],
+      "concept": "O CPP prevê flagrante quando alguém está cometendo a infração, acaba de cometê-la, é perseguido logo após em situação indicativa de autoria ou é encontrado logo depois com elementos que façam presumir a autoria. Em infração permanente, o flagrante dura enquanto a permanência não cessa. O art. 301 diferencia a faculdade de qualquer pessoa e o dever das autoridades policiais e de seus agentes.",
+      "example": "Encontrar alguém logo depois do fato com objetos que façam presumir autoria difere de persegui-lo logo após. Os requisitos concretos são mais importantes que decorar uma duração fixa.",
+      "recall": {
+        "prompt": "O CPP estabelece uma regra geral de flagrante baseada apenas em ter passado menos de 24 horas?",
+        "answer": "Não. É necessário enquadramento nas hipóteses legais; não há esse prazo geral fixo."
+      },
+      "exercises": [
+        {
+          "statement": "Uma pessoa presencia um crime em execução e afirma que somente policiais podem realizar a prisão em flagrante. Considerando o art. 301 do CPP, essa afirmação está:",
+          "options": [
+            "Errada, porque qualquer do povo pode prender quem for encontrado em flagrante delito.",
+            "Correta, pois a faculdade de qualquer pessoa depende de mandado judicial.",
+            "Correta, porque o particular somente pode agir depois da condenação.",
+            "Errada, porque todos os particulares têm exatamente o mesmo dever funcional dos policiais."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 301 permite a prisão por qualquer do povo e impõe dever às autoridades policiais e seus agentes.",
+            "A hipótese de flagrante não exige mandado como condição dessa faculdade.",
+            "O flagrante se relaciona ao fato em curso ou às demais hipóteses legais, não à condenação.",
+            "A norma usa poderá para qualquer do povo e deverão para autoridades policiais e agentes."
+          ]
+        },
+        {
+          "statement": "Uma equipe encontra alguém enquanto pratica a infração penal. Qual hipótese do art. 302 do CPP está diretamente descrita?",
+          "options": [
+            "A de quem está cometendo a infração penal.",
+            "A de quem é apenas suspeito sem vínculo com fato concreto.",
+            "A de quem foi condenado por qualquer fato anterior.",
+            "A de quem encerrou o cumprimento de uma pena."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso I trata de quem está cometendo a infração; o enunciado descreve flagrante em execução.",
+            "Suspeita genérica não substitui a hipótese legal.",
+            "Uma condenação anterior, isoladamente, não caracteriza flagrante desse novo fato.",
+            "Fim de pena não corresponde à prática atual de infração."
+          ]
+        },
+        {
+          "statement": "Logo após uma infração, o ofendido persegue o suspeito em situação que faz presumir ser ele o autor. Qual análise corresponde ao art. 302, III?",
+          "options": [
+            "A perseguição pelo ofendido também pode configurar a hipótese legal de flagrante.",
+            "A perseguição só vale se iniciada por autoridade policial.",
+            "A presença do ofendido elimina qualquer possibilidade de flagrante.",
+            "O flagrante depende de sentença judicial anterior."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso III admite perseguição pela autoridade, pelo ofendido ou por qualquer pessoa, atendidos os requisitos.",
+            "O dispositivo não restringe os perseguidores à autoridade.",
+            "O ofendido é expressamente contemplado na hipótese.",
+            "O flagrante nessa situação não depende de sentença anterior."
+          ]
+        },
+        {
+          "statement": "Logo depois de uma infração, alguém é encontrado com objetos que, nas circunstâncias, fazem presumir sua autoria. Sem afirmar culpa definitiva, qual hipótese do CPP corresponde ao caso?",
+          "options": [
+            "O flagrante do art. 302, IV.",
+            "A prisão automática por condenação transitada em julgado.",
+            "Uma prisão sempre ilegal por faltar perseguição.",
+            "Uma hipótese que depende exclusivamente de ter ocorrido em até 24 horas."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O inciso IV prevê o encontro logo depois com instrumentos, armas, objetos ou papéis indicativos de autoria; não equivale a condenação.",
+            "O enunciado não descreve sentença definitiva.",
+            "O inciso IV é distinto da perseguição do inciso III; perseguição não é requisito dessa modalidade.",
+            "O CPP não substitui os requisitos por um prazo geral de 24 horas."
+          ]
+        },
+        {
+          "statement": "Em uma infração de natureza permanente, a execução continua ao longo do tempo. Segundo o art. 303 do CPP, o agente é considerado em flagrante:",
+          "options": [
+            "Enquanto não cessar a permanência.",
+            "Somente no primeiro minuto da infração.",
+            "Somente nas primeiras 24 horas, independentemente da permanência.",
+            "Apenas após autorização judicial específica que reconheça a permanência."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 303 vincula o estado de flagrância à continuidade da permanência da infração.",
+            "O dispositivo não limita o flagrante ao instante inicial.",
+            "Não há essa limitação temporal fixa no artigo.",
+            "O artigo não condiciona essa regra a reconhecimento judicial prévio da permanência."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cadh-detencao",
+      "subject": "Direitos Humanos",
+      "title": "Convenção Americana: detenção e dignidade",
+      "syllabusTopic": "Sistema Interamericano de Direitos Humanos",
+      "sourceKeys": [
+        "cadh-detencao-lote2"
+      ],
+      "concept": "A Convenção Americana protege a integridade física, psíquica e moral e veda detenção arbitrária. A pessoa detida deve ser informada das razões da detenção e conduzida sem demora a autoridade com funções judiciais. A legalidade da prisão pode ser submetida a juiz ou tribunal. Processados devem ser separados de condenados, salvo circunstâncias excepcionais, respeitando sua condição de não condenados.",
+      "example": "Segurança da custódia e respeito à dignidade são exigências que devem coexistir: a privação de liberdade não autoriza tratamento degradante.",
+      "recall": {
+        "prompt": "A prisão retira a dignidade protegida pela Convenção Americana?",
+        "answer": "Não. A privação de liberdade deve respeitar a dignidade inerente ao ser humano."
+      },
+      "exercises": [
+        {
+          "statement": "Uma pessoa privada de liberdade é submetida a humilhação deliberada sob a justificativa de que perdeu seus direitos ao ser presa. À luz do art. 5º da Convenção Americana, qual análise é correta?",
+          "options": [
+            "A privação de liberdade não afasta o respeito à dignidade nem autoriza tratamento degradante.",
+            "A proteção da integridade termina com a prisão.",
+            "A integridade psíquica não é protegida pela Convenção.",
+            "O tratamento degradante é permitido se não deixar lesão física."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 5º protege integridade física, psíquica e moral e exige respeito à dignidade da pessoa privada de liberdade.",
+            "A Convenção expressamente protege quem está privado de liberdade.",
+            "A integridade psíquica integra a proteção expressa.",
+            "A vedação a tratamento degradante não depende de marca física."
+          ]
+        },
+        {
+          "statement": "Segundo o art. 7º, item 4, da Convenção Americana, a pessoa detida deve:",
+          "options": [
+            "Ser informada das razões da detenção e notificada sem demora da acusação ou das acusações.",
+            "Receber informação sobre a acusação somente depois da condenação.",
+            "Ser informada apenas se renunciar ao direito de defesa.",
+            "Descobrir as razões da prisão exclusivamente por notícias de imprensa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "A informação sobre a detenção e a notificação sem demora são garantias expressas do dispositivo.",
+            "O artigo não autoriza adiar a informação até a condenação.",
+            "A garantia não depende de renúncia à defesa.",
+            "Informação por imprensa não substitui a garantia de comunicação à pessoa detida."
+          ]
+        },
+        {
+          "statement": "Uma pessoa detida solicita controle judicial da legalidade da prisão. Conforme o art. 7º, item 6, da Convenção Americana, o recurso:",
+          "options": [
+            "Pode ser apresentado pela própria pessoa ou por outra pessoa, perante juiz ou tribunal competente.",
+            "Só pode ser apresentado pelo agente que realizou a prisão.",
+            "Só pode ser analisado depois do cumprimento integral da pena.",
+            "É vedado quando a prisão é considerada ilegal pela defesa."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O artigo assegura recurso para decisão sem demora sobre a legalidade e admite interposição própria ou por outra pessoa.",
+            "A legitimidade não fica restrita ao agente da prisão.",
+            "O controle deve ocorrer sem demora, não após a pena.",
+            "A alegação de ilegalidade é justamente compatível com o objeto do recurso."
+          ]
+        },
+        {
+          "statement": "Uma unidade reúne processados e condenados por mera conveniência, sem analisar circunstâncias excepcionais nem adequar o tratamento à condição processual. Qual regra do art. 5º, item 4, da Convenção Americana deve orientar a decisão?",
+          "options": [
+            "Separar processados de condenados, salvo circunstâncias excepcionais, com tratamento adequado à condição de não condenados.",
+            "Separar apenas pessoas de religiões diferentes.",
+            "Tratar todo processado como definitivamente condenado.",
+            "Manter sempre ambos os grupos juntos, sem exceções."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O item 4 estabelece essa separação como regra e exige tratamento adequado da pessoa ainda não condenada.",
+            "Religião não é o critério estabelecido nesse dispositivo.",
+            "Processados não devem ser tratados como condenados definitivos por mera conveniência.",
+            "A regra do artigo é de separação, com ressalva de circunstâncias excepcionais."
+          ]
+        },
+        {
+          "statement": "Segundo o art. 7º, item 5, da Convenção Americana, a pessoa detida deve ser conduzida sem demora à presença de:",
+          "options": [
+            "Um juiz ou outra autoridade autorizada por lei a exercer funções judiciais.",
+            "Qualquer servidor administrativo, mesmo sem funções judiciais.",
+            "Somente um profissional de comunicação da unidade.",
+            "Uma autoridade judicial apenas depois da condenação definitiva."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O dispositivo exige autoridade com funções judiciais; o controle não aguarda condenação definitiva.",
+            "A mera condição de servidor não satisfaz a exigência de funções judiciais.",
+            "O artigo não atribui esse controle a profissional de comunicação.",
+            "Sem demora é incompatível com aguardar o trânsito em julgado."
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "competencia-delegacao-federal",
+      "subject": "Direito Administrativo",
+      "title": "Competência, delegação e avocação na Lei 9.784",
+      "syllabusTopic": "Competência, distribuição, avocação e delegação",
+      "sourceKeys": [
+        "processo-federal-lote2"
+      ],
+      "concept": "Na Lei federal 9.784/1999, competência é irrenunciável, ressalvadas delegação e avocação legalmente admitidas. A delegação pode alcançar órgão ou titular sem subordinação hierárquica, quando conveniente pelas razões previstas em lei. Não se delegam atos normativos, decisões de recursos administrativos ou matérias de competência exclusiva. Avocação exige caráter excepcional, motivo relevante justificado, temporariedade e órgão hierarquicamente inferior. Estas questões cobram a lei federal, não atribuem automaticamente suas regras ao processo estadual de MT.",
+      "example": "Delegar parte de uma competência é diferente de avocar temporariamente uma competência de órgão inferior. Em ambos os casos, os limites legais precisam ser observados.",
+      "recall": {
+        "prompt": "A Lei 9.784 permite delegar decisões de recursos administrativos?",
+        "answer": "Não. O art. 13 veda essa delegação."
+      },
+      "exercises": [
+        {
+          "statement": "Uma questão cobra expressamente a Lei federal 9.784/1999. A autoridade pretende delegar a decisão de recursos administrativos. Segundo o art. 13, essa medida:",
+          "options": [
+            "É vedada, pois decisões de recursos administrativos não podem ser objeto de delegação.",
+            "É obrigatória sempre que houver muitos recursos.",
+            "É permitida apenas porque a autoridade considera a medida eficiente.",
+            "Transfere definitivamente a titularidade da competência."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 13, II, inclui decisões de recursos administrativos entre as matérias indelegáveis.",
+            "Volume de recursos não afasta a vedação legal.",
+            "A conveniência não supera uma proibição expressa de delegação.",
+            "Delegação não implica transferência definitiva da titularidade; aqui ainda existe vedação."
+          ]
+        },
+        {
+          "statement": "De acordo com o art. 12 da Lei federal 9.784/1999, a delegação de parte da competência a outro órgão ou titular:",
+          "options": [
+            "Pode ocorrer mesmo sem subordinação hierárquica, quando conveniente pelas razões previstas em lei e sem impedimento legal.",
+            "Exige sempre que o destinatário seja subordinado hierárquico.",
+            "Permite delegar qualquer matéria, inclusive competência exclusiva.",
+            "Dispensa a observância de qualquer impedimento legal."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 12 expressamente admite destinatário não subordinado, ressalvado impedimento legal e observadas suas condições.",
+            "A subordinação não é requisito universal dessa delegação.",
+            "O art. 13 preserva matérias indelegáveis, incluindo competência exclusiva.",
+            "A ausência de impedimento legal é condição expressa."
+          ]
+        },
+        {
+          "statement": "Um superior quer avocar competência de órgão inferior. À luz do art. 15 da Lei federal 9.784/1999, qual descrição atende aos requisitos legais?",
+          "options": [
+            "Avocação temporária, excepcional e fundada em motivos relevantes devidamente justificados.",
+            "Avocação definitiva de qualquer competência, sem justificativa.",
+            "Avocação rotineira de órgão sem relação hierárquica.",
+            "Avocação para renunciar de forma permanente à competência do superior."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 15 exige excepcionalidade, motivo relevante justificado, temporariedade e órgão hierarquicamente inferior.",
+            "A descrição elimina limites expressos da lei.",
+            "A regra exige órgão hierarquicamente inferior e caráter excepcional.",
+            "Avocar é chamar para si a execução de competência, não renunciar à própria competência."
+          ]
+        },
+        {
+          "statement": "Após ato de delegação válido, qual regra do art. 14 da Lei federal 9.784/1999 se aplica às decisões praticadas pelo delegado?",
+          "options": [
+            "Devem mencionar expressamente a qualidade de delegação e são consideradas editadas pelo delegado.",
+            "Devem omitir a delegação para aparentar decisão do delegante.",
+            "São sempre consideradas editadas pelo delegante, sem qualquer referência ao delegado.",
+            "Dispensam os limites e objetivos fixados no ato de delegação."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 14, §3º, impõe a menção expressa e considera o ato editado pelo delegado.",
+            "Omitir a qualidade contraria o dispositivo.",
+            "A lei as considera editadas pelo delegado.",
+            "O ato de delegação define limites e objetivos que continuam aplicáveis."
+          ]
+        },
+        {
+          "statement": "Um órgão federal pretende delegar a edição de atos normativos. Considerando apenas a Lei 9.784/1999, qual resposta é correta?",
+          "options": [
+            "A edição de atos de caráter normativo é matéria que não pode ser delegada.",
+            "A edição de atos normativos pode ser delegada sem qualquer restrição.",
+            "A vedação existe apenas para documentos com menos de uma página.",
+            "A vedação pode ser ignorada por acordo verbal entre autoridades."
+          ],
+          "answer": 0,
+          "reasons": [
+            "O art. 13, I, veda delegação da edição de atos de caráter normativo.",
+            "A lei estabelece restrição expressa.",
+            "Tamanho do documento não é o critério da vedação.",
+            "Acordo verbal não afasta proibição legal."
+          ]
+        }
+      ]
+    }
+  ]
+}
