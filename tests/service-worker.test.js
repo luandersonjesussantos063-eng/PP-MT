@@ -15,7 +15,7 @@ test('preparo offline inclui todos os módulos locais, áudio, imagens e bibliot
 });
 test('reabertura e arquivos do estudo continuam acessíveis sem nenhuma resposta de rede',async()=>{
  const w=worker();await w.install();
- for(const path of ['index.html','app.js?v=2.10.2','auth.js?v=47','assets/vendor/supabase-2.117.2.js','syllabus-data.js?v=47']){const r=await w.request('https://app.test/PP-MT/'+path,path==='index.html'?'navigate':'cors');assert.equal(r.status,200,path)}
+ for(const path of ['index.html','app.js?v=2.11.0','auth.js?v=47','assets/vendor/supabase-2.117.2.js','syllabus-data.js?v=47']){const r=await w.request('https://app.test/PP-MT/'+path,path==='index.html'?'navigate':'cors');assert.equal(r.status,200,path)}
  const nav=await w.request('https://app.test/PP-MT/?reopen=1','navigate');assert.match(await nav.text(),/index.html/);
  assert.equal(await w.request('https://fermfbmhwlafwopwndoj.supabase.co/auth/v1/user'),null);
 });
