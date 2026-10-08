@@ -379,3 +379,8 @@ body{min-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-te
 }
 .question .option.correct .letter{border-color:#a9e976;color:#d9ffc4}
 .question .option.wrong .letter{border-color:#ef8a91;color:#ffd6da}
+
+/* Review actions remain visible in the document flow. */
+.review-learning-card>details{padding:14px 0;border-top:1px solid var(--line)}
+.review-learning-card>details summary{cursor:pointer;color:var(--accent);line-height:1.5}
+@media(max-width:640px){#reviewTransfer,#reviewNext{width:100%;min-height:48px}}
