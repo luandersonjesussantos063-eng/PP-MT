@@ -131,8 +131,12 @@ async function action(value){
   notice('Solicitação registrada. Verifique a situação antes de gerar outro pagamento.');
   return data;
  }catch(e){
-  // Um erro após o POST não comprova que nenhuma solicitação foi criada.
-  // Faça uma consulta de leitura para identificar checkout eventualmente já existente.
+  // Não repetir automaticamente chamadas de status que já falharam.
+  if(value==='status'){
+   showError('Não foi possível verificar seu plano. Tente novamente antes de gerar outra cobrança.');
+   return null;
+  }
+  // Falhar após o POST não comprova que nenhuma cobrança foi registrada.
   try{
    const current=await runMonthlyBilling('status');
    render(current);
@@ -148,6 +152,7 @@ async function reconcileAfterCheckout(){
  const outcome=new URLSearchParams(location.search).get('resultado');
  if(!['aprovado','pendente','falhou'].includes(outcome))return;
  const data=lastBilling;
+ if(!data)return;
  if(outcome==='falhou'){
   notice('O pagamento não foi concluído. Não pague novamente sem conferir sua situação.');
  }else if(data?.premium===true){
