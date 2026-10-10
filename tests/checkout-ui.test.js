@@ -19,8 +19,10 @@ test('checkout mostra somente preço, planos e mensagens essenciais',()=>{
  assert.match(html,/id="offer-panel"/);
  assert.match(html,/id="error-panel"/);
  assert.match(html,/id="pending-panel"/);
- assert.match(html,/id="switch-to-pix-btn"/);
- assert.match(html,/Trocar para Pix/);
+ assert.match(html,/id="change-method-btn"/);
+ assert.match(html,/id="error-change-method-btn"/);
+ assert.match(html,/Voltar e escolher outra forma de pagamento/);
+ assert.doesNotMatch(html,/id="switch-to-pix-btn"/);
  assert.match(html,/id="manage-panel"/);
  assert.doesNotMatch(html,/name="pay-method"/);
  assert.match(html,/id="paid-panel"/);
@@ -46,7 +48,22 @@ test('interface compacta mantém integração, confirmação e cancelamento',()=
  assert.match(js,/confirm\(/);
  assert.match(js,/runMonthlyBilling/);
  assert.match(js,/enabled=data\.enabled===true/);
- assert.match(js,/cs==='pending'/);
- assert.match(js,/action\('card_cancel',\{switchToPix:true\}\)/);
- assert.match(js,/updated\?\.card\?\.state==='cancelled'/);
+ assert.match(js,/const manualPending=pendingStates\.has\(ms\)/);
+ assert.match(js,/function openPaymentOptions\(/);
+ assert.match(js,/change-method-btn/);
+ assert.match(js,/error-change-method-btn/);
+ assert.match(js,/async function startMethod\(method\)/);
+ assert.match(js,/runMonthlyBilling\('card_cancel'\)/);
+ assert.match(js,/runMonthlyBilling\('cancel_manual'\)/);
+ const auth=readFileSync(new URL('../auth.js',import.meta.url),'utf8');
+ assert.match(auth,/\['status','manual_checkout','card_start','card_cancel','cancel_manual','readiness'\]/);
+});
+
+test('voltar às formas de pagamento não cria cobrança e erro mantém saída visível',()=>{
+ const page=read('assinar.html'),js=read('assinar.js');
+ assert.match(page,/id="pending-panel"[\\s\\S]*id="change-method-btn"/);
+ assert.match(page,/id="error-panel"[\\s\\S]*id="error-change-method-btn"/);
+ assert.match(js,/function openPaymentOptions\(\)\{[\s\S]*show\('offer'\);/);
+ assert.match(js,/startMethod\('manual'\)/);
+ assert.match(js,/startMethod\('card'\)/);
 });
