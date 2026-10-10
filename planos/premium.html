@@ -2,39 +2,75 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b111b">
-<title>PPMT Premium | Treino exclusivo</title>
+<title>Central Tática Premium | PP-MT</title>
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
-<link rel="stylesheet" href="./premium.css?v=2.15.0">
-<script type="module" src="./premium.js?v=2.15.0"></script>
+<link rel="stylesheet" href="./premium.css?v=2.15.1-elite">
+<script type="module" src="./premium.js?v=2.15.1-elite"></script>
 </head><body>
 <header class="top"><a class="brand" href="../"><img src="../icon.svg" alt="" width="42" height="46"><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a><nav><a href="../#plano">Meu plano</a><a href="./assinar.html">Assinatura</a></nav></header>
-<main class="wrap premium-page" id="conteudo">
-<p class="eyebrow">TREINO PREMIUM · POLÍCIA PENAL MT</p>
-<h1>Questões comentadas</h1>
-<p class="premium-sub">Treino exclusivo, com correção e explicação após cada resposta.</p>
+<main class="wrap premium-page premium-elite" id="conteudo">
+<section class="elite-hero">
+  <div class="elite-stamp"><span class="elite-light"></span> ÁREA RESTRITA · OPERAÇÃO ELITE</div>
+  <div class="elite-hero-grid">
+    <div><p class="eyebrow">PPMT PREMIUM · CENTRAL TÁTICA</p>
+    <h1>Treine com <em>inteligência.</em></h1>
+    <p class="premium-sub">Questões exclusivas comentadas, revisão dos seus erros, treinos direcionados e desempenho real por disciplina. Um centro de preparação para a Polícia Penal de Mato Grosso.</p></div>
+    <div class="elite-badge" aria-hidden="true"><img src="../icon.svg" alt=""><b>PP / MT</b><span>MISSÃO PREMIUM</span></div>
+  </div>
+  <div class="elite-hero-footer"><span>● BANCO PROTEGIDO</span><span>● CORREÇÃO NO SERVIDOR</span><span>● FOCO EM EVOLUÇÃO</span></div>
+</section>
 <p id="feedback" role="status" aria-live="polite">Verificando seu acesso…</p>
 <section class="premium-card" id="login-panel" hidden>
-<h2>Entrar na conta</h2>
-<form id="login-form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required>
-<label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
-<button class="button primary" id="login-btn">Entrar</button></form>
+ <h2>Identifique-se para iniciar</h2>
+ <form id="login-form">
+ <label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required>
+ <label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
+ <button class="button primary" id="login-btn">Entrar na central tática →</button></form>
 </section>
-<section class="premium-card" id="locked-panel" hidden>
-<h2>Acesso Premium</h2><p>O banco exclusivo é liberado quando a mensalidade é aprovada.</p>
-<a class="button primary" href="./assinar.html">Ver mensalidade — R$ 19,99</a>
+<section class="premium-card elite-locked" id="locked-panel" hidden>
+ <div class="elite-stamp">ACESSO PREMIUM</div>
+ <h2>Desbloqueie a sua central avançada</h2>
+ <p>O estudo gratuito continua disponível. O Premium acrescenta o banco exclusivo, cinco modos de treino e análises por matéria.</p>
+ <a class="button primary" href="./assinar.html">Ativar Premium · R$ 19,99/mês →</a>
+ <a class="button secondary" href="../#inicio">Continuar no grátis</a>
 </section>
-<section class="premium-card" id="training-panel" hidden>
-<div class="premium-top"><span id="subject"></span><span id="progress"></span></div>
-<h2 id="question-title"></h2>
-<p id="question-text" class="premium-question"></p>
-<div id="choices" class="premium-choices" role="group" aria-label="Alternativas"></div>
-<div id="answer-feedback" class="premium-explanation" hidden>
-<strong id="answer-title"></strong><p id="explanation"></p>
-</div>
-<div class="premium-controls"><button class="button primary" type="button" id="next-btn">Próxima questão →</button></div>
+<section id="insights-panel" class="elite-section" hidden>
+ <div class="elite-section-heading"><div><p class="eyebrow">INTELIGÊNCIA DE ESTUDOS</p><h2>Seu painel de operação</h2></div><span id="elite-validity" class="elite-validity"></span></div>
+ <div class="elite-stats">
+  <div class="elite-stat"><small>PRECISÃO</small><strong id="stat-accuracy">—</strong><span>Acertos no treino exclusivo</span></div>
+  <div class="elite-stat"><small>QUESTÕES RESPONDIDAS</small><strong id="stat-answered">—</strong><span>Inclui revisões</span></div>
+  <div class="elite-stat"><small>INÉDITAS DISPONÍVEIS</small><strong id="stat-remaining">—</strong><span>Questões ainda não vistas</span></div>
+  <div class="elite-stat"><small>ERROS PARA REVISAR</small><strong id="stat-errors">—</strong><span>Conforme sua última resposta</span></div>
+ </div>
+ <div class="premium-card elite-subject-panel"><div class="elite-section-heading"><div><h3>Desempenho por matéria</h3><p class="premium-sub">Taxa de acerto e quantidade de respostas no banco exclusivo</p></div><span class="elite-pill">ANÁLISE PREMIUM</span></div>
+  <div id="subject-stats" class="elite-subject-stats"></div>
+ </div>
 </section>
-<p class="premium-note">O acervo Premium é protegido no servidor. O estudo gratuito do PP-MT continua disponível.</p>
+<section class="premium-card elite-modes" id="modes-panel" hidden>
+ <p class="eyebrow">ESCOLHA SUA MISSÃO</p><h2>Como vamos treinar hoje?</h2>
+ <div id="mode-buttons" class="elite-modes-grid" role="group" aria-label="Modalidades de treino">
+ <button type="button" data-mode="mixed" class="elite-mode is-selected"><b>◈ Treino misto</b><span>Questões variadas, priorizando as inéditas</span></button>
+ <button type="button" data-mode="wrong" class="elite-mode"><b>↻ Recuperação de erros</b><span>Revisite questões em que você falhou</span></button>
+ <button type="button" data-mode="new" class="elite-mode"><b>✦ Questões inéditas</b><span>Responda o que ainda não viu</span></button>
+ <button type="button" data-mode="weak" class="elite-mode"><b>⌁ Ponto fraco</b><span>Prioridade à sua matéria menos dominada</span></button>
+ <button type="button" data-mode="subject" class="elite-mode"><b>▤ Por disciplina</b><span>Concentre-se em uma matéria específica</span></button>
+ </div>
+ <div id="subject-filter-wrap" class="elite-filter" hidden>
+  <label for="subject-filter">Escolha a matéria</label>
+  <select id="subject-filter"></select>
+ </div>
+ <div class="elite-start-row"><p id="mode-note" class="premium-sub">Uma nova questão exclusiva por vez, com correção detalhada.</p><button class="button primary" id="start-mode" type="button">Iniciar missão →</button></div>
+</section>
+<section class="premium-card elite-training" id="training-panel" hidden>
+ <div class="premium-top"><span id="subject"></span><span id="progress"></span></div>
+ <div class="elite-question-head"><span class="elite-pill">QUESTÃO EXCLUSIVA</span><h2 id="question-title"></h2></div>
+ <p id="question-text" class="premium-question"></p>
+ <div id="choices" class="premium-choices" role="group" aria-label="Alternativas"></div>
+ <div id="answer-feedback" class="premium-explanation" hidden><strong id="answer-title"></strong><p id="explanation"></p></div>
+ <div class="premium-controls"><button class="button primary" type="button" id="next-btn">Próxima questão →</button></div>
+</section>
+<p class="premium-note">O conteúdo exclusivo e o gabarito são protegidos no servidor. As estatísticas acima representam somente o seu treino Premium, não as questões gratuitas.</p>
 </main>
 <footer class="wrap"><a class="brand" href="../">PPMT</a><p>NovaByte Soluções</p></footer>
 </body></html>
