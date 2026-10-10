@@ -206,3 +206,14 @@ export async function runMercadoPagoDiagnostic(){
   throw new Error('O servidor retornou um diagnóstico incompleto.');
  return data;
 }
+
+/** Registers or removes a Web Push endpoint belonging to the verified logged-in user. */
+export async function pushSubscriptionAction(action, subscription){
+ if(!['subscribe','unsubscribe'].includes(action))throw new Error('Ação de notificações inválida.');
+ if(!navigator.onLine)throw new Error('Conecte-se à internet.');
+ const user=await verifiedUser();
+ if(!user)throw new Error('Entre na conta para ativar avisos.');
+ const {data,error}=await client().functions.invoke('ppmt-push',{body:{action,subscription}});
+ if(error||!data?.ok)throw new Error('Não foi possível salvar a permissão de notificações.');
+ return true;
+}
