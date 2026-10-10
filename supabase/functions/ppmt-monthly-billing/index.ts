@@ -6,6 +6,12 @@ function checked<T>(r:{data:T,error:unknown}):T{
 }
 const db={
  async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true'&&Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));},
+ async privatePilot(id:string){
+  if(Deno.env.get('PPMT_MONTHLY_PRIVATE_PILOT_ENABLED')!=='true' ||
+    Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')!=='true' ||
+    !Deno.env.get('MP_WEBHOOK_SECRET'))return false;
+  return this.isTester(id);
+ },
  async isTester(id:string){return Boolean(checked(await admin.from('billing_sandbox_testers').select('user_id').eq('user_id',id).maybeSingle()));},
  async diagnostics(){return {
    webhook_secret_present:Boolean(Deno.env.get('MP_WEBHOOK_SECRET')),

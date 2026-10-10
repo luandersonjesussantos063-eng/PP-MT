@@ -78,3 +78,10 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - **Condições finais antes do lançamento:** verificar mercadoria/benefícios anunciados, completar dados de identificação comercial e atendimento nos Termos, revisar política de reembolso, testar pagamento de R$19,99 e webhook assinado, conferir liberação real do treino Premium, renovação mensal, suspensão e cancelamento com cartão de produção, e plano de recuperação para cobranças antigas. Sem testes reais aprovados, não alterar as flags comerciais.
 - **Limite gratuito de 10 questões/dia ainda não aplicado**; o acervo público anterior continua disponível sem cobrança. O preço de R$19,99 refere-se ao treino Premium exclusivo, e não ao bloqueio retroativo das questões existentes.
 - E-mails de aviso de vencimento ainda não são enviados: as cobranças mensais manuais podem ser acessadas dentro do site.
+
+## Piloto comercial privado antes da abertura geral
+
+- A flag `PPMT_MONTHLY_PRIVATE_PILOT_ENABLED=true`, em conjunto com `PPMT_PREMIUM_DELIVERY_READY=true` e `MP_WEBHOOK_SECRET` configurado, libera checkout REAL de R$ 19,99 **somente** para usuários previamente cadastrados em `billing_sandbox_testers`.
+- A abertura pública `PPMT_MONTHLY_BILLING_ENABLED` continua `false` ou ausente. Alunos comuns recebem erro de venda indisponível. Não ativar sem validação completa.
+- Administrador consulta `planos/diagnostico.html`; a tela expõe apenas booleanos, nunca as credenciais.
+- Para testar, primeiro configurar notificações de produção e secret do Mercado Pago; conferir evento assinado de pagamento. Depois simular compra manual e assinatura recorrente em produção usando conta de comprador real e autorização explícita, observar `memberships` e cancelar o cartão para validar o fim da recorrência. Evitar fazer duas cobranças no mesmo teste. O teste de R$ 0,01 não substitui a validação da assinatura de R$ 19,99.
