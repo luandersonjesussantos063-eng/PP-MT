@@ -61,7 +61,7 @@ test('check informa R$ 0,01 e configuração sem criar cobrança',async()=>{
  assert.equal(res.status,200);
  const body=await res.json();
  assert.deepEqual(body,{amount:0.01,enabled:true,recurring:false});
- assert.equal(a.events.length,0);
+ assert.deepEqual(a.events.map(e=>({path:e.path,method:e.method})),[{path:'/users/me',method:undefined}]);
 });
 test('cria pagamento via Pix com valor imposto no backend, sem vincular Premium',async()=>{
  const a=setup();
@@ -100,4 +100,20 @@ test('não há qualquer atualização na tabela de membros',()=>{
  assert.match(src,/MP_ACCESS_TOKEN_PROD/);
  assert.match(src,/PIX_PILOT_ENABLED/);
  assert.match(src,/X-Idempotency-Key/);
+});
+
+test('não habilita Pix com credencial de vendedor diferente',async()=>{
+ const a=setup({mercado:async()=>({id:99999999,tags:[]})});
+ const res=await a.handler(req('check'));
+ const data=await res.json();
+ assert.equal(res.status,200);
+ assert.equal(data.enabled,false);
+ assert.match(data.reason,/conta real de recebimento/);
+});
+test('não habilita Pix quando a consulta ao Mercado Pago falha',async()=>{
+ const a=setup({mercado:async()=>{throw Error('upstream unavailable')}});
+ const res=await a.handler(req('check'));
+ const data=await res.json();
+ assert.equal(data.enabled,false);
+ assert.match(data.reason,/Não foi possível validar/);
 });
