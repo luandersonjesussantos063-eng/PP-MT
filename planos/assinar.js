@@ -112,6 +112,12 @@ function display(data){
  showLink('manual-link',isPendingManual&&manualState==='pending'?manual.checkout_url:null);
  const canCancel=cancelableCard.has(cardState);
  $('manage-panel').hidden=!canCancel;
+ $('manage-panel').querySelector('summary').textContent=cardState==='pending'?
+  'Cancelar solicitação ainda não autorizada':'Gerenciar renovação automática';
+ $('manage-panel').querySelector('p').textContent=cardState==='pending'?
+  'Se você não deseja continuar com esta assinatura, pode cancelar a solicitação pendente.':
+  'Ao cancelar a renovação, não serão feitas novas cobranças automáticas. O período já pago permanece disponível até vencer.';
+ $('cancel-btn').textContent=cardState==='pending'?'Cancelar solicitação pendente':'Cancelar renovação futura';
  $('cancel-btn').hidden=!canCancel;
  busyState(busy);
  choosePaymentUI();
