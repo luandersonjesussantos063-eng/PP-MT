@@ -189,7 +189,9 @@ export function makeHandler({authenticate,db,mp}){
       fail(409,'Você já possui um mês pago. Autorize o cartão nos últimos 7 dias do período para evitar duas cobranças.');
     if(card) {
       if(!card.provider_id)fail(409,'Há uma solicitação de assinatura em revisão. Não criaremos outra cobrança.');
-      card=await syncCard(card);
+      // 'cancelled' só é gravado depois de cancelamento confirmado no provedor.
+      // Não consultar novamente um ID encerrado, que pode deixar de existir na API.
+      if(card.state!=='cancelled')card=await syncCard(card);
       if(card.state!=='cancelled')
         return output({...result,card:{state:card.state,checkout_url:card.checkout_url}});
       if(member?.status==='active'&&member.current_period_end&&Date.parse(member.current_period_end)-Date.now()>7*86400000)
@@ -222,7 +224,8 @@ export function makeHandler({authenticate,db,mp}){
    if(body.action==='manual_checkout'){
     if(card){
       if(!card.provider_id)fail(409,'Sua solicitação de assinatura no cartão está em revisão. Não criaremos uma segunda cobrança.');
-      const checked=await syncCard(card);
+      // Contrato anteriormente cancelado e verificado não bloqueia pagamento manual.
+      const checked=card.state==='cancelled'?card:await syncCard(card);
       if(['pending','authorized','paused'].includes(checked.state))
         fail(409,'Já existe uma assinatura de cartão. Cancele a renovação antes de gerar uma cobrança manual.');
       if(checked.state==='needs_review')
