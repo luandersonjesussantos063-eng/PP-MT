@@ -136,7 +136,7 @@ export async function runPixPilot(action){
 // Portal do PPMT Premium R$ 19,99/mês. Cartão recorrente; Pix/boleto/débito renovados no site.
 export async function runMonthlyBilling(action) {
  if(!online())throw new Error('Conecte-se à internet para consultar sua mensalidade.');
- if(!['status','manual_checkout','card_start','card_cancel'].includes(action))throw new Error('Ação de cobrança inválida.');
+ if(!['status','manual_checkout','card_start','card_cancel','readiness'].includes(action))throw new Error('Ação de cobrança inválida.');
  const user=await verifiedUser();
  if(!user)throw new Error('Entre na sua conta PP-MT.');
  const {data,error}=await client().functions.invoke('ppmt-monthly-billing',{body:{action}});
@@ -147,4 +147,23 @@ export async function runMonthlyBilling(action) {
  }
  if(Number(data?.price)!==19.99||data?.month!==true)throw new Error('O valor do plano não corresponde à mensalidade contratada.');
  return data;
+}
+
+
+// Treino pago: JWT do aluno, gabarito nunca incluído no script público.
+export async function runPremiumPractice(action,fields={}) {
+  if(!navigator.onLine)throw new Error('O treino Premium exige conexão para verificar o acesso.');
+  if(!['status','next','answer'].includes(action))throw new Error('Ação inválida.');
+  const user=await verifiedUser();
+  if(!user)throw new Error('Entre na conta PP-MT.');
+  const body={action};
+  if(action==='answer'){body.id=fields.id;body.selected_index=fields.selected_index;}
+  const {data,error}=await client().functions.invoke('ppmt-premium-practice',{body});
+  if(error) {
+    let message='';
+    if(typeof error.context?.json==='function')try{message=String((await error.context.json())?.error||'');}catch{}
+    if(error.context?.status===402)return {premium:false,state:'locked'};
+    throw new Error(message.slice(0,220)||'Não foi possível consultar o treino Premium.');
+  }
+  return data;
 }

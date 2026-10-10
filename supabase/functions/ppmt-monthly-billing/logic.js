@@ -50,12 +50,25 @@ export function makeHandler({authenticate,db,mp}){
    if(Number(req.headers.get('content-length')||'0')>512)fail(413,'Requisição muito grande.');
    const raw=await req.text();if(raw.length>512)fail(413,'Requisição muito grande.');
    let body;try{body=JSON.parse(raw);}catch{fail(400,'JSON inválido.');}
-   if(!['status','manual_checkout','card_start','card_cancel'].includes(body?.action))fail(400,'Ação inválida.');
+   if(!['status','manual_checkout','card_start','card_cancel','readiness'].includes(body?.action))fail(400,'Ação inválida.');
+   if(body.action==='readiness'){
+    if(!await db.isTester(user.id))fail(403,'Diagnóstico restrito ao administrador.');
+    const flags=await db.diagnostics();
+    const token=await db.token();
+    let merchant_valid=false;
+    if(token)try{merchant_valid=isSeller(await mp(token,'/users/me'));}catch{}
+    return output({price:AMOUNT,month:true,enabled:await db.enabled(),checks:{
+      merchant_valid,webhook_secret_present:flags.webhook_secret_present,
+      delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
+    }});
+   }
    const enabled=await db.enabled();
-   if(body.action!=='status'&&!enabled)fail(503,'As vendas ainda não estão abertas. O pagamento real de R$ 0,01 permanece separado.');
+   if(['manual_checkout','card_start'].includes(body.action)&&!enabled)fail(503,'As vendas ainda não estão abertas. O teste Pix permanece separado.');
    const member=await db.member(user.id);
    const result={price:AMOUNT,month:true,enabled,premium:Boolean(member?.status==='active'&&member?.current_period_end&&Date.parse(member.current_period_end)>Date.now()),current_period_end:member?.current_period_end??null};
-   if(body.action==='status'&&!enabled)return output({...result,manual:null,card:null});
+   // Mesmo que novas vendas sejam suspensas, permitir consultar e cancelar assinatura existente.
+   // Se não houver token configurado, mostramos pelo menos a vigência do acesso.
+   if(body.action==='status'&&!enabled&&!(await db.token()))return output({...result,manual:null,card:null});
    const access=await db.token();
    if(!access)fail(503,'Mercado Pago de produção não configurado.');
    const mercado=(path,method='GET',payload=null,key=null)=>mp(access,path,method,payload,key);
@@ -93,7 +106,7 @@ export function makeHandler({authenticate,db,mp}){
       if(!/^[0-9]{1,25}$/.test(String(brief?.id||'')))continue;
       const p=await mercado('/v1/payments/'+brief.id);
       if(!verifiedPayment(p,order.id))continue;
-      if(paidStatus(p)){await db.credit(user.id,p,'manual');paid=true;}
+      if(paidStatus(p)){await db.credit(user.id,p,'manual',order.id);paid=true;}
       else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0)await db.void(p.id);
     }
     if(paid){await db.updateOrder(order.id,{state:'paid'});return {...order,state:'paid',checkout_url:null};}
@@ -107,11 +120,13 @@ export function makeHandler({authenticate,db,mp}){
    if(body.action==='card_cancel'){
     if(!card?.provider_id)fail(409,'Não há assinatura de cartão para cancelar.');
     const sub=await mercado('/preapproval/'+encodeURIComponent(card.provider_id));
-    if(!['cancelled','paused'].includes(sub.status))await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
+    if(sub.status!=='cancelled')await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
     await db.updateCard(user.id,{state:'cancelled',checkout_url:null});
     return output({...result,message:'Renovação automática cancelada. Pagamentos já aprovados permanecem válidos até seu vencimento.'});
    }
    if(body.action==='card_start'){
+    const waiting=await db.openOrder(user.id);
+    if(waiting)fail(409,'Existe um pagamento Pix, boleto ou débito pendente. Resolva-o antes de autorizar o cartão automático.');
     if(!card&&member?.status==='active'&&member.current_period_end&&Date.parse(member.current_period_end)-Date.now()>7*86400000)
       fail(409,'Você já possui um mês pago. Autorize o cartão nos últimos 7 dias do período para evitar duas cobranças.');
     if(card) {

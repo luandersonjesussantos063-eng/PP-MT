@@ -1,7 +1,7 @@
-# PPMT Premium — V 2.14.0
+# PPMT Premium — V 2.15.0
 
 ## Entregue
-- Página pública de apresentação em `planos/`, com cadastro, entrada no app, exemplo interativo e plano mensal previsto de R$ 19,90.
+- Página pública de apresentação em `planos/`, com cadastro, entrada no app, exemplo interativo e plano mensal previsto de R$ 19,99.
 - Rota `#plano`, acessível em Mais > Meu plano e no menu lateral.
 - Cadastro direcionado por `?cadastro=1`, preservando o login e o progresso existentes.
 - Tabela `memberships` no projeto PP-MT, RLS de leitura apenas da própria conta e RPC `my_membership`, com vencimento calculado no servidor. Cliente não pode criar ou alterar assinaturas. DDL aplicado está em `database/membership.sql`.
@@ -26,7 +26,7 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 
 - Página técnica de homologação em `planos/teste.html`. Não é checkout comercial. Somente testadores com cadastro aprovado em `billing_sandbox_testers` podem acessar a função de teste.
 - Função `ppmt-billing-test` com `verify_jwt = true` e confirmação de usuário no servidor; lógica versionada em `supabase/functions/ppmt-billing-test/`. A credencial de teste fica no banco/segredo do Supabase, nunca no GitHub.
-- A assinatura de teste é conferida no Mercado Pago com vendedor/comprador de teste, valor de R$ 19,90, BRL, frequência mensal e `live_mode = false` para pagamentos aprovados.
+- A assinatura de teste é conferida no Mercado Pago com vendedor/comprador de teste, valor de R$ 19,99, BRL, frequência mensal e `live_mode = false` para pagamentos aprovados.
 - Criar uma assinatura de teste **não modifica** a tabela `memberships`. Teste aprovado não equivale a liberação Premium.
 - Não aplicar ainda limite gratuito de 10 questões/dia. O acervo atual está estático e disponível em cache; o paywall real exige conteúdo entregue por backend após autorização.
 - Para iniciar o teste, o administrador deverá incluir seu usuário de login PPMT na lista de testadores (mediante confirmação da conta) e possuir comprador de teste separado. Não usar cartão real.
@@ -46,11 +46,11 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - A variável MP_ACCESS_TOKEN_PROD deve ser cadastrada em Edge Function Secrets no Supabase. A variável PIX_PILOT_ENABLED precisa ser exatamente true para habilitar; padrão desligado. NÃO inserir credenciais no GitHub, frontend ou chats. Se uma credencial foi compartilhada indevidamente, revogá-la e criar outra.
 - O token de TESTE já existente no banco NÃO serve para cobrança real. É necessária chave Pix ativa na conta Mercado Pago.
 - Somente após ter uma credencial REAL privada, confirmar a conta recebedora e verificar aceite do valor mínimo do Mercado Pago, liberar a ação de pagar.
-- Não anunciar o curso inteiro por R$ 0,01: a operação é prova de integração, não compra de assinatura ou direito a curso. O preço futuro do Premium continua previsto em R$ 19,90/mês.
+- Não anunciar o curso inteiro por R$ 0,01: a operação é prova de integração, não compra de assinatura ou direito a curso. O preço futuro do Premium continua previsto em R$ 19,99/mês.
 - Sem webhooks, sem entrega de conteúdo premium protegido e sem verificação ponta a ponta real até configurar e executar o piloto com permissão do responsável. Não abrir vendas públicas.
 
 
-## V 2.14.0 — Mensalidade R$ 19,99 (implantação sem vendas públicas)
+## V 2.15.0 — Mensalidade R$ 19,99 (implantação sem vendas públicas)
 
 - Preço definido: PPMT Premium, R$ 19,99/mês.
 - Cartão de crédito: cliente autoriza uma assinatura mensal automática no Mercado Pago (API /preapproval, frequência 1 mês). O portal permite cancelar cobranças futuras.
@@ -64,3 +64,17 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - O banco atual de questões ainda está publicado em JS e no cache offline. É necessário migrar funcionalidades e questões Premium ao backend autenticado antes de cobrar pelo acesso exclusivo. Não bloquear alunos gratuitos antes de implementar isso.
 - Lembretes por e-mail requerem serviço transacional, cronograma de envio e consentimento. Por enquanto a renovação fica no site; não afirmar que e-mails já são enviados.
 - Piloto Pix único de R$ 0,01 permanece separado das mensalidades, sem liberar Premium.
+
+## V 2.15.0 — Entrega protegida e auditoria comercial
+
+- **31 questões Premium autorais** cadastradas exclusivamente no Supabase, fora do repositório GitHub. A tabela `ppmt_premium_questions` e a de tentativas têm RLS ativado, sem permissão SELECT para `anon` nem `authenticated`.
+- Nova função `ppmt-premium-practice` exige JWT do aluno, usuário confirmado e assinatura `memberships.status='active'` com `current_period_end > now()`. A resposta de próxima questão não inclui gabarito/explanação. A correção é feita e registrada no servidor após a escolha.
+- Página `planos/premium.html` exibe questões, alternativas, correção comentada e erro de assinatura vencida. Links na área "Meu plano" e no portal de mensalidades.
+- O acervo público antigo permanece gratuito; ele não se torna privado retroativamente. A oferta comercial deve distinguir claramente o treino autoral Premium do acervo gratuito.
+- Uma preferência de Checkout Pro só pode render **uma mensalidade**, mesmo se dois pagamentos com IDs diferentes forem aprovados para essa mesma preferência: índice de unicidade `ppmt_monthly_one_manual_checkout` e RPC `ppmt_credit_verified_manual_payment`.
+- Suspender vendas não pode impedir cancelamento de assinatura ativa. A consulta de status e o cancelamento permanecem permitidos quando as flags de abertura estiverem desligadas.
+- O backend só habilita novas vendas com `PPMT_MONTHLY_BILLING_ENABLED=true`, `PPMT_PREMIUM_DELIVERY_READY=true` **e** presença de `MP_WEBHOOK_SECRET`. Não liberar esses controles antes de confirmar notificações do Mercado Pago e ciclo completo de cobrança.
+- Diagnóstico privado em `planos/diagnostico.html` acessível a usuários autorizados em `billing_sandbox_testers`. Só mostra presença de configurações e correspondência da conta recebedora; jamais retorna segredos. Verificar também os webhooks NO PAINEL do Mercado Pago; presença do secret não comprova entrega de notificações.
+- **Condições finais antes do lançamento:** verificar mercadoria/benefícios anunciados, completar dados de identificação comercial e atendimento nos Termos, revisar política de reembolso, testar pagamento de R$19,99 e webhook assinado, conferir liberação real do treino Premium, renovação mensal, suspensão e cancelamento com cartão de produção, e plano de recuperação para cobranças antigas. Sem testes reais aprovados, não alterar as flags comerciais.
+- **Limite gratuito de 10 questões/dia ainda não aplicado**; o acervo público anterior continua disponível sem cobrança. O preço de R$19,99 refere-se ao treino Premium exclusivo, e não ao bloqueio retroativo das questões existentes.
+- E-mails de aviso de vencimento ainda não são enviados: as cobranças mensais manuais podem ser acessadas dentro do site.

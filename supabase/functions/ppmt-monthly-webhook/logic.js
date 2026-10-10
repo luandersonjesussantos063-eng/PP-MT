@@ -48,7 +48,7 @@ export function webhookHandler({secret,token,db,mp}){
     const order=await db.orderById(p.external_reference);
     if(order&&order.provider_preference_id){
      if(p.status==='approved'&&Number(p.transaction_amount_refunded||0)===0){
-      await db.credit(order.user_id,p,'manual');
+      await db.credit(order.user_id,p,'manual',order.id);
       await db.updateOrder(order.id,{state:'paid'});
      }else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0){
       await db.void(p.id);

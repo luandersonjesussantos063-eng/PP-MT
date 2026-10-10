@@ -1,7 +1,7 @@
-import {loadMembership} from '../auth.js?v=2.13.2';
+import {loadMembership} from '../auth.js?v=2.15.0';
 import {PLAN} from './plan.js';
 export async function renderMembership(container){
- container.innerHTML=`<div class="eyebrow">PPMT PREMIUM</div><h1>Meu plano</h1><section class="card"><h2>Acesso de lançamento</h2><p>Você pode continuar estudando gratuitamente enquanto preparamos as assinaturas.</p><p id="membershipStatus" role="status">Consultando sua conta…</p><p><strong>${PLAN.price}/mês</strong> · Valor mensal do Premium.</p><p>O checkout está em implantação. Cartão poderá renovar automaticamente; Pix, boleto e débito exigirão novo pagamento mensal.</p><a class="button primary" href="./planos/assinar.html">Minha mensalidade →</a> <a class="button secondary" href="#inicio">Continuar estudando</a></section>`;
+ container.innerHTML=`<div class="eyebrow">PPMT PREMIUM</div><h1>Meu plano</h1><section class="card"><h2>Acesso de lançamento</h2><p>Você pode continuar estudando gratuitamente enquanto preparamos as assinaturas.</p><p id="membershipStatus" role="status">Consultando sua conta…</p><p><strong>${PLAN.price}/mês</strong> · Valor mensal do Premium.</p><p>O checkout está em implantação. Cartão poderá renovar automaticamente; Pix, boleto e débito exigirão novo pagamento mensal.</p><a class="button primary" href="./planos/assinar.html">Minha mensalidade →</a> <a class="button secondary" href="./planos/premium.html">Treino Premium exclusivo →</a> <a class="button secondary" href="#inicio">Continuar estudando</a></section>`;
  const status=container.querySelector('#membershipStatus');
  try{
   const member=await loadMembership();

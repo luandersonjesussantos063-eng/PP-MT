@@ -5,7 +5,13 @@ function checked<T>(r:{data:T,error:unknown}):T{
  if(r.error)throw new Error('Erro de banco de dados');return r.data;
 }
 const db={
- async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true';},
+ async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true'&&Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));},
+ async isTester(id:string){return Boolean(checked(await admin.from('billing_sandbox_testers').select('user_id').eq('user_id',id).maybeSingle()));},
+ async diagnostics(){return {
+   webhook_secret_present:Boolean(Deno.env.get('MP_WEBHOOK_SECRET')),
+   delivery_flag:Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true',
+   billing_flag:Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'
+ };},
  async token(){return Deno.env.get('MP_ACCESS_TOKEN_PROD')||null;},
  async member(id:string){return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());},
  async card(id:string){return checked(await admin.from('ppmt_monthly_cards').select('*').eq('user_id',id).maybeSingle());},
@@ -26,9 +32,16 @@ const db={
  async updateOrder(id:string,fields:Record<string,unknown>){
   checked(await admin.from('ppmt_monthly_orders').update({...fields,updated_at:new Date().toISOString()}).eq('id',id).select('id').single());
  },
- async credit(userId:string,payment:any,source:string){
+ async credit(userId:string,payment:any,source:string,reference?:string){
   const approvedAt=payment.date_approved;
   if(!approvedAt||!Number.isFinite(Date.parse(approvedAt)))return;
+  if(source==='manual'){
+    if(!reference)throw new Error('Referência da mensalidade ausente.');
+    checked(await admin.rpc('ppmt_credit_verified_manual_payment',{
+      p_user_id:userId,p_payment_id:String(payment.id),p_paid_at:payment.date_approved,p_reference:reference
+    }));
+    return;
+  }
   checked(await admin.rpc('ppmt_credit_verified_monthly_payment',{
    p_user_id:userId,p_payment_id:String(payment.id),p_source:source,p_paid_at:approvedAt
   }));
