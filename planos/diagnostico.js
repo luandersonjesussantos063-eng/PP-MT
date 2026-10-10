@@ -15,7 +15,9 @@ async function check(){
     merchantStatus?'Conta de recebimento não validada (HTTP '+merchantStatus+')':'Não foi possível verificar a conta recebedora';
   $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+reason+(flags.merchant_error_code?' · Código: '+flags.merchant_error_code:'');
   const checkoutStatus=flags.checkout_api_http_status;
-  const checkLabel=flags.checkout_api_authorized?
+  const checkLabel=flags.checkout_api_error_code==='invalid_token'?
+    'Credencial de produção inválida no Mercado Pago. Atualize o Access Token de produção nos Secrets do Supabase':
+    flags.checkout_api_authorized?
     flags.checkout_seller_matches===true?'API de Checkout Pro aceitou o token e confirmou o recebedor':
     flags.checkout_seller_matches===false?'ATENÇÃO: conta recebedora diferente da configurada':
     'API de Checkout Pro aceitou o token (identidade do recebedor ainda não confirmada)':

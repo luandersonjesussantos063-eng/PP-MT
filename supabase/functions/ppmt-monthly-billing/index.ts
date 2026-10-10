@@ -1,5 +1,6 @@
 import {createClient} from 'npm:@supabase/supabase-js@2.117.2';
 import {makeHandler,BillingError} from './logic.js';
+import {providerErrorCode} from './provider-error.js';
 const admin=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}});
 function checked<T>(r:{data:T,error:unknown}):T{
  if(r.error)throw new Error('Erro de banco de dados');return r.data;
@@ -97,11 +98,12 @@ Deno.serve(makeHandler({
    let code=null;
    try{
     const payload=await res.json();
-    const candidate=String(payload?.error||payload?.code||payload?.cause?.[0]?.code||'');
-    if(/^[A-Za-z0-9_-]{1,80}$/.test(candidate))code=candidate;
+    code=providerErrorCode(payload);
    }catch{}
    console.warn('PPMT Mercado Pago recusou etapa', {operation,status:res.status,code});
    throw new BillingError(res.status>=500?503:422,
+    code==='invalid_token'?
+    'O Mercado Pago recusou a credencial de produção (invalid_token). O administrador precisa atualizar o Access Token no servidor. Nenhuma nova cobrança foi confirmada.':
     res.status===401||res.status===403?
     'A credencial de produção do Mercado Pago precisa ser verificada pelo administrador. Nenhuma nova cobrança foi confirmada.':
     'O Mercado Pago não concluiu a operação. Consulte o status antes de criar nova cobrança.',
