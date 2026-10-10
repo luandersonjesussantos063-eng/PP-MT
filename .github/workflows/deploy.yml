@@ -29,10 +29,12 @@ jobs:
         with:
           node-version: '22'
       - name: Conferir publicações oficiais
+        if: github.event_name != 'push'
         run: |
           python3 -m unittest discover -s tests -p 'test_concurso_monitor.py'
           python3 tools/update_concurso.py
       - name: Preservar resultado da checagem
+        if: github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -54,11 +56,12 @@ jobs:
       - name: Preparar arquivos públicos
         run: |
           mkdir dist
-          cp authorial-mt.js performance.js free-training.js concurso-news.js offline.js syllabus.js syllabus-data.js index.html style.css app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
+          cp account-services.js dashboard-v218.js authorial-mt.js performance.js free-training.js concurso-news.js offline.js syllabus.js syllabus-data.js index.html style.css app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js sw.js icon.svg manifest.webmanifest dist/
           cp *.png dist/
           cp sitemap.xml robots.txt dist/
-          cp -R assets planos dist/
+          cp -R assets planos admin dist/
           touch dist/.nojekyll
+          printf '%s\n' 'ppmt.novabytesolucoes.com.br' > dist/CNAME
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
