@@ -11,7 +11,7 @@ async function check(){
   const merchantStatus=flags.merchant_http_status;
   const reason=flags.merchant_valid?'Conta de recebimento de produção validada':
     !flags.production_token_present?'Token de produção ausente':
-    merchantStatus===401||merchantStatus===403?'Mercado Pago recusou o token de produção (HTTP '+merchantStatus+')':
+    merchantStatus===401||merchantStatus===403?'API de identidade do vendedor recusou acesso (HTTP '+merchantStatus+'). Confira a API de Checkout Pro abaixo':
     merchantStatus?'Conta de recebimento não validada (HTTP '+merchantStatus+')':'Não foi possível verificar a conta recebedora';
   $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+reason;
   const checkoutStatus=flags.checkout_api_http_status;
