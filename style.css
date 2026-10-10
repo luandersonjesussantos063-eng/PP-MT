@@ -761,3 +761,34 @@ nav a.active{background:#29313a;color:var(--accent)}
  }
  #notificationBell svg{width:19px;height:19px}
 }
+
+/* V 2.19.6 — Cabeçalho móvel numa linha, sem relógio ocupando espaço */
+.study-clock-toggle{min-height:36px;padding:7px 12px;border:1px solid #726043;border-radius:9px;background:#223145;color:#efd099;font-weight:700;font-size:12px;cursor:pointer}
+.study-clock-toggle:focus-visible{outline:2px solid #f1ca86;outline-offset:2px}
+.admin-gear{font-size:14px;display:inline-block}
+.admin-label{margin-left:4px}
+@media(max-width:640px){
+ .main>header{display:flex;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:6px;height:auto;min-height:68px;padding:9px 10px}
+ .main>header .mobile-app-brand{display:flex;flex:1 1 auto;min-width:0;gap:6px;align-items:center}
+ .main>header .mobile-app-brand img{width:35px;height:41px;flex:none}
+ .main>header .mobile-app-brand .brand-copy{flex:1 1 auto;min-width:0}
+ .main>header .mobile-app-brand .brand-copy b{font-size:13px;letter-spacing:.1px;white-space:nowrap}
+ .main>header .mobile-app-brand .brand-copy>span{font-size:8px;letter-spacing:1.3px;margin-top:2px}
+ .main>header .mobile-app-brand .brand-copy small{font-size:8px;line-height:1.45;margin-top:3px}
+ .main>header .header-right{display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;flex-wrap:nowrap;gap:4px;margin-left:auto}
+ .main>header .account{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;white-space:nowrap}
+ .main>header .account-email{display:none}
+ .main>header .notification-trigger{min-width:36px;min-height:38px;padding:7px;flex-shrink:0}
+ .main>header .notification-trigger svg{width:22px;height:22px}
+ .main>header .account-logout{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px;border-radius:8px;font-size:11px}
+ .main>header .admin-label{display:none}
+ .main>header .admin-gear{font-size:19px;margin:0}
+ .main>header .version{display:none}
+}
+@media(max-width:360px){
+ .main>header{gap:4px;padding-left:8px;padding-right:8px}
+ .main>header .mobile-app-brand img{width:32px;height:38px}
+ .main>header .mobile-app-brand .brand-copy b{font-size:12px}
+ .main>header .header-right{gap:2px}
+ .main>header .account{gap:3px}
+}
