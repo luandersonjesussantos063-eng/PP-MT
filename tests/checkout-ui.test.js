@@ -61,8 +61,8 @@ test('interface compacta mantém integração, confirmação e cancelamento',()=
 
 test('voltar às formas de pagamento não cria cobrança e erro mantém saída visível',()=>{
  const page=read('assinar.html'),js=read('assinar.js');
- assert.match(page,/id="pending-panel"[\\s\\S]*id="change-method-btn"/);
- assert.match(page,/id="error-panel"[\\s\\S]*id="error-change-method-btn"/);
+ assert.ok(page.indexOf('id="pending-panel"')>=0&&page.indexOf('id="change-method-btn"')>page.indexOf('id="pending-panel"'));
+ assert.ok(page.indexOf('id="error-panel"')>=0&&page.indexOf('id="error-change-method-btn"')>page.indexOf('id="error-panel"'));
  assert.match(js,/function openPaymentOptions\(\)\{[\s\S]*show\('offer'\);/);
  assert.match(js,/startMethod\('manual'\)/);
  assert.match(js,/startMethod\('card'\)/);
