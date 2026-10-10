@@ -36,3 +36,15 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Requer sessão autenticada e liberação como testador; só exibe e-mail `@testuser.com` se a API confirmar que pertence ao comprador esperado.
 - Se a API não fornecer o e-mail, o sistema informa a limitação sem inventar endereço. Nenhuma assinatura é criada por essa consulta.
 - Cobranças comerciais e acessos Premium permanecem desativados.
+
+## Piloto Pix real R$ 0,01 (preparado — NÃO ativado)
+
+- Página /planos/pix.html com pagamento PIX único de R$ 0,01, não recorrente, usada exclusivamente para homologação real da integração.
+- Função ppmt-pix-pilot exige JWT e inscrição na tabela de testadores existente. O checkout usa somente o e-mail verificado do PPMT, sem contas TESTUSER.
+- O valor (0.01 BRL), destinatário, meio Pix e referência são impostos no backend. A criação usa X-Idempotency-Key estável baseado na tentativa registrada no banco; não recria cobrança se já houver uma.
+- O status sempre é consultado pelo backend na API oficial e confere live_mode=true, recebedor, valor, moeda, referência, Pix e ausência de estorno. O cliente não ativa acesso Premium.
+- A variável MP_ACCESS_TOKEN_PROD deve ser cadastrada em Edge Function Secrets no Supabase. A variável PIX_PILOT_ENABLED precisa ser exatamente true para habilitar; padrão desligado. NÃO inserir credenciais no GitHub, frontend ou chats. Se uma credencial foi compartilhada indevidamente, revogá-la e criar outra.
+- O token de TESTE já existente no banco NÃO serve para cobrança real. É necessária chave Pix ativa na conta Mercado Pago.
+- Somente após ter uma credencial REAL privada, confirmar a conta recebedora e verificar aceite do valor mínimo do Mercado Pago, liberar a ação de pagar.
+- Não anunciar o curso inteiro por R$ 0,01: a operação é prova de integração, não compra de assinatura ou direito a curso. O preço futuro do Premium continua previsto em R$ 19,90/mês.
+- Sem webhooks, sem entrega de conteúdo premium protegido e sem verificação ponta a ponta real até configurar e executar o piloto com permissão do responsável. Não abrir vendas públicas.
