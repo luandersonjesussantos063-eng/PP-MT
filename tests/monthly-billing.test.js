@@ -162,3 +162,41 @@ test('piloto de mensalidade libera checkout somente para testador autorizado pel
  assert.equal((await publicUser.fn(request('manual_checkout'))).status,503);
  assert.equal(publicUser.calls.filter(x=>x.method==='POST').length,0);
 });
+
+test('simulação de assinatura com HMAC válido e ID fictício não gera pagamento nem erro',async()=>{
+ const secret='FAKE_SIMULATOR_SECRET';
+ const id='123456', reqId='test-request-id-123', ts=String(Date.now());
+ const message='id:'+id+';request-id:'+reqId+';ts:'+ts+';';
+ const signature='ts='+ts+',v1='+createHmac('sha256',secret).update(message).digest('hex');
+ let providerCalls=0,credits=0;
+ const handler=webhookHandler({
+  secret:async()=>secret,token:async()=>'FAKE_TOKEN',
+  db:{cardByProvider:async()=>null,credit:async()=>{credits++;}},
+  mp:async()=>{providerCalls++;throw Error('Não consultar ID fictício de simulação');}
+ });
+ const response=await handler(new Request('https://example.supabase.co/functions/v1/ppmt-monthly-webhook?data.id=123456&type=subscription_preapproval',{
+  method:'POST',headers:{'x-signature':signature,'x-request-id':reqId,'content-type':'application/json'},
+  body:JSON.stringify({action:'updated',application_id:'example',data:{id},date:'2021-11-01T02:02:02Z',entity:'preapproval',id,type:'subscription_preapproval',version:8})
+ }));
+ assert.equal(response.status,200);
+ assert.equal(providerCalls,0);
+ assert.equal(credits,0);
+});
+test('requisição GET não simula evento; POST com assinatura inválida não credita',async()=>{
+ let credited=false;
+ const handler=webhookHandler({
+  secret:async()=>'FAKE_SECRET',token:async()=>'FAKE_TOKEN',
+  db:{credit:async()=>{credited=true;}},mp:async()=>{throw Error('Must not be called');}
+ });
+ assert.equal((await handler(new Request('https://example.supabase.co/functions/v1/ppmt-monthly-webhook'))).status,405);
+ const originalWarn=console.warn;
+ const warnings=[];
+ try{
+  console.warn=(...args)=>warnings.push(args);
+  const invalid=await handler(new Request('https://example.supabase.co/functions/v1/ppmt-monthly-webhook?data.id=123456',{method:'POST',body:'{}'}));
+  assert.equal(invalid.status,401);
+ }finally{console.warn=originalWarn;}
+ assert.equal(credited,false);
+ assert.ok(warnings.length>0);
+ assert.doesNotMatch(JSON.stringify(warnings),/FAKE_SECRET/);
+});
