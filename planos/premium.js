@@ -1,4 +1,5 @@
 import {signIn,verifiedUser,runPremiumPractice} from '../auth.js?v=2.15.0';
+import {loginWithGoogle} from '../account-services.js?v=2.17.0';
 import {createClient} from '../assets/vendor/supabase-2.117.2.js';
 
 const $=id=>document.getElementById(id);
@@ -186,3 +187,10 @@ $('subject-filter').addEventListener('change',e=>{subject=e.target.value;show('t
 $('start-mode').addEventListener('click',nextQuestion);
 $('next-btn').addEventListener('click',nextQuestion);
 connect();
+
+// Login Google: retorno para a Central Tática após a autenticação.
+$('google-login-btn').addEventListener('click',async()=>{
+ const button=$('google-login-btn');button.disabled=true;notice('Abrindo login seguro do Google…');
+ try{await loginWithGoogle('premium');}
+ catch(e){button.disabled=false;notice(e?.message||'Não foi possível autenticar com Google. Tente com e-mail e senha.');}
+});
