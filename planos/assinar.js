@@ -6,7 +6,8 @@ function paidFarFromExpiry(){
  return lastBilling?.premium===true && Number.isFinite(expiry) && expiry-Date.now()>7*86400000;
 }
 function canStartCard(){
- return enabled && !paidFarFromExpiry() && !lastBilling?.card &&
+ return enabled && !paidFarFromExpiry() &&
+  (!lastBilling?.card || lastBilling.card.state==='cancelled') &&
   !['pending','creating','needs_review'].includes(lastBilling?.manual?.state);
 }
 function canStartManual(){
@@ -43,7 +44,7 @@ function display(data){
  $('membership-state').textContent=valid?'Premium ativo':'Plano gratuito';
  $('next-bill').textContent=valid&&expiry?'Válido até '+expiry:'';
  if(data.card){
-  const states={pending:'Aguardando autorização.',authorized:'Cobrança mensal ativa.',cancelled:'Renovação cancelada.',paused:'Assinatura pausada.',needs_review:'Assinatura em análise.'};
+  const states={pending:'Aguardando autorização.',authorized:'Cobrança mensal ativa.',cancelled:'Renovação cancelada. Você pode assinar novamente quando seu período pago estiver próximo do fim.',paused:'Assinatura pausada.',needs_review:'Assinatura em análise.'};
   $('card-state').textContent=states[data.card.state]||'Verificar assinatura.';
   showLink('card-link',data.card.checkout_url);
   $('cancel-btn').hidden=!['authorized','pending','paused'].includes(data.card.state);
@@ -105,12 +106,12 @@ async function reconcileAfterCheckout(){
    if(tentativa>0)await new Promise(resolve=>setTimeout(resolve,6000));
    const data=await action('status');
    if(data?.premium===true){
-    notice('Pagamento confirmado pelo Mercado Pago. Seu acesso Premium está liberado!');
+    notice('Seu plano Premium está ativo. Confira a validade em “Meu plano” para verificar se a nova mensalidade já foi creditada.');
     window.history.replaceState(null,'',window.location.pathname);
     return;
    }
   }
-  notice('Ainda não recebemos a confirmação. Use "Atualizar" para consultar depois; não pague de novo antes de verificar.');
+  notice('Ainda não foi possível confirmar este novo pagamento. Use “Atualizar” para consultar depois; não pague novamente antes de verificar.');
  }finally{reconciling=false;}
 }
 $('login-form').addEventListener('submit',async e=>{
