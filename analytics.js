@@ -1,7 +1,7 @@
 // PP-MT: métricas próprias agregadas. Sem cookies de publicidade, identificadores de clique ou e-mails.
 (()=>{
  if(navigator.doNotTrack==='1'||navigator.globalPrivacyControl)return;
- let visitor=null;try{visitor=localStorage.getItem('ppmt-anon-visitor-v1');if(!visitor||!/^[a-f0-9-]{36}$/.test(visitor)){visitor=crypto.randomUUID();localStorage.setItem('ppmt-anon-visitor-v1',visitor)}}catch{}\n const ENDPOINT='https://fermfbmhwlafwopwndoj.supabase.co/functions/v1/ppmt-pageview';
+ const ENDPOINT='https://fermfbmhwlafwopwndoj.supabase.co/functions/v1/ppmt-pageview';
  const EVENTS=new Set(['signup_click','premium_click','install_click','whatsapp_click','start_study_click']);
  const page=(location.pathname.replace(/^\/PP-MT(?=\/|$)/,'')||'/').replace(/\/+/g,'/');
  const cleanTag=v=>String(v||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase()
@@ -32,7 +32,7 @@
   const key='ppmt-view:'+page,last=Number(sessionStorage.getItem(key)||0);
   if(Date.now()-last>=1800000){
    sessionStorage.setItem(key,String(Date.now()));
-   send({page,visitor});
+   send({page});
   }
  }catch{send({page})}
  function track(event){
