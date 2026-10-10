@@ -1,5 +1,5 @@
 import {signIn,verifiedUser,runPremiumPractice} from '../auth.js?v=2.15.0';
-import {loginWithGoogle} from '../account-services.js?v=2.17.0';
+import {loginWithGoogle} from '../account-services.js?v=2.18.0';
 import {createClient} from '../assets/vendor/supabase-2.117.2.js';
 
 const $=id=>document.getElementById(id);
