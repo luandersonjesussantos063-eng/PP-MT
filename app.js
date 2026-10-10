@@ -1,4 +1,4 @@
-import {renderMembership} from './planos/account.js?v=2.15.0';
+import {renderMembership} from './planos/account.js?v=2.15.0-comercial1';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
