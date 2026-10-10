@@ -265,3 +265,10 @@ test('diagnóstico privado separa token de produção ausente, HTTP rejeitado e 
  assert.match(merchantUi,/production_token_present/);
  assert.doesNotMatch(merchantUi,/MP_ACCESS_TOKEN_PROD|APP_USR-/);
 });
+
+test('validação da conta usa endpoint de identidade documentado pelo Mercado Pago, pagamentos usam API de cobranças',()=>{
+ const src=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
+ assert.match(src,/path==='\/users\/me'\?'https:\/\/api\.mercadolibre\.com':'https:\/\/api\.mercadopago\.com'/);
+ assert.match(src,/await fetch\(host\+path,/);
+ assert.match(src,/redirect:'error'/);
+});

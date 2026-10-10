@@ -79,7 +79,10 @@ Deno.serve(makeHandler({
  async mp(token:string,path:string,method='GET',body:unknown=null,key:string|null=null){
   const headers:Record<string,string>={Authorization:'Bearer '+token,'Content-Type':'application/json'};
   if(key&&method==='POST')headers['X-Idempotency-Key']=key;
-  const res=await fetch('https://api.mercadopago.com'+path,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000),redirect:'error'});
+  // Mercado Pago documenta a API de identidade do vendedor no dominio Mercado Livre.
+  // Apenas /users/me usa esse host; pagamentos e assinaturas ficam em api.mercadopago.com.
+  const host=path==='/users/me'?'https://api.mercadolibre.com':'https://api.mercadopago.com';
+  const res=await fetch(host+path,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000),redirect:'error'});
   if(!res.ok){
    // Log apenas da etapa e do HTTP; sem token, e-mail, pedido ou resposta do provedor.
    const operation=path==='/users/me'?'merchant_validation':
