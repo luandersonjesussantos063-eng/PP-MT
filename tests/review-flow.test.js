@@ -11,25 +11,25 @@ function setup({scheduled=false,similar=false}={}){
  const questions=['a','b'].map(id=>({id,subject:'Português',topic:id,statement:id,options:['Certa','Errada'],answer:0}));
  const buttons=[0,1].map(i=>({dataset:{reviewAnswer:String(i)},getAttribute:()=>null,classList:{contains:()=>false}}));
  const store={attempts:[],program:{reviews:scheduled?{a:nextReview(null,false)}:{}}};
- const context=vm.createContext({reviewState:null,store,answerSounds:{play(){}},dailyStudyPlan,studyRemaining:()=>1800,localDay:()=> '2026-10-08',save:()=>true,createReviewExercise:q=>createReviewExercise(q,()=>0),bank:()=>questions,lastAttemptFor:id=>store.attempts.findLast(a=>a.id===id),pendingErrorIds:()=>new Set(['a','b']),findSimilar:q=>similar?questions.find(x=>x.id!==q.id):null,$,document:{querySelectorAll:()=>buttons},window:{scrollTo(){}},title:(a,b)=>a+b,reviewLearnHTML:(q,i,n)=>`${q.id} ${i+1}/${n}`,manualStrikes:()=>[],supportHTML:()=>'',originalHTML:()=>'',explanationHTML:()=>'<p>Explicação</p>',esc:s=>s,markErrorMastered:(id,correct)=>{store.program.reviews[id]=nextReview(store.program.reviews[id],correct)}});
+ const context=vm.createContext({reviewState:null,store,answerSounds:{play(){}},dailyStudyPlan,studyRemaining:()=>1800,localDay:()=> '2026-10-08',save:()=>true,createReviewExercise:q=>createReviewExercise(q,()=>0),bank:()=>questions,lastAttemptFor:id=>store.attempts.findLast(a=>a.id===id),pendingErrorIds:()=>new Set(['a','b']),findSimilar:q=>similar?questions.find(x=>x.id!==q.id):null,$,document:{querySelectorAll:()=>buttons},window:{scrollTo(){}},title:(a,b)=>a+b,reviewLearnHTML:(q,i,n)=>`${q.id} ${i+1}/${n}`,manualStrikes:()=>[],supportHTML:()=>'',originalHTML:()=>'',explanationHTML:()=>'<p>Explicação</p>',esc:s=>s,allowStudy:async()=>true,markErrorMastered:(id,correct)=>{store.program.reviews[id]=nextReview(store.program.reviews[id],correct)}});
  vm.runInContext(app.slice(app.indexOf('function todayReviewIds('),app.indexOf('\nfunction stats()',app.indexOf('function todayReviewIds('))),context);
  context.renderErrorReview();return {context,$,store,buttons};
 }
-test('sem equivalente: exige resposta ao exercício gerado antes de avançar',()=>{
+test('sem equivalente: exige resposta ao exercício gerado antes de avançar',async()=>{
  const {context,$,store,buttons}=setup();
  $('#reviewTransfer').onclick();assert.equal(context.reviewState.originalId,'a');assert.equal(store.program.reviews.a,undefined);
  assert.match($('#content').innerHTML,/Treino criado pelo app/);
- buttons[0].onclick({preventDefault(){}});assert.equal(store.program.generatedReviews.length,1);assert.equal(store.attempts.length,0);
+ await buttons[0].onclick({preventDefault(){}});assert.equal(store.program.generatedReviews.length,1);assert.equal(store.attempts.length,0);
  $('#reviewNext').click();assert.equal(context.reviewState.originalId,'b');
- $('#reviewTransfer').onclick();buttons[1].onclick({preventDefault(){}});$('#reviewNext').click();assert.match($('#content').innerHTML,/Revisão concluída/);
+ $('#reviewTransfer').onclick();await buttons[1].onclick({preventDefault(){}});$('#reviewNext').click();assert.match($('#content').innerHTML,/Revisão concluída/);
 });
-test('revisão posterior: erro mostra correção e permite concluir sem repetir o primeiro item',()=>{
+test('revisão posterior: erro mostra correção e permite concluir sem repetir o primeiro item',async()=>{
  const {context,$,store,buttons}=setup({scheduled:true,similar:true});
- buttons[1].onclick({preventDefault(){}});assert.equal(store.attempts.length,1);assert.equal(store.attempts[0].correct,false);assert.match($('#content').innerHTML,/Entender a resposta/);
+ await buttons[1].onclick({preventDefault(){}});assert.equal(store.attempts.length,1);assert.equal(store.attempts[0].correct,false);assert.match($('#content').innerHTML,/Entender a resposta/);
  $('#reviewNext').click();assert.equal(context.reviewState.originalId,'b');
 });
-test('questão relacionada: acerto é registrado uma vez e próxima avança a fila',()=>{
+test('questão relacionada: acerto é registrado uma vez e próxima avança a fila',async()=>{
  const {context,$,store,buttons}=setup({similar:true});
- $('#reviewTransfer').onclick();buttons[0].onclick({preventDefault(){}});buttons[0].onclick({preventDefault(){}});
+ $('#reviewTransfer').onclick();await buttons[0].onclick({preventDefault(){}});await buttons[0].onclick({preventDefault(){}});
  assert.equal(store.attempts.length,1);assert.equal(store.program.reviews.a.correct,true);$('#reviewNext').click();assert.equal(context.reviewState.originalId,'b');
 });
