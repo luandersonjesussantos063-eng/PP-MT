@@ -50,7 +50,18 @@ export function makeHandler({authenticate,db,mp}){
    if(Number(req.headers.get('content-length')||'0')>512)fail(413,'Requisição muito grande.');
    const raw=await req.text();if(raw.length>512)fail(413,'Requisição muito grande.');
    let body;try{body=JSON.parse(raw);}catch{fail(400,'JSON inválido.');}
-   if(!['status','manual_checkout','card_start','card_cancel'].includes(body?.action))fail(400,'Ação inválida.');
+   if(!['status','manual_checkout','card_start','card_cancel','readiness'].includes(body?.action))fail(400,'Ação inválida.');
+   if(body.action==='readiness'){
+    if(!await db.isTester(user.id))fail(403,'Diagnóstico restrito ao administrador.');
+    const flags=await db.diagnostics();
+    const token=await db.token();
+    let merchant_valid=false;
+    if(token)try{merchant_valid=isSeller(await mp(token,'/users/me'));}catch{}
+    return output({price:AMOUNT,month:true,enabled:await db.enabled(),checks:{
+      merchant_valid,webhook_secret_present:flags.webhook_secret_present,
+      delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
+    }});
+   }
    const enabled=await db.enabled();
    if(['manual_checkout','card_start'].includes(body.action)&&!enabled)fail(503,'As vendas ainda não estão abertas. O teste Pix permanece separado.');
    const member=await db.member(user.id);
