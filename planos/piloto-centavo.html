@@ -5,7 +5,7 @@
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
 <link rel="stylesheet" href="./pix.css?v=2.15.0">
-<script type="module" src="./piloto-centavo.js?v=2.15.0-centavo4"></script>
+<script type="module" src="./piloto-centavo.js?v=2.15.0-mpdiag1"></script>
 </head><body>
 <a class="skip" href="#conteudo">Ir ao conteúdo</a>
 <header class="top"><a class="brand" href="../"><img src="../icon.svg" alt="" width="42" height="46"><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a>
@@ -30,7 +30,9 @@
 <div class="pix-actions">
 <button id="pay-btn" type="button" class="button primary" disabled>Gerar Pix de R$ 0,01</button>
 <button id="status-btn" type="button" class="button secondary">Verificar pagamento ↻</button>
+<button id="api-test-btn" type="button" class="button secondary">Diagnosticar conexão (sem cobrança)</button>
 </div>
+<p id="api-test-result" class="pix-info" role="status" aria-live="polite" hidden></p>
 <div id="pix-result" hidden>
 <h3>Pix copia e cola</h3>
 <p>Antes de pagar, confirme no aplicativo do banco o valor de R$ 0,01 e o destinatário. A geração do Pix não libera acesso; é necessária a aprovação oficial.</p>
