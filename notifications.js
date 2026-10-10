@@ -17,8 +17,8 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
  function paintBell(){
   const bell=document.querySelector('#notificationBell');if(!bell||!userId)return;
   const count=unread();bell.style.opacity=count?'1':'.86';
-  bell.innerHTML='🔔'+(count?'<span class="notification-badge">'+Math.min(99,count)+'</span>':'');
-  bell.setAttribute('aria-label',count?count+' notificações não lidas':'Notificações');
+  bell.innerHTML='🔔'+(count?'<span class="notification-dot" aria-hidden="true"></span>':'');
+  bell.setAttribute('aria-label',count?'Você tem notificações não lidas':'Nenhuma notificação não lida');
  }
  async function localAlert(item){
   if(!canAlert())return;
@@ -60,8 +60,12 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
     for(const n of all.filter(x=>x.kind==='news'&&Date.now()-Date.parse(x.date)>24*3600000))state.read.push(n.id);
    }
    state.known=[...new Set([...state.known,...all.map(i=>i.id)])];
-   items=first(all);save();paintBell();
-   const panel=document.querySelector('#notificationHub');if(panel&&panel.isConnected)draw(panel,false);
+   items=first(all);
+   const panel=document.querySelector('#notificationHub');
+   // Anything loaded while the reader is already in the inbox counts as viewed.
+   if(panel?.isConnected && location.hash==='#ofertas')markRead();
+   else {save();paintBell();}
+   if(panel?.isConnected)draw(panel,false);
    if(ready&&notify&&newRows.length){
     for(const n of newRows.slice(0,3))await localAlert(n);
    }
@@ -105,9 +109,11 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
  function drawIfOpen(){const panel=document.querySelector('#notificationHub');if(panel)draw(panel,false)}
  async function renderInbox(panel){
   if(!panel)return;
+  // Opening the inbox immediately clears the red dot (including while loading).
+  markRead();
   panel.innerHTML='<p class="muted">Carregando avisos e notícias oficiais…</p>';
   if(!busy)await refresh({notify:false});
-  draw(panel,true);
+  if(panel.isConnected && location.hash==='#ofertas')draw(panel,true);
  }
  function draw(panel,mark=false){
   if(mark)markRead();
