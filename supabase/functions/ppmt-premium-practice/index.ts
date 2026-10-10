@@ -10,9 +10,10 @@ const db={
   return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());
  },
  async summary(id:string){
-  const total=checked(await admin.from('ppmt_premium_questions').select('id',{count:'exact',head:true}).eq('active',true));
-  const attempts=checked(await admin.from('ppmt_premium_attempts').select('id',{count:'exact',head:true}).eq('user_id',id));
-  return {total_questions:total?.length??0,answered:attempts?.length??0};
+  const total=await admin.from('ppmt_premium_questions').select('id',{count:'exact',head:true}).eq('active',true);
+  const attempts=await admin.from('ppmt_premium_attempts').select('id',{count:'exact',head:true}).eq('user_id',id);
+  if(total.error||attempts.error)throw new Error('Não foi possível consultar os totais.');
+  return {total_questions:total.count??0,answered:attempts.count??0};
  },
  async next(id:string){
   const seen=checked(await admin.from('ppmt_premium_attempts').select('question_id').eq('user_id',id).order('created_at',{ascending:false}).limit(200));
