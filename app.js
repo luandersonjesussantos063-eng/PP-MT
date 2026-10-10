@@ -34,6 +34,46 @@ function normalizeStore(s){return validStore(s)?{...emptyStore(),...s,program:s.
 function userKey(id=currentUser?.id){return id?`${KEY}:${id}`:KEY}
 function localDay(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
 function ensureProgram(){if(!store.program||typeof store.program!=='object')store.program={startDate:localDay(),completed:{},xp:0};if(!store.program.startDate)store.program.startDate=localDay();if(!store.program.completed)store.program.completed={};if(!Number.isFinite(store.program.xp))store.program.xp=0;if(!store.program.studySeconds||typeof store.program.studySeconds!=='object')store.program.studySeconds={};if(!Number.isFinite(store.program.dailyGoalMinutes)||store.program.dailyGoalMinutes<5)store.program.dailyGoalMinutes=20;if(!store.program.reviewMastered||typeof store.program.reviewMastered!=='object')store.program.reviewMastered={}}
+let quotaSnapshot=null,quotaChecking=false;
+function quotaBadge(){
+ if(!quotaSnapshot)return '';
+ const q=quotaSnapshot;
+ return q.premium
+  ? '<div class="study-quota-banner is-premium"><strong>✦ PREMIUM · SEM LIMITES</strong><span>Questões e simulados ilimitados</span><a href="#plano">Meu plano ↗</a></div>'
+  : '<div class="study-quota-banner"><strong>GRÁTIS · COTA DE ESTUDOS</strong><span>'+
+    Math.max(0,Number(q.daily_remaining)||0)+' de 20 questões hoje · '+
+    Math.max(0,Number(q.weekly_exams_remaining)||0)+' de 1 simulado nesta semana</span><a href="#plano">Liberar Premium ↗</a></div>';
+}
+function showQuotaBadge(){
+ const parent=document.querySelector('#content');
+ if(!parent)return;
+ parent.querySelector('.study-quota-banner')?.remove();
+ if(quotaSnapshot)parent.insertAdjacentHTML('afterbegin',quotaBadge());
+}
+async function refreshStudyQuota(){
+ if(!currentUser)return;
+ try{quotaSnapshot=await studyQuota('status');if(tab!=='plano')showQuotaBadge();}
+ catch{quotaSnapshot=null;}
+}
+async function allowStudy(kind='question',units=1){
+ if(quotaChecking)return false;
+ quotaChecking=true;
+ try{
+  const response=await studyQuota(kind,units);
+  quotaSnapshot=response;
+  if(tab!=='plano')showQuotaBadge();
+  if(response.allowed)return true;
+  const type=kind==='exam'&&Number(response.weekly_exams_remaining)===0
+   ?'Você já utilizou seu simulado gratuito nesta semana.'
+   :'Você atingiu o limite de 20 questões gratuitas neste dia, ou o bloco ultrapassa a cota restante.';
+  if(confirm(type+'\\n\\nNo Premium, questões e simulados não têm esse limite. Ver os planos?'))location.hash='plano';
+  else toast(type);
+  return false;
+ }catch{
+  toast('Conecte-se à internet para registrar o treino. Nenhuma questão foi descontada.');
+  return false;
+ }finally{quotaChecking=false;}
+}
 let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null),strikeState=Object.create(null),deferredInstallPrompt=null,reviewState=null;const studyTracker={lastActivity:Date.now(),lastTick:Date.now(),localFlush:0,cloudFlush:0};
 const pages=[['inicio','⌂','Hoje'],['estudar','▦','Estudar'],['erros','↺','Revisar'],['simulados','◷','Simulado'],['desempenho','▥','Progresso'],['edital','▤','Cobertura do edital'],['noticias','◉','Notícias do concurso'],['livre','▷','Treino livre'],['rotina','⚙','Minha rotina'],['conteudos','▤','Comentários MT'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['favoritos','☆','Favoritos'],['plano','◇','Meu plano'],['dados','⚙','Meus dados']];
 const LAST_EDITAL_SUBJECTS=[
@@ -76,7 +116,7 @@ async function loadAccount(user){run=null;reviewState=null;assistState=Object.cr
  else if(local)store=normalizeStore(local);
  else if(legacyStore){store=normalizeStore(legacyStore);localStorage.removeItem(KEY);legacyStore=null}
  else store=emptyStore();
- ensureProgram();const restoredExam=restoreExam(store.program.activeExam,rawBank());run=location.hash.slice(1)===(restoredExam?.originTab||'simulados')?restoredExam:null;accountUI();save();navigate()}
+ ensureProgram();const restoredExam=restoreExam(store.program.activeExam,rawBank());run=location.hash.slice(1)===(restoredExam?.originTab||'simulados')?restoredExam:null;accountUI();save();navigate();void refreshStudyQuota()}
 function renderAuth(){currentUser=null;syncConnectionUI();$('#nav').innerHTML='';accountUI();const c=$('#content');c.innerHTML=`<section class="auth-shell"><div class="auth-card"><img src="./icon.svg" alt="PP MT" class="auth-logo"><div class="eyebrow">PP MT • ACESSO DO CANDIDATO</div><h1>Seu progresso é só seu.</h1><p class="muted"><a href="./planos/">Conheça o PPMT e os planos →</a></p><p class="muted">Seu plano diário, revisões e progresso ficam vinculados à sua conta.</p><div class="auth-tabs"><button id="loginTab" class="active">Entrar</button><button id="signupTab">Criar conta</button></div><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="primary auth-submit" type="submit">Entrar</button></form><div class="oauth-divider"><span>ou continue com</span></div><button type="button" class="google-login-btn" id="googleSignIn"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.9 24.5c0-1.6-.2-3.2-.4-4.7H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7l7.4 5.8C43.7 37.5 46.9 31.7 46.9 24.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7L32 36.5c-2.1 1.4-4.7 2.2-8 2.2-6.3 0-11.6-4.1-13.5-9.7l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Entrar com Google</span></button><p id="authHint" class="muted auth-hint">${navigator.onLine===false?'Conecte-se à internet para entrar pela primeira vez neste aparelho.':'Use seu e-mail e senha para continuar.'}</p></div></section>`;
  let mode='login';const setMode=m=>{mode=m;$('#loginTab').classList.toggle('active',m==='login');$('#signupTab').classList.toggle('active',m==='signup');$('.auth-submit').textContent=m==='login'?'Entrar':'Criar conta';$('#authPassword').autocomplete=m==='login'?'current-password':'new-password';$('#authHint').textContent=m==='login'?'Use seu e-mail e senha para continuar.':'Crie uma conta. Se a confirmação de e-mail estiver ativa, você receberá uma mensagem para confirmar.'};$('#loginTab').onclick=()=>setMode('login');$('#signupTab').onclick=()=>setMode('signup');if(new URLSearchParams(location.search).get('cadastro')==='1')setMode('signup');
  $('#authForm').onsubmit=async e=>{e.preventDefault();const email=$('#authEmail').value.trim(),password=$('#authPassword').value,btn=$('.auth-submit');btn.disabled=true;btn.textContent='Aguarde...';try{if(mode==='login'){const user=await signIn(email,password);await loadAccount(user)}else{const data=await signUp(email,password);if(data.session&&data.user){await loadAccount(data.user)}else{setMode('login');$('#authHint').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}}}catch(err){$('#authHint').textContent=err.message||'Não foi possível autenticar.'}finally{btn.disabled=false;btn.textContent=mode==='login'?'Entrar':'Criar conta'}}}
@@ -394,6 +434,7 @@ function render(){
  if(tab==='desempenho')renderLearningProgress();
  if(tab==='plano')renderMembership(c);
  if(tab==='dados')renderData();
+ if(tab!=='plano'&&quotaSnapshot)showQuotaBadge();
 }
 function pool(){const errors=pendingErrorIds();return bank().filter(q=>(!filter.topicId||questionTopicIds(q).includes(filter.topicId))&&(!q.historicalOnly||!!filter.exam)&&(tab!=='erros'||errors.has(q.id))&&(tab!=='favoritos'||store.favorites.includes(q.id))&&(!filter.exam||examId(q)===filter.exam)&&(!filter.subject||q.subject===filter.subject)&&(!filter.kind||q.origin===filter.kind)&&(!filter.search||(q.statement+' '+q.topic+' '+(q.context||'')+' '+(q.source?.exam||'')).toLocaleLowerCase('pt-BR').includes(filter.search.toLocaleLowerCase('pt-BR'))));}
 function renderPractice(){
