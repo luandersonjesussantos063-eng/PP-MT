@@ -1,4 +1,5 @@
 import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
+import {loginWithGoogle} from '../account-services.js?v=2.17.0';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false,lastBilling=null;
 function paidFarFromExpiry(){
@@ -125,3 +126,9 @@ $('card-btn').addEventListener('click',()=>{if(busy||!canStartCard())return;if(w
 $('manual-btn').addEventListener('click',()=>{if(busy||!canStartManual())return;if(window.confirm('Gerar uma mensalidade de R$ 19,99 para pagar por Pix, boleto ou débito? Sem débito automático.'))action('manual_checkout');});
 $('cancel-btn').addEventListener('click',()=>{if(!busy&&window.confirm('Cancelar as próximas cobranças automáticas do cartão?'))action('card_cancel');});
 load();
+// OAuth Google conserva o login por senha como alternativa.
+$('google-login-btn').addEventListener('click',async()=>{
+ const button=$('google-login-btn');button.disabled=true;notice('Abrindo login seguro do Google…');
+ try{await loginWithGoogle('checkout');}
+ catch(e){button.disabled=false;notice(e?.message||'Login com Google indisponível. Use e-mail e senha.',true);}
+});
