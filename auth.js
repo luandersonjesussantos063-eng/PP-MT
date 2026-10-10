@@ -145,7 +145,9 @@ export async function runMonthlyBilling(action) {
   if(typeof error.context?.json==='function')try{message=String((await error.context.json())?.error||'');}catch{}
   throw new Error(message.slice(0,220)||'Não foi possível consultar seu pagamento. Confira a situação antes de repetir.');
  }
- if(Number(data?.price)!==19.99||data?.month!==true)throw new Error('O valor do plano não corresponde à mensalidade contratada.');
+ if(data?.month!==true)throw new Error('Resposta de mensalidade inválida.');
+ if(data.price!=null && (!Number.isFinite(Number(data.price))||Number(data.price)<0.01||Number(data.price)>19.99))throw new Error('Valor de pagamento fora do intervalo permitido.');
+ if(action==='card_start' && data.price!=null && Number(data.price)!==19.99)throw new Error('Assinatura recorrente exige o preço integral.');
  return data;
 }
 
