@@ -1,4 +1,4 @@
-import {loadMembership} from '../auth.js?v=2.13.1';
+import {loadMembership} from '../auth.js?v=2.13.2';
 import {PLAN} from './plan.js';
 export async function renderMembership(container){
  container.innerHTML=`<div class="eyebrow">PPMT PREMIUM</div><h1>Meu plano</h1><section class="card"><h2>Acesso de lançamento</h2><p>Você pode continuar estudando gratuitamente enquanto preparamos as assinaturas.</p><p id="membershipStatus" role="status">Consultando sua conta…</p><p><strong>${PLAN.price}/mês</strong> · Plano previsto para o lançamento.</p><p>As vendas ainda não estão abertas. Nenhum valor será cobrado agora.</p><a class="button primary" href="./planos/">Conhecer o Premium →</a> <a class="button secondary" href="#inicio">Continuar estudando</a></section>`;
