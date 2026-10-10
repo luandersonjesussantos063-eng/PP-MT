@@ -579,3 +579,71 @@ nav a.active{background:#29313a;color:var(--accent)}
 .study-quota-banner.is-premium{border-color:#4f746c;background:linear-gradient(100deg,#153a38,#182536)}
 .study-quota-banner.is-premium strong{color:#bfe6d7}
 @media(max-width:650px){.study-quota-banner{align-items:flex-start;flex-direction:column}.study-quota-banner a{margin-left:0}}
+
+/* PP-MT V 2.18.0 — Central de Comando, navy + metal dourado */
+.command-v218,.command-metrics,.command-overview,.command-quick{font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif}
+.command-v218{position:relative;overflow:hidden;background:radial-gradient(ellipse at 78% 10%,#314d69b0,transparent 41%),linear-gradient(121deg,#112034 0%,#172b43 52%,#111b2b 100%);border:1px solid #3d5872;border-radius:20px;color:#f6f7f9;margin:0 0 16px;box-shadow:0 16px 32px #0002}
+.command-v218:before{content:"";position:absolute;width:400px;height:400px;border:1px solid #7c8ca11e;border-radius:50%;right:-150px;top:-160px;box-shadow:0 0 0 34px #8096aa0a,0 0 0 72px #8096aa07;pointer-events:none}
+.command-main{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:clamp(25px,4vw,39px) clamp(22px,4vw,40px)}
+.command-intro{position:relative;z-index:1;max-width:640px}
+.command-kicker{display:inline-flex;align-items:center;gap:9px;color:#f0c881;font-size:11px;font-weight:850;letter-spacing:1.7px}
+.command-kicker-dot{width:7px;height:7px;background:#edbd64;border-radius:50%;box-shadow:0 0 0 5px #d7a55225}
+.command-date{margin:18px 0 8px;text-transform:capitalize;color:#b8c8d8;font-size:12px;font-weight:550}
+.command-v218 h1{font-size:clamp(35px,5vw,64px);font-weight:900;letter-spacing:-1.8px;line-height:1.05;margin:7px 0 15px}
+.command-v218 h1 em{font-style:normal;color:#eec17a}
+.command-description{color:#d1dbe6;line-height:1.7;max-width:540px;font-size:14px;margin:0}
+.command-buttons{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:24px}
+.command-buttons a{display:inline-flex;align-items:center;gap:12px;justify-content:center;text-decoration:none;min-height:46px;border-radius:10px;padding:12px 17px;font-size:11px;letter-spacing:.65px;font-weight:850;transition:transform .16s,border-color .16s,filter .16s}
+.command-buttons a:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.command-primary{background:#e4b46d!important;border:1px solid #f8dba8!important;color:#172236!important}
+.command-secondary{background:#ffffff08!important;border:1px solid #8393a180!important;color:#f5f5f5!important}
+.command-insignia{position:relative;z-index:1;display:flex;align-items:center;flex-direction:column;justify-content:center;gap:14px;min-width:176px;max-width:204px}
+.command-insignia-ring{width:175px;height:175px;border:1px solid #e0b46a6b;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#22364b 50%,#111d2d 72%);box-shadow:0 0 0 11px #b7a47d13,0 0 0 19px #caa9690b,0 10px 20px #0003}
+.command-insignia-ring img{height:112px;width:112px;object-fit:contain;filter:drop-shadow(0 5px 8px #0007)}
+.command-insignia>span{color:#c6b792;font-size:9px;font-weight:800;letter-spacing:1.2px;white-space:nowrap}
+.command-footer{display:flex;flex-wrap:wrap;gap:24px;border-top:1px solid #71839835;padding:14px clamp(22px,4vw,40px);color:#aebfd0;font-size:10px;font-weight:700;letter-spacing:.6px;background:#ffffff04}
+.command-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:15px}
+.command-metric{position:relative;display:flex;flex-direction:column;gap:5px;min-height:144px;border:1px solid #3b4756;border-radius:14px;background:linear-gradient(145deg,#1b2634,#171e27);padding:17px 17px 15px;overflow:hidden}
+.command-metric-ico{font-size:21px;color:#e4bc7a;margin-bottom:4px;font-weight:850}
+.command-metric small{font-size:9px;font-weight:850;letter-spacing:1px;line-height:1.3;color:#a7b9c9}
+.command-metric strong{color:#f7f7f7;font-size:clamp(24px,2.65vw,33px);font-weight:900;letter-spacing:-.5px;white-space:nowrap;line-height:1.2}
+.command-metric>span:last-child{color:#b6c4ce;font-size:10px;line-height:1.4;margin-top:auto}
+.command-overview{border:1px solid #3d4f60;border-radius:15px;background:linear-gradient(145deg,#1d2b3b,#192330);padding:24px 25px;margin-bottom:23px}
+.command-overview-top{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.command-overview-top small,.command-quick-heading small{font-size:10px;color:#e5bc77;font-weight:900;letter-spacing:1.25px}
+.command-overview-top h2{font-size:23px;letter-spacing:-.5px;color:#f3f7fb;margin:7px 0 5px}
+.command-overview-top p{font-size:12px;color:#c2d1e0;line-height:1.5;margin:0}
+.command-overview-rate{font-size:34px;font-weight:900;color:#eac078}
+.command-progress-track{height:11px;border-radius:99px;overflow:hidden;background:#425064;margin:21px 0 12px}
+.command-progress-track i{display:block;height:100%;background:linear-gradient(90deg,#bc965c,#f9d18e);border-radius:inherit;transition:width .24s ease}
+.command-overview-bottom{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:#aebfce;font-size:11px}
+.command-quota{margin-top:18px;padding-top:15px;border-top:1px solid #ffffff20;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;color:#e0d4bd;font-size:12px}
+.command-quota a{color:#f1c785;text-decoration:none;font-weight:800}
+.command-quick{margin-bottom:20px}
+.command-quick-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:15px}
+.command-quick-heading h2{color:#f1f1f1;font-size:22px;letter-spacing:-.5px;margin:5px 0}
+.command-quick-heading>span{color:#94a4b5;font-size:11px}
+.command-quick-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.command-shortcut{min-width:0;position:relative;min-height:138px;display:flex;flex-direction:column;gap:8px;padding:17px;background:#191f29;border:1px solid #444b54;border-radius:14px;text-decoration:none;transition:transform .16s,border-color .16s}
+.command-shortcut:hover{transform:translateY(-2px);border-color:#b08b53}
+.command-shortcut-icon{font-size:23px;font-weight:900;color:#ebbf77}
+.command-shortcut b{font-size:14px;color:#f6f6f7;line-height:1.3;margin-top:auto}
+.command-shortcut small{color:#b0c1d1;font-size:11px;line-height:1.35}
+.command-shortcut-arrow{position:absolute;right:16px;top:17px;color:#b7c3d3}
+.command-shortcut-gold{background:linear-gradient(145deg,#393223,#241f1c);border-color:#8d703f}
+.command-shortcut-gold small{color:#dfcda9}
+@media(max-width:1024px){.command-metrics,.command-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.command-insignia{min-width:132px}.command-insignia-ring{width:128px;height:128px}.command-insignia-ring img{height:82px;width:82px}.command-insignia>span{font-size:8px}}
+@media(max-width:640px){
+ .command-v218{border-radius:16px}.command-main{padding:24px 20px}
+ .command-v218 h1{font-size:clamp(34px,9vw,45px)}
+ .command-insignia{display:none}.command-footer{gap:8px 14px;padding:13px 19px;font-size:8px}
+ .command-buttons{align-items:stretch}.command-buttons a{width:100%;justify-content:space-between}
+ .command-metrics{gap:9px}.command-metric{min-height:128px;padding:14px 12px}
+ .command-metric strong{font-size:clamp(23px,6vw,29px)}
+ .command-metric small{font-size:8px}
+ .command-overview{padding:20px 16px}
+ .command-overview-rate{font-size:29px}.command-overview-top h2{font-size:21px}
+ .command-shortcut{padding:14px;min-height:125px}
+ .command-shortcut b{font-size:13px}
+ .command-quick-heading>span{display:none}
+}
