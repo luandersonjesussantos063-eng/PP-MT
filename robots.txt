@@ -1,5 +1,4 @@
-# Project Pages: em https://usuario.github.io/PP-MT/ esta cópia NÃO é o robots.txt da raiz do host.
-# O sitemap permanece publicamente acessível e pode ser enviado por propriedade verificada.
+# Robots: PP-MT NovaByte Soluções — produção em domínio próprio
 User-agent: *
-Allow: /PP-MT/
-Sitemap: https://luandersonjesussantos063-eng.github.io/PP-MT/sitemap.xml
+Allow: /
+Sitemap: https://ppmt.novabytesolucoes.com.br/sitemap.xml
