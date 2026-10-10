@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runCentavoPremium} from '../auth.js?v=2.15.0-centavo1';
+import {signIn,verifiedUser,runCentavoPremium,runMercadoPagoDiagnostic} from '../auth.js?v=2.15.0-mpdiag1';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false,created=false;
 function info(msg,error=false){
@@ -9,6 +9,7 @@ function controls(value){
  busy=value;
  $('login-btn').disabled=value;
  $('status-btn').disabled=value;
+ $('api-test-btn').disabled=value;
  $('pay-btn').disabled=value||!enabled||created;
 }
 function safeTicket(value){
@@ -113,3 +114,25 @@ $('copy-btn').addEventListener('click',async()=>{
  catch{$('pix-code').select();info('Selecione e copie o código Pix acima.');}
 });
 load();
+// Diagnóstico somente leitura; nenhuma cobrança é criada.
+$('api-test-btn').addEventListener('click',async()=>{
+ if(busy)return;
+ controls(true);
+ const output=$('api-test-result');
+ output.hidden=false;
+ output.textContent='Consultando as APIs do Mercado Pago (sem cobrança)…';
+ try{
+  const data=await runMercadoPagoDiagnostic();
+  const payment=data.payments,identity=data.identity;
+  const statusCode=r=>r.http_status===0?'sem resposta':String(r.http_status);
+  const provider=r=>r.code?' / '+r.code:'';
+  let conclusion='As APIs não confirmaram autorização; não gere uma cobrança ainda.';
+  if(payment.authorized && !identity.authorized)
+   conclusion='A API de pagamentos autorizou a leitura; o bloqueio está na consulta de identidade. O piloto permanece protegido até corrigir a validação do vendedor.';
+  else if(payment.authorized && identity.authorized)
+   conclusion='As duas APIs responderam. Revalide o piloto para conferir se a conta recebedora corresponde à configuração.';
+  output.textContent='Pagamentos: HTTP '+statusCode(payment)+provider(payment)+
+    ' | Identificação: HTTP '+statusCode(identity)+provider(identity)+'. '+conclusion;
+ }catch(error){output.textContent=error?.message||'Falha ao verificar a conexão.';}
+ finally{controls(false);}
+});
