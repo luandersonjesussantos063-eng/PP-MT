@@ -214,6 +214,15 @@ export async function pushSubscriptionAction(action, subscription){
  const user=await verifiedUser();
  if(!user)throw new Error('Entre na conta para ativar avisos.');
  const {data,error}=await client().functions.invoke('ppmt-push',{body:{action,subscription}});
- if(error||!data?.ok)throw new Error('Não foi possível salvar a permissão de notificações.');
+ if(error){
+  let serverCode='';
+  try{serverCode=String((await error.context?.clone?.().json())?.error||'')}catch{}
+  const status=error.context?.status;
+  if(status===401||serverCode==='login required')throw new Error('Sua sessão expirou. Entre novamente no PP-MT.');
+  if(status===400||status===404)throw new Error('Este aparelho ainda não está cadastrado corretamente. Desative e ative os alertas novamente.');
+  if(status===503)throw new Error('Servidor de notificações indisponível. Tente novamente.');
+  throw new Error('Falha ao conectar ao servidor de notificações. Confira a conexão e atualize o aplicativo.');
+ }
+ if(!data?.ok)throw new Error('O servidor não confirmou o cadastro das notificações.');
  return true;
 }
