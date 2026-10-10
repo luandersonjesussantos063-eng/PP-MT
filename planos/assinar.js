@@ -26,7 +26,7 @@ async function loadDiscount(){
 }
 function setBusy(on){
  busy=on;
- for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','switch-to-pix-btn']){
+ for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','switch-to-pix-btn','cancel-manual-btn']){
   const el=$(id);if(el)el.disabled=on;
  }
 }
@@ -81,6 +81,7 @@ function render(data){
  // O servidor revalida e cancela no provedor antes de exibir novas opções.
  const maySwitchToPix=cs==='pending' && !pendingStates.has(ms) && data.premium!==true;
  $('switch-to-pix-btn').hidden=!maySwitchToPix;
+ $('cancel-manual-btn').hidden=!(manualPending&&data.premium!==true);
  $('switch-to-pix-help').hidden=!maySwitchToPix;
  const manages=cancelable.has(cs);
  $('manage-panel').hidden=!manages;
@@ -142,6 +143,11 @@ async function action(value,{switchToPix=false}={}){
   if(value==='status'){
    render(data);
    return data;
+  }
+  if(value==='cancel_manual'){
+   const updated=await runMonthlyBilling('status');render(updated);
+   notice('Tentativa anterior encerrada. Agora escolha outra forma de pagamento.',true);
+   return updated;
   }
   if(value==='card_cancel'){
    // Uma falha na consulta posterior nunca é tratada como autorização para cobrar.
@@ -255,6 +261,7 @@ $('switch-to-pix-btn').addEventListener('click',()=>{
   action('card_cancel',{switchToPix:true});
  }
 });
+$('cancel-manual-btn').addEventListener('click',()=>{if(!busy&&lastBilling?.manual?.state==='pending'&&window.confirm('Cancelar esta tentativa e escolher outra forma? O sistema verificará se não há transação em andamento.'))action('cancel_manual');});
 $('refresh-btn').addEventListener('click',()=>action('status'));
 $('retry-btn').addEventListener('click',()=>action('status'));
 $('cancel-btn').addEventListener('click',()=>{
