@@ -9,7 +9,7 @@ let busy=false,enabled=false,lastBilling=null,discountOffer=null;
 async function loadDiscount(){
  try{const offers=await myPremiumOffers();const requested=new URLSearchParams(location.search).get('oferta');const discounts=offers.filter(o=>o.kind==='monthly_discount'&&Date.parse(o.expires_at)>Date.now());discountOffer=(requested?discounts.find(o=>o.id===requested):null)||discounts[0]||null;
  const panel=$('discount-notice');if(!panel)return;panel.hidden=!discountOffer;
- if(discountOffer){$('discount-message').textContent='Você recebeu '+discountOffer.discount_percent+'% de desconto, válido até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'.';$('manual-btn').disabled=true;$('card-btn').disabled=true;}
+ if(discountOffer){$('discount-message').textContent='Oferta de '+discountOffer.discount_percent+'%: de R$ 19,99 por '+Number(discountOffer.discounted_price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+' no primeiro período mensal, válida até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'. A cobrança promocional ainda não está disponível.';$('manual-btn').disabled=true;$('card-btn').disabled=true;}
  }catch{discountOffer=null}
 }
 function setBusy(on){
