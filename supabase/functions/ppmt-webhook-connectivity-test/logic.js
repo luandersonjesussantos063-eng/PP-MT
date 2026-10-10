@@ -16,7 +16,8 @@ export function makeConnectivityTestHandler(){
    let event;try{event=JSON.parse(body);}catch{return reply(400,'JSON invalido.');}
    if(!event||typeof event!=='object'||
       !TYPES.has(event.type)||String(event.data?.id)!=='123456'||
-      !['updated','created'].includes(event.action))return reply(422,'Somente notificacoes ficticias com data.id=123456 sao aceitas.');
+      !['updated','created',event.type+'.updated',event.type+'.created'].includes(event.action)||
+      event.live_mode===true)return reply(422,'Somente notificacoes ficticias com data.id=123456 sao aceitas.');
    // Sem acesso ao banco, pagamentos ou gabaritos; sucesso significa SOMENTE conectividade.
    return reply(200,'TESTE RECEBIDO — nenhuma cobranca ou assinatura alterada.');
   }catch{return reply(400,'Falha na leitura do teste.');}
