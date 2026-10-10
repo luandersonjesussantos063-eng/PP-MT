@@ -29,6 +29,9 @@ export function verifiedPayment(payment,reference){
   typeof payment.id!=='undefined' &&
   /^[0-9]{1,25}$/.test(String(payment.id));
 }
+// A identidade de uma cobrança recorrente vem da fatura vinculada ao preapproval_id,
+// não necessariamente do external_reference da transação do cartão.
+export const verifiedCardPayment=p=>p&&p.live_mode===true&&Number(p.collector_id)===SELLER&&Number(p.transaction_amount)===AMOUNT&&p.currency_id==='BRL'&&/^[0-9]{1,25}$/.test(String(p.id));
 export function paidStatus(p){
  return p?.status==='approved' && Number(p.transaction_amount_refunded||0)===0;
 }
@@ -73,7 +76,7 @@ export function makeHandler({authenticate,db,mp}){
       const paymentId=invoice?.payment?.id;
       if(invoice.preapproval_id!==card.provider_id||!/^[0-9]{1,25}$/.test(String(paymentId||'')))continue;
       const payment=await mercado('/v1/payments/'+paymentId);
-      if(!verifiedPayment(payment,card.external_reference))continue;
+      if(!verifiedCardPayment(payment))continue;
       if(paidStatus(payment))await db.credit(user.id,payment,'card');
       else if(['refunded','charged_back'].includes(payment.status)||Number(payment.transaction_amount_refunded||0)>0)await db.void(payment.id);
      }
