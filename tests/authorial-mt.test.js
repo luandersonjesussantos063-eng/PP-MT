@@ -45,6 +45,6 @@ test('sessão com questões novas retoma os IDs e as respostas sem alterar o pra
  const restored=restoreExam(packExam(session),batch,now);assert.ok(restored);assert.deepEqual(restored.questions.map(q=>q.id),qs.map(q=>q.id));assert.equal(restored.answers[qs[0].id],qs[0].answer);assert.equal(restored.deadline,session.deadline);
 });
 test('publicação e cache incluem o lote e mantêm separados gabarito oficial e resposta autoral',()=>{
- const app=read('app.js');assert.match(app,/\.\.\.CONCEPT_PRACTICE,\.\.\.AUTHORIAL_MT_QUESTIONS/);assert.match(read('sw.js'),/authorial-mt\.js\?v=2\.13\.1/);assert.match(read('.github/workflows/deploy.yml'),/cp authorial-mt\.js/);assert.match(app,/const questions=\[\.\.\.MT_QUESTIONS,\.\.\.AUTHORIAL_MT_QUESTIONS\]/);assert.doesNotMatch(app,/AUTORAL • DEMONSTRAÇÃO/);assert.match(app,/q\.origin==='prova'\?' · gabarito oficial':' · resposta correta'/);
+ const app=read('app.js');assert.match(app,/\.\.\.CONCEPT_PRACTICE,\.\.\.AUTHORIAL_MT_QUESTIONS/);assert.match(read('sw.js'),/authorial-mt\.js\?v=2\.13\.2/);assert.match(read('.github/workflows/deploy.yml'),/cp authorial-mt\.js/);assert.match(app,/const questions=\[\.\.\.MT_QUESTIONS,\.\.\.AUTHORIAL_MT_QUESTIONS\]/);assert.doesNotMatch(app,/AUTORAL • DEMONSTRAÇÃO/);assert.match(app,/q\.origin==='prova'\?' · gabarito oficial':' · resposta correta'/);
  assert.equal(MT_QUESTIONS.length,57);
 });
