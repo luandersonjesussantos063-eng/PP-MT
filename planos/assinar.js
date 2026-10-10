@@ -208,20 +208,19 @@ async function reconcileAfterCheckout(){
 }
 async function load(){
  setBusy(true);show('loading');notice('');
+ const watchdog=setTimeout(()=>{if(!$('loading-panel').hidden)showError('A verificação demorou mais que o esperado. Você pode tentar novamente sem gerar cobrança.');},10000);
  try{
-  if(location.protocol!=='https:'){
-   showError('Aguarde o HTTPS deste endereço ser ativado antes de usar pagamentos.');
-   return;
-  }
-  const user=await Promise.race([verifiedUser(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_auth')),12000))]);
+  if(location.protocol!=='https:'){showError('É necessário abrir o pagamento por HTTPS.');return;}
+  const user=await Promise.race([verifiedUser(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_auth')),9000))]);
   if(!user){show('login');return;}
   setBusy(false);
-  await Promise.race([action('status'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_billing')),18000))]);
-  await Promise.race([loadDiscount(),new Promise(resolve=>setTimeout(resolve,8000))]);
+  const data=await Promise.race([runMonthlyBilling('status'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_billing')),11000))]);
+  render(data);
+  void loadDiscount().catch(()=>{});
   await reconcileAfterCheckout();
  }catch(e){
-  showError('A verificação demorou demais ou a conexão falhou. Toque em Tentar novamente. Se persistir, abra no Chrome e entre novamente na sua conta.');
- }finally{setBusy(false);}
+  showError('Não foi possível concluir a verificação de acesso. Toque em Tentar novamente; se persistir, abra no Chrome e entre na sua conta.');
+ }finally{clearTimeout(watchdog);setBusy(false);}
 }
 $('login-form').addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;
