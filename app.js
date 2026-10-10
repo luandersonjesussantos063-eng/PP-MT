@@ -1,5 +1,5 @@
 import {renderMembership} from './planos/account.js?v=2.17.0';
-import {commandDashboard} from './dashboard-v218.js?v=2.18.0';
+import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn} from './account-services.js?v=2.18.0';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
@@ -23,7 +23,7 @@ import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=2.15.0';
 import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=2.15.0';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.18.0';
+const APP_VERSION='2.18.1';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -56,6 +56,8 @@ async function refreshStudyQuota(){
  try{
  quotaSnapshot=await studyQuota('status');
  if(tab!=='plano')showQuotaBadge();
+ const membershipMarker=document.querySelector('.command-footer span');
+ if(membershipMarker)membershipMarker.textContent=quotaSnapshot.premium?'✦ ACESSO PREMIUM ATIVO':'◈ PREPARAÇÃO POLICIAL';
  const mini=document.querySelector('[data-command-quota] span');
  if(mini){
   mini.textContent=quotaSnapshot.premium?'✦ Plano Premium: sem limite de questões e simulados':
