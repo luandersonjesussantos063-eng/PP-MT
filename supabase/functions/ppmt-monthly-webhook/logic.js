@@ -55,6 +55,13 @@ export function webhookHandler({secret,token,db,mp}){
   if(!['payment','subscription_preapproval','subscription_authorized_payment'].includes(kind))return respond();
   if(String(event.data?.id||'').toLowerCase()!==resourceId.toLowerCase()||
      (event.user_id!=null&&Number(event.user_id)!==SELLER))return respond(400);
+  // A notificação simulada pelo painel MP usa live_mode=false e um ID fictício.
+  // Depois de VALIDAR a assinatura, reconhecer apenas o evento de teste,
+  // sem consultar o MP, criar cobrança ou alterar acesso Premium.
+  if(event.live_mode===false) return respond(200);
+  if(resourceId==='123456' && event.id==='123456' &&
+      event.date==='2021-11-01T02:02:02Z' &&
+      kind==='subscription_preapproval') return respond(200);
   const access=await token();if(!access)return respond(503);
   const get=path=>mp(access,path);
   // A operação pode se repetir: os IDs de transações têm UNIQUE no banco.
