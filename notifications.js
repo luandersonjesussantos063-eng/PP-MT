@@ -20,7 +20,7 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
   // Não substitui o SVG ao atualizar as notificações; apenas alterna o ponto vermelho.
   if(dot)dot.hidden=count===0;
   bell.classList.toggle('has-unread',count>0);
-  bell.setAttribute('aria-label',count?count+' notificação'+(count===1?'':'ões')+' não lida'+(count===1?'':'s'):'Abrir notificações');
+  bell.setAttribute('aria-label',count?(count===1?'1 notificação não lida':count+' notificações não lidas'):'Abrir notificações');
  }
  async function localAlert(item){
   if(!canAlert())return;
