@@ -84,7 +84,7 @@ async function allowStudy(kind='question',units=1){
  }finally{quotaChecking=false;}
 }
 let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null),strikeState=Object.create(null),deferredInstallPrompt=null,reviewState=null;const studyTracker={lastActivity:Date.now(),lastTick:Date.now(),localFlush:0,cloudFlush:0};
-const pages=[['inicio','⌂','Hoje'],['estudar','▦','Estudar'],['erros','↺','Revisar'],['simulados','◷','Simulado'],['desempenho','▥','Progresso'],['edital','▤','Cobertura do edital'],['noticias','◉','Notícias do concurso'],['livre','▷','Treino livre'],['rotina','⚙','Minha rotina'],['conteudos','▤','Comentários MT'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['favoritos','☆','Favoritos'],['plano','◇','Meu plano'],['dados','⚙','Meus dados']];
+const pages=[['inicio','⌂','Hoje'],['missao','◆','Missão diária'],['estudar','▦','Estudar'],['erros','↺','Revisar'],['simulados','◷','Simulado'],['desempenho','▥','Progresso'],['edital','▤','Cobertura do edital'],['noticias','◉','Notícias do concurso'],['livre','▷','Treino livre'],['rotina','⚙','Minha rotina'],['conteudos','▤','Comentários MT'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['favoritos','☆','Favoritos'],['plano','◇','Meu plano'],['dados','⚙','Meus dados']];
 const LAST_EDITAL_SUBJECTS=[
  'Língua Portuguesa',
  'História e Geografia de Mato Grosso',
@@ -420,7 +420,7 @@ function missionHeader(){const d=programDay(),pct=Math.max(1,Math.round(d/90*100
 function renderMission(){
  if(run&&run.originTab==='missao'){showExamQuestion();return}
  const spec=missionSpec(),done=todayDone(),last=store.program.completed[localDay()];
- $('#content').innerHTML=missionHeader()+`<section class="card daily-mission ${done?'done':''}"><div class="mission-badge">${done?'✓':'◆'}</div><div class="eyebrow">${done?'MISSÃO CONCLUÍDA':'MISSÃO DO DIA'}</div><h1>${esc(missionDisplayTitle(spec))}</h1><p>${esc(spec.desc)}</p><div class="mission-facts"><span><b>${spec.count}</b> questões</span><span><b>${spec.minutes}</b> min</span><span><b>${spec.target}%</b> meta</span><span><b>+${100}</b> XP base</span></div>${done?`<div class="mission-result"><b>${last.correct}/${last.total} acertos</b><span>${last.rate}% de aproveitamento</span></div><p class="muted">A missão obrigatória acabou. Continue no próximo bloco até fechar sua meta líquida de estudo.</p>`:`<button id="startMission" class="primary mission-cta">INICIAR MISSÃO →</button><p class="muted">As áreas de treino ficam bloqueadas até você concluir a missão de hoje.</p>`}</section>${done?studyClockCardHTML()+postMissionCardHTML():''}<section class="card spaced"><div class="row"><h2>Como funciona</h2><span class="tag">AUTOMÁTICO</span></div><p class="muted">Primeiro você cumpre a missão obrigatória. Depois o app direciona revisão, ponto fraco e simulados até completar a meta líquida do dia.</p></section>`;
+ $('#content').innerHTML=missionHeader()+`<section class="card daily-mission ${done?'done':''}"><div class="mission-badge">${done?'✓':'◆'}</div><div class="eyebrow">${done?'MISSÃO CONCLUÍDA':'MISSÃO DO DIA'}</div><h1>${esc(missionDisplayTitle(spec))}</h1><p>${esc(spec.desc)}</p><div class="mission-facts"><span><b>${spec.count}</b> questões</span><span><b>${spec.minutes}</b> min</span><span><b>${spec.target}%</b> meta</span><span><b>+${100}</b> XP base</span></div>${done?`<div class="mission-result"><b>${last.correct}/${last.total} acertos</b><span>${last.rate}% de aproveitamento</span></div><p class="muted">Missão concluída. Continue com outros blocos se quiser avançar na meta de estudo.</p>`:`<button id="startMission" class="primary mission-cta">INICIAR MISSÃO →</button><p class="muted">A missão diária é opcional. Estude dentro das condições do seu plano.</p>`}</section>${done?studyClockCardHTML()+postMissionCardHTML():''}<section class="card spaced"><div class="row"><h2>Como funciona</h2><span class="tag">AUTOMÁTICO</span></div><p class="muted">Você pode fazer a missão do dia e continuar com revisões, treino direcionado ou simulados conforme sua rotina e os limites do seu plano.</p></section>`;
  if(!done)$('#startMission').onclick=()=>startMission(spec);else $('#continueStudy')?.addEventListener('click',startRecommendedBlock);
  syncStudyClockUI();
 }
@@ -437,7 +437,8 @@ window.addEventListener('hashchange',navigate);
 function render(){
  $('#nav').innerHTML=pages.map(([id,icon,name])=>{const locked=lockStudy(id),mobilePrimary=['inicio','estudar','erros','simulados','desempenho'].includes(id);return `<a href="#${locked?'missao':id}" class="${tab===id?'active':''} ${locked?'locked':''} ${mobilePrimary?'mobile-primary':'mobile-extra'}" ${tab===id?'aria-current="page"':''}><span class="navicon">${locked?'🔒':icon}</span>${name}</a>`}).join('');
  const c=$('#content');
- if(tab==='inicio'||tab==='missao')renderToday();
+ if(tab==='inicio')renderToday();
+ if(tab==='missao')renderMission();
  if(tab==='estudar')renderLearn();
  if(tab==='livre')renderFreeTraining();
  if(tab==='rotina')renderRoutine();
