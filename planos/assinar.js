@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.14.1';
+import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false;
 function notice(msg,error=false){$('feedback').hidden=!msg;$('feedback').textContent=msg||'';$('feedback').classList.toggle('is-error',error);}
