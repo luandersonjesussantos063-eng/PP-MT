@@ -112,6 +112,8 @@ export function makeHandler({authenticate,db,mp}){
     return output({...result,message:'Renovação automática cancelada. Pagamentos já aprovados permanecem válidos até seu vencimento.'});
    }
    if(body.action==='card_start'){
+    if(!card&&member?.status==='active'&&member.current_period_end&&Date.parse(member.current_period_end)-Date.now()>7*86400000)
+      fail(409,'Você já possui um mês pago. Autorize o cartão nos últimos 7 dias do período para evitar duas cobranças.');
     if(card) {
       if(!card.provider_id)fail(409,'Há uma solicitação de assinatura em revisão. Não criaremos outra cobrança.');
       card=await syncCard(card);
@@ -138,6 +140,10 @@ export function makeHandler({authenticate,db,mp}){
    }
    let order=await db.openOrder(user.id);
    if(body.action==='manual_checkout'){
+    if(card?.provider_id){
+      const checked=await syncCard(card);
+      if(checked.state==='authorized')fail(409,'Sua assinatura do cartão já renova automaticamente. Cancele a renovação antes de solicitar uma cobrança manual.');
+    }
     if(member?.status==='active'&&member.current_period_end && Date.parse(member.current_period_end)-Date.now()>7*86400000)
       fail(409,'Seu plano já está ativo. A próxima mensalidade poderá ser paga nos últimos 7 dias de vigência.');
     if(!order) {
