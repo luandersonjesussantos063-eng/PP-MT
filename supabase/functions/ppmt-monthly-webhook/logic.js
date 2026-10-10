@@ -1,0 +1,92 @@
+// Webhook Mercado Pago: assinatura HMAC obrigatória, nunca acredita no corpo
+// para aprovar pedidos. Sempre relê a transação na API oficial de produção.
+export const SELLER=740298583;
+export const AMOUNT=19.99;
+export function trustedPayment(p){
+ return p&&p.live_mode===true&&Number(p.collector_id)===SELLER&&Number(p.transaction_amount)===AMOUNT&&p.currency_id==='BRL'&&/^[0-9]{1,25}$/.test(String(p.id));
+}
+export function signatureParts(header){
+ const fields=Object.fromEntries(String(header||'').split(',').map(part=>part.trim().split('=').map(x=>x.trim())).filter(x=>x.length===2));
+ if(!/^\d{10,16}$/.test(fields.ts||'')||!/^[a-f0-9]{64}$/i.test(fields.v1||''))return null;
+ return fields;
+}
+export async function checkSignature({secret,signature,requestId,id}){
+ if(!secret||!requestId||!/^[a-zA-Z0-9_-]{1,150}$/.test(requestId)||!id||id.length>100)return false;
+ const p=signatureParts(signature);if(!p)return false;
+ const timestamp=Number(p.ts),ms=p.ts.length>12?timestamp:timestamp*1000;
+ if(!Number.isFinite(ms)||Math.abs(Date.now()-ms)>24*60*60*1000)return false;
+ const msg='id:'+id.toLowerCase()+';request-id:'+requestId+';ts:'+p.ts+';';
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+ const digest=new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(msg)));
+ const expected=Array.from(digest,x=>x.toString(16).padStart(2,'0')).join('');
+ let diff=0;for(let i=0;i<64;i++)diff|=expected.charCodeAt(i)^p.v1.toLowerCase().charCodeAt(i);
+ return diff===0;
+}
+export function webhookHandler({secret,token,db,mp}){
+ const respond=(status=200)=>new Response('OK',{status,headers:{'Content-Type':'text/plain','Cache-Control':'no-store'}});
+ return async(req)=>{
+  if(req.method!=='POST')return respond(405);
+  const url=new URL(req.url);
+  const resourceId=url.searchParams.get('data.id')||'';
+  const approved=await checkSignature({
+   secret:await secret(),signature:req.headers.get('x-signature'),
+   requestId:req.headers.get('x-request-id'),id:resourceId
+  });
+  if(!approved)return respond(401);
+  const text=await req.text();if(text.length>4096)return respond(413);
+  let event;try{event=JSON.parse(text);}catch{return respond(400);}
+  const kind=String(event.type||'');
+  if(!['payment','subscription_preapproval','subscription_authorized_payment'].includes(kind))return respond();
+  if(String(event.data?.id||'').toLowerCase()!==resourceId.toLowerCase()||Number(event.user_id)!==SELLER)return respond(400);
+  const access=await token();if(!access)return respond(503);
+  const get=path=>mp(access,path);
+  // A operação pode se repetir: os IDs de transações têm UNIQUE no banco.
+  try{
+   if(kind==='payment'&&/^\d{1,25}$/.test(resourceId)){
+    const p=await get('/v1/payments/'+resourceId);
+    if(!trustedPayment(p))return respond();
+    const order=await db.orderById(p.external_reference);
+    if(order&&order.provider_preference_id){
+     if(p.status==='approved'&&Number(p.transaction_amount_refunded||0)===0){
+      await db.credit(order.user_id,p,'manual');
+      await db.updateOrder(order.id,{state:'paid'});
+     }else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0){
+      await db.void(p.id);
+     }
+    }
+    return respond();
+   }
+   if(kind==='subscription_preapproval'||kind==='subscription_authorized_payment'){
+    let card=null;
+    if(kind==='subscription_preapproval'){
+     const sub=await get('/preapproval/'+encodeURIComponent(resourceId));
+     if(Number(sub?.collector_id)!==SELLER)return respond();
+     card=await db.cardByProvider(sub.id);
+    }else{
+     // O ID desta notificação representa uma fatura autorizada.
+     const invoice=await get('/authorized_payments/'+encodeURIComponent(resourceId));
+     card=await db.cardByProvider(invoice?.preapproval_id);
+    }
+    if(!card?.provider_id)return respond();
+    const sub=await get('/preapproval/'+encodeURIComponent(card.provider_id));
+    if(String(sub.external_reference)!==card.external_reference||Number(sub.collector_id)!==SELLER||
+       Number(sub.auto_recurring?.transaction_amount)!==AMOUNT||
+       sub.auto_recurring?.frequency!==1||sub.auto_recurring?.frequency_type!=='months')return respond();
+    const invoices=await get('/authorized_payments/search?preapproval_id='+encodeURIComponent(card.provider_id)+'&limit=30');
+    for(const item of (invoices.results||[]).slice(0,30)){
+     if(item.preapproval_id!==card.provider_id||!/^\d{1,25}$/.test(String(item.payment?.id||'')))continue;
+     const p=await get('/v1/payments/'+item.payment.id);
+     if(!trustedPayment(p))continue;
+     if(p.status==='approved'&&Number(p.transaction_amount_refunded||0)===0)await db.credit(card.user_id,p,'card');
+     else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0)await db.void(p.id);
+    }
+    await db.updateCard(card.user_id,{state:['authorized','cancelled','paused'].includes(sub.status)?sub.status:'pending'});
+    return respond();
+   }
+   return respond();
+  }catch{
+   // HTTP 503 instrui o provedor a tentar novamente sem duplicar créditos.
+   return respond(503);
+  }
+ };
+}

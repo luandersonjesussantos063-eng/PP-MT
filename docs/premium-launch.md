@@ -1,4 +1,4 @@
-# PPMT Premium — V 2.13.2
+# PPMT Premium — V 2.14.0
 
 ## Entregue
 - Página pública de apresentação em `planos/`, com cadastro, entrada no app, exemplo interativo e plano mensal previsto de R$ 19,90.
@@ -48,3 +48,19 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Somente após ter uma credencial REAL privada, confirmar a conta recebedora e verificar aceite do valor mínimo do Mercado Pago, liberar a ação de pagar.
 - Não anunciar o curso inteiro por R$ 0,01: a operação é prova de integração, não compra de assinatura ou direito a curso. O preço futuro do Premium continua previsto em R$ 19,90/mês.
 - Sem webhooks, sem entrega de conteúdo premium protegido e sem verificação ponta a ponta real até configurar e executar o piloto com permissão do responsável. Não abrir vendas públicas.
+
+
+## V 2.14.0 — Mensalidade R$ 19,99 (implantação sem vendas públicas)
+
+- Preço definido: PPMT Premium, R$ 19,99/mês.
+- Cartão de crédito: cliente autoriza uma assinatura mensal automática no Mercado Pago (API /preapproval, frequência 1 mês). O portal permite cancelar cobranças futuras.
+- Pix, boleto e cartão de débito: pagamento mensal manual por Checkout Pro (/checkout/preferences). Ao vencer, o aluno volta ao site e gera outra mensalidade por R$ 19,99. Débito não é recorrente automaticamente.
+- A disponibilidade dos métodos no checkout depende da conta recebedora, do cliente e do Mercado Pago.
+- O preço e comprador são definidos no servidor com autenticação. Existe proteção de repetição por pedido, confirmação por API, ledger com ID de transação, RPC idempotente para estender o Premium por um mês e suspensão diante de estorno ou contestação.
+- Webhook com HMAC SHA256 obrigatório. Publicar ppmt-monthly-webhook com verify_jwt=false pois autentica por assinatura HMAC; nunca aceitar status somente do redirect ou do JSON recebido.
+- No Supabase Secrets cadastrar MP_WEBHOOK_SECRET da aplicação no Mercado Pago. No painel Mercado Pago > aplicação > Webhooks, configurar URL: https://fermfbmhwlafwopwndoj.supabase.co/functions/v1/ppmt-monthly-webhook ; habilitar eventos payment, subscription_preapproval, subscription_authorized_payment disponíveis.
+- Token de produção MP_ACCESS_TOKEN_PROD deve ficar somente no servidor, nunca em GitHub, frontend ou conversa.
+- Vendas reais DESATIVADAS por duas flags (ambas devem ser true): PPMT_MONTHLY_BILLING_ENABLED e PPMT_PREMIUM_DELIVERY_READY. Somente ativar após validação completa do webhook, primeira transação e política de entrega Premium.
+- O banco atual de questões ainda está publicado em JS e no cache offline. É necessário migrar funcionalidades e questões Premium ao backend autenticado antes de cobrar pelo acesso exclusivo. Não bloquear alunos gratuitos antes de implementar isso.
+- Lembretes por e-mail requerem serviço transacional, cronograma de envio e consentimento. Por enquanto a renovação fica no site; não afirmar que e-mails já são enviados.
+- Piloto Pix único de R$ 0,01 permanece separado das mensalidades, sem liberar Premium.
