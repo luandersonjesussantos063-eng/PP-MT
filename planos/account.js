@@ -20,7 +20,7 @@ export async function renderMembership(container){
     <ul>
      <li>Questões e provas históricas do acervo público</li>
      <li>Correção das questões gratuitas</li>
-     <li>Simulados e treino livre já disponíveis no app</li>
+     <li><strong>Até 20 questões por dia</strong> nas atividades grátis</li><li><strong>1 simulado por semana</strong> com cota reservada ao iniciar</li><li>Treino livre e revisão dentro da cota diária</li>
      <li>Progresso básico e rotina de estudos</li>
      <li>Notícias e acompanhamento do concurso</li>
     </ul>
@@ -36,7 +36,7 @@ export async function renderMembership(container){
      <li><strong>Inteligência por disciplina</strong>: taxa de acerto e dificuldades</li>
      <li><strong>Revisão automática</strong> das questões cuja última tentativa foi incorreta</li>
      <li><strong>Novas questões</strong> incorporadas ao banco ao longo do desenvolvimento</li>
-     <li>Todos os recursos do plano grátis continuam disponíveis</li>
+     <li><strong>Questões e simulados sem as cotas do Grátis</strong></li><li>Todos os recursos do plano grátis continuam disponíveis</li>
     </ul>
     <a href="./planos/assinar.html" class="button primary">Assinar por ${PLAN.price}/mês →</a>
     <a href="./planos/premium.html" class="plan-secondary-link">Conhecer a Central Tática →</a>
