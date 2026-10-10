@@ -13,7 +13,9 @@ test('ativação do piloto fica restrita a flags privadas e segredo de produçã
 test('vendas públicas permanecem duplamente bloqueadas',()=>{
  const index=read('supabase/functions/ppmt-monthly-billing/index.ts');
  assert.match(index,/flags\.public_sales_enabled===true/);
- assert.match(index,/PPMT_MONTHLY_BILLING_ENABLED/);
+ assert.match(index,/flags\.delivery_ready===true/);
+ assert.match(index,/MP_ACCESS_TOKEN_PROD/);
+ assert.match(index,/MP_WEBHOOK_SECRET/);
 });
 test('tabela de configuração não pode ser consultada por alunos',()=>{
  const sql=read('database/commercial-flags.sql');
