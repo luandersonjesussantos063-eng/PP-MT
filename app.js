@@ -1,6 +1,6 @@
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.0';
-import {loginWithGoogle,studyQuota,takeGoogleReturn} from './account-services.js?v=2.17.0';
+import {loginWithGoogle,studyQuota,takeGoogleReturn} from './account-services.js?v=2.18.0';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
