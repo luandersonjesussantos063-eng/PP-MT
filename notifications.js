@@ -129,11 +129,21 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
   // Restore the server registration when returning to an account on the same device.
   void (async()=>{try{if(!supported()||Notification.permission!=='granted')return;const reg=await navigator.serviceWorker.ready,sub=await reg.pushManager.getSubscription();if(sub)await registerPush('subscribe',sub.toJSON());}catch{}})();
  }
+ async function unregisterOnLogout(){
+  if(!supported()||Notification.permission!=='granted')return;
+  try{
+   const reg=await navigator.serviceWorker.ready;
+   const sub=await reg.pushManager.getSubscription();
+   if(!sub)return;
+   try{await registerPush('unsubscribe',sub.toJSON());}catch{}
+   await sub.unsubscribe();
+  }catch{}
+ }
  function onFocus(){if(userId)void refresh()}
  function onVisible(){if(!document.hidden)onFocus()}
  function stop(){
   if(timer)clearInterval(timer);timer=null;userId=null;ready=false;items=[];state=fresh();
   window.removeEventListener('focus',onFocus);window.removeEventListener('online',onFocus);document.removeEventListener('visibilitychange',onVisible);
  }
- return {start,stop,refresh,renderInbox,paintBell};
+ return {start,stop,refresh,renderInbox,paintBell,unregisterOnLogout};
 }
