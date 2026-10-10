@@ -200,3 +200,16 @@ test('requisição GET não simula evento; POST com assinatura inválida não cr
  assert.ok(warnings.length>0);
  assert.doesNotMatch(JSON.stringify(warnings),/FAKE_SECRET/);
 });
+
+test('webhook segue manifesto do SDK Mercado Pago inclusive ID com maiusculas',async()=>{
+ const secret='SEGREDO_SOMENTE_TESTE',id='AbC123',requestId='pedido-assinado-08',ts=String(Math.floor(Date.now()/1000));
+ const signature='ts='+ts+',v1='+createHmac('sha256',secret).update('id:'+id+';request-id:'+requestId+';ts:'+ts+';').digest('hex');
+ assert.equal(await checkSignature({secret,signature,requestId,id}),true);
+ assert.equal(await checkSignature({secret,signature,requestId,id:'abc123'}),false);
+});
+test('webhook tolera espacos externos do segredo mas rejeita assinatura falsa',async()=>{
+ const secret='SEGREDO_SOMENTE_TESTE',id='123456',requestId='pedido-assinado-09',ts=String(Date.now());
+ const signature='ts='+ts+',v1='+createHmac('sha256',secret).update('id:'+id+';request-id:'+requestId+';ts:'+ts+';').digest('hex');
+ assert.equal(await checkSignature({secret:'  '+secret+String.fromCharCode(10),signature,requestId,id}),true);
+ assert.equal(await checkSignature({secret,signature:signature.replace(/v1=[a-f0-9]+/, 'v1='+'0'.repeat(64)),requestId,id}),false);
+});
