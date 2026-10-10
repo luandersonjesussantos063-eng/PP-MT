@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b111b">
+<title>PPMT — Piloto Premium de R$ 0,01</title>
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css?v=2.15.0">
+<link rel="stylesheet" href="./pix.css?v=2.15.0">
+<script type="module" src="./piloto-centavo.js?v=2.15.0-centavo1"></script>
+</head><body>
+<a class="skip" href="#conteudo">Ir ao conteúdo</a>
+<header class="top"><a class="brand" href="../"><img src="../icon.svg" alt="" width="42" height="46"><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a>
+<nav><a href="./diagnostico.html">Diagnóstico</a><a href="./premium.html">Treino Premium</a></nav></header>
+<main class="wrap pix-layout" id="conteudo">
+<p class="eyebrow">TESTE COMERCIAL PRIVADO — PAGAMENTO ÚNICO</p>
+<h1>Premium por <em>R$ 0,01</em></h1>
+<p class="lead">Teste real de Pix de um centavo para conferir a aprovação do pagamento e a liberação do treino Premium.</p>
+<section class="pix-warning"><strong>Somente para a conta administradora autorizada.</strong>
+<p>O Pix cobra <strong>R$ 0,01 real, uma única vez</strong>, sem renovação automática. Quando aprovado e validado no servidor, libera as questões exclusivas por <strong>24 horas</strong>. O plano oficial continua custando R$ 19,99/mês; este teste não altera seu preço.</p></section>
+<p id="session" class="pix-info" role="status" aria-live="polite">Verificando login…</p>
+<section id="login-panel" class="pix-card" hidden>
+<h2>Entrar no PP-MT</h2>
+<form id="login-form">
+<label for="email">E-mail</label><input type="email" id="email" maxlength="254" autocomplete="username" required>
+<label for="password">Senha</label><input type="password" id="password" autocomplete="current-password" required>
+<button class="button primary" type="submit" id="login-btn">Entrar</button>
+</form></section>
+<section id="pilot-panel" class="pix-card" hidden>
+<div class="price-head"><div><p class="eyebrow">PIX DE VALIDAÇÃO</p><h2>R$ 0,01</h2></div><span>ÚNICO</span></div>
+<p id="state" class="pix-info" role="status" aria-live="polite">Verificando disponibilidade…</p>
+<div class="pix-actions">
+<button id="pay-btn" type="button" class="button primary" disabled>Gerar Pix de R$ 0,01</button>
+<button id="status-btn" type="button" class="button secondary">Verificar pagamento ↻</button>
+</div>
+<div id="pix-result" hidden>
+<h3>Pix copia e cola</h3>
+<p>Antes de pagar, confirme no aplicativo do banco o valor de R$ 0,01 e o destinatário. A geração do Pix não libera acesso; é necessária a aprovação oficial.</p>
+<label for="pix-code">Código Pix</label>
+<textarea id="pix-code" readonly rows="5"></textarea>
+<button id="copy-btn" type="button" class="button secondary">Copiar código Pix</button>
+<a id="ticket-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Abrir no Mercado Pago ↗</a>
+<p class="micro">Após pagar, volte e toque em “Verificar pagamento”. Não tente gerar um segundo Pix.</p>
+</div>
+<div id="success" hidden>
+<h3>Pagamento confirmado. Premium de teste ativo!</h3>
+<p id="expiry"></p>
+<a class="button primary" href="./premium.html">Abrir questões Premium ↗</a>
+</div>
+</section>
+<p id="feedback" class="pix-info" role="alert" hidden></p>
+<p class="micro">Uma conta pode gerar somente um Pix nesta campanha. Não compartilhe senhas bancárias. O pagamento é verificado com a API oficial do Mercado Pago; o Premium de teste expira automaticamente.</p>
+</main><footer class="wrap"><a class="brand" href="../">PPMT</a><p>NovaByte Soluções · Piloto restrito</p></footer>
+</body></html>

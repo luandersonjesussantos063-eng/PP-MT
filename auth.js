@@ -167,3 +167,23 @@ export async function runPremiumPractice(action,fields={}) {
   }
   return data;
 }
+
+
+// Teste financeiro privado: Pix REAL de um centavo, sem assinatura.
+export async function runCentavoPremium(action){
+ if(!online())throw new Error('Conecte-se para testar o Pix.');
+ if(!['check','create','status'].includes(action))throw new Error('Ação inválida.');
+ const user=await verifiedUser();
+ if(!user)throw new Error('Entre na conta PP-MT.');
+ const {data,error}=await client().functions.invoke('ppmt-centavo-premium',{body:{action}});
+ if(error){
+  let message='';
+  if(typeof error.context?.json==='function'){
+   try{message=String((await error.context.json())?.error||'');}catch{}
+  }
+  throw new Error(message.slice(0,220)||'Não foi possível consultar o Pix. Verifique a situação antes de repetir.');
+ }
+ if(data?.pilot!==true||Number(data?.amount)!==0.01||data?.recurring!==false)
+  throw new Error('A resposta do teste não corresponde a R$ 0,01.');
+ return data;
+}

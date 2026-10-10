@@ -2,6 +2,15 @@
 // para aprovar pedidos. Sempre relê a transação na API oficial de produção.
 export const SELLER=740298583;
 export const AMOUNT=19.99;
+export const PILOT_AMOUNT=0.01;
+export function trustedCentavoPix(p){
+ return p && p.live_mode===true &&
+  Number(p.collector_id)===SELLER &&
+  Number(p.transaction_amount)===PILOT_AMOUNT &&
+  p.currency_id==='BRL' && p.payment_method_id==='pix' &&
+  /^[0-9]{1,25}$/.test(String(p.id)) &&
+  /^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(String(p.external_reference||'')); 
+}
 export function trustedPayment(p){
  return p&&p.live_mode===true&&Number(p.collector_id)===SELLER&&Number(p.transaction_amount)===AMOUNT&&p.currency_id==='BRL'&&/^[0-9]{1,25}$/.test(String(p.id));
 }
@@ -68,6 +77,22 @@ export function webhookHandler({secret,token,db,mp}){
   try{
    if(kind==='payment'&&/^\d{1,25}$/.test(resourceId)){
     const p=await get('/v1/payments/'+resourceId);
+    // Pix de R$ 0,01, cadastrado na tabela de piloto restrito:
+    // somente a API oficial valida a transação. Nunca alterar mensalidades reais.
+    if(trustedCentavoPix(p)){
+     const testOrder=await db.centavoByPayment(String(p.id));
+     if(testOrder?.provider_payment_id===String(p.id)&&
+        String(testOrder.id)===String(p.external_reference)){
+      if(p.status==='approved' && p.date_approved &&
+         Number.isFinite(Date.parse(p.date_approved)) &&
+         Number(p.transaction_amount_refunded||0)===0)
+        await db.approveCentavo(testOrder.id,String(p.id));
+      else if(['refunded','charged_back'].includes(p.status)||
+              Number(p.transaction_amount_refunded||0)>0)
+        await db.revokeCentavo(testOrder.id,String(p.id));
+     }
+     return respond();
+    }
     if(!trustedPayment(p))return respond();
     const order=await db.orderById(p.external_reference);
     if(order&&order.provider_preference_id){

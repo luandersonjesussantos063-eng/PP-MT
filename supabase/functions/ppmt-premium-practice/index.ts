@@ -7,7 +7,17 @@ function checked<T>(r:{data:T,error:unknown}):T{
 }
 const db={
  async member(id:string){
-  return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());
+  const paid=checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());
+  if(paid?.status==='active'&&paid.current_period_end&&Date.parse(paid.current_period_end)>Date.now())return paid;
+  // O teste de R$ 0,01 libera 24h apenas para conta autorizada; não altera assinaturas reais.
+  const tester=checked(await admin.from('billing_sandbox_testers').select('user_id').eq('user_id',id).maybeSingle());
+  if(!tester)return paid;
+  const trial=checked(await admin.from('ppmt_centavo_premium_orders')
+   .select('state,premium_until').eq('user_id',id).maybeSingle());
+  if(trial?.state==='approved'&&trial.premium_until&&Date.parse(trial.premium_until)>Date.now()){
+   return {status:'active',current_period_end:trial.premium_until};
+  }
+  return paid;
  },
  async summary(id:string){
   const total=await admin.from('ppmt_premium_questions').select('id',{count:'exact',head:true}).eq('active',true);
