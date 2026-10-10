@@ -16,9 +16,11 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
  const unread=()=>items.filter(i=>!state.read.includes(i.id)).length;
  function paintBell(){
   const bell=document.querySelector('#notificationBell');if(!bell||!userId)return;
-  const count=unread();bell.style.opacity=count?'1':'.86';
-  bell.innerHTML='🔔'+(count?'<span class="notification-dot" aria-hidden="true"></span>':'');
-  bell.setAttribute('aria-label',count?'Você tem notificações não lidas':'Nenhuma notificação não lida');
+  const count=unread(),dot=bell.querySelector('.notification-dot');
+  // Não substitui o SVG ao atualizar as notificações; apenas alterna o ponto vermelho.
+  if(dot)dot.hidden=count===0;
+  bell.classList.toggle('has-unread',count>0);
+  bell.setAttribute('aria-label',count?count+' notificação'+(count===1?'':'ões')+' não lida'+(count===1?'':'s'):'Abrir notificações');
  }
  async function localAlert(item){
   if(!canAlert())return;
