@@ -3,6 +3,17 @@ import {webhookHandler} from './logic.js';
 const admin=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}});
 function checked<T>(r:{data:T,error:unknown}):T{if(r.error)throw new Error('Database unavailable');return r.data;}
 const db={
+ async centavoByPayment(paymentId:string){
+  if(!/^[0-9]{1,25}$/.test(paymentId))return null;
+  return checked(await admin.from('ppmt_centavo_premium_orders').select('id,provider_payment_id')
+   .eq('provider_payment_id',paymentId).maybeSingle());
+ },
+ async approveCentavo(orderId:string,paymentId:string){
+  checked(await admin.rpc('ppmt_approve_centavo_premium',{p_order_id:orderId,p_payment_id:paymentId}));
+ },
+ async revokeCentavo(orderId:string,paymentId:string){
+  checked(await admin.rpc('ppmt_revoke_centavo_premium',{p_order_id:orderId,p_payment_id:paymentId}));
+ },
  async orderById(reference:string){
   if(!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(String(reference||'')))return null;
   return checked(await admin.from('ppmt_monthly_orders').select('*').eq('id',reference).maybeSingle());
