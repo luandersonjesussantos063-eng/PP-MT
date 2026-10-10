@@ -120,7 +120,7 @@ window.addEventListener('online',()=>{if(currentUser)save();syncConnectionUI()})
 function save(){if(!currentUser)return false;try{ensureProgram();store.program.reviews=scheduleCorrectReviews(store.attempts,store.program.reviews||{});store.updatedAt=new Date().toISOString();localStorage.setItem(userKey(),JSON.stringify(store));progressSync.queue(currentUser.id,store);syncConnectionUI();return true}catch{toast('Não foi possível salvar neste navegador. Exporte um backup.');return false}}
 function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',4200)}
 function accountUI(){syncConnectionUI();const el=$('#account');if(!el)return;if(!currentUser){el.innerHTML='';return}const isAdmin=currentUser.app_metadata?.ppmt_admin===true;el.innerHTML=`<span class="account-email">${esc(currentUser.email||'Usuário')}</span>${isAdmin?'<a href="./admin/" class="account-logout" aria-label="Abrir painel administrativo PP-MT" title="Central de Comando">⚙ Administração</a>':''}<button id="logout" class="account-logout">Sair</button>`;$('#logout').onclick=async()=>{if(!confirm('Sair da sua conta?'))return;try{await signOut();currentUser=null;store=emptyStore();renderAuth()}catch(e){toast(e.message||'Não foi possível sair.')}}}
-async function loadAccount(user){run=null;reviewState=null;assistState=Object.create(null);strikeState=Object.create(null);currentUser=user;let cloud=null;try{cloud=await loadUserState(user.id)}catch{toast('Não foi possível carregar seus dados da nuvem.')}
+async function loadAccount(user){run=null;reviewState=null;assistState=Object.create(null);strikeState=Object.create(null);currentUser=user;let cloud=null;try{cloud=await Promise.race([loadUserState(user.id),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),10000))])}catch{toast('Não foi possível carregar seus dados da nuvem.')}
  let local=null;try{const raw=localStorage.getItem(userKey(user.id));if(raw){const parsed=JSON.parse(raw);if(validStore(parsed))local=parsed}}catch{}
  if(local&&(progressSync.pending(user.id)||!cloud||Date.parse(local.updatedAt||0)>Date.parse(cloud.updatedAt||0)))store=normalizeStore(local);
  else if(cloud&&validStore(cloud))store=normalizeStore(cloud);
@@ -138,7 +138,8 @@ function renderAuth(){currentUser=null;syncConnectionUI();$('#nav').innerHTML=''
  };
 }
 async function bootstrap(){
- const user=await getCurrentUser();
+ let user=null;
+ try{user=await Promise.race([getCurrentUser(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),10000))])}catch{toast('A conexão demorou. Entre novamente para continuar.')}
  if(user){
   const destination=takeGoogleReturn();
   if(destination&&location.pathname!==destination){location.replace(location.origin+destination);return;}
@@ -444,7 +445,7 @@ async function renderMyOffers(){
  if(!offers.length){el.textContent='Você não tem ofertas ativas no momento.';return;}
  for(const offer of offers){const card=document.createElement('section');card.className='panel';const title=document.createElement('h2'),info=document.createElement('p'),valid=document.createElement('p');valid.className='muted';
  const until=new Date(offer.expires_at).toLocaleDateString('pt-BR');
- if(offer.kind==='monthly_discount'){title.textContent='🎁 Desconto exclusivo de '+offer.discount_percent+'% no Premium';info.textContent='Você recebeu uma oferta especial para sua conta.';valid.textContent='Oferta válida até '+until+'.';const link=document.createElement('a');link.href='./planos/assinar.html?oferta='+encodeURIComponent(offer.id);link.className='button primary';link.textContent='Ver desconto na assinatura →';card.append(title,info,valid,link);const notice=document.createElement('p');notice.className='muted';notice.textContent='A cobrança com desconto está em preparação. O checkout ainda não aplicará o valor promocional.';card.append(notice)}
+ if(offer.kind==='monthly_discount'){title.textContent='🎁 Desconto exclusivo de '+offer.discount_percent+'% no Premium';info.textContent='Você recebeu uma oferta especial para sua conta.';valid.textContent='Oferta válida até '+until+'.';const link=document.createElement('a');link.href='./planos/assinar.html?oferta='+encodeURIComponent(offer.id);link.className='button primary';link.textContent='Ver desconto na assinatura →';card.append(title,info,valid,link);const notice=document.createElement('p');notice.className='muted';notice.textContent='Confira o preço promocional no Mercado Pago antes de pagar.';card.append(notice)}
  else{title.textContent='✓ Cortesia Premium';info.textContent='Você recebeu '+offer.days+' dia(s) de acesso Premium gratuito.';valid.textContent='Válido até '+until;card.append(title,info,valid)}
  el.append(card)}
  }catch{if(el.isConnected)el.textContent='Não foi possível consultar suas notificações. Tente novamente.'}
