@@ -9,12 +9,13 @@ const ORIGIN='https://luandersonjesussantos063-eng.github.io';
 const request=(action,payload={})=>new Request('https://supabase.invalid/functions/v1/ppmt-monthly-billing',{
  method:'POST',headers:{origin:ORIGIN,authorization:'Bearer fakeJwt','content-type':'application/json'},body:JSON.stringify({action,...payload})
 });
-function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=false,preferencesEmpty=false,checkoutSeller=SELLER}={}){
- const calls=[];let card=null,order=null,member=null;
+function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=false,preferencesEmpty=false,checkoutSeller=SELLER,initialCard=null,initialOrder=null,initialMember=null,providerOffline=false}={}){
+ const calls=[];let card=initialCard,order=initialOrder,member=initialMember;
  const db={
   async enabled(){return enabled;},async privatePilot(){return pilot;},async token(){return 'FAKE_ONLY';},
   async isTester(){return true;},
   async diagnostics(){return {webhook_secret_present:false,delivery_flag:false,billing_flag:false};},
+  async verifiedFlows(){return {webhook_real_verified:false,manual_monthly_verified:false,card_monthly_verified:false};},
   async member(){return member;},async card(){return card;},
   async claimCard(uid){card={user_id:uid,external_reference:'11111111-1111-4111-8111-111111111111'};return card;},
   async updateCard(uid,patch){card={...card,...patch};},
@@ -25,6 +26,7 @@ function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=fals
  };
  const mp=async(t,path,method,body,key)=>{
   calls.push({path,method,body,key});
+  if(providerOffline)throw new BillingError(503,'Provedor temporariamente indisponível',503);
   if(path==='/users/me'){
     if(identityForbidden)throw new BillingError(422,'API de identidade proibida',403);
     return {id:seller,site_id:'MLB',tags:[]};
@@ -56,7 +58,7 @@ test('preço oficial é R$ 19,99, não inclui centavo piloto',()=>{
  const plan=readFileSync(new URL('../planos/plan.js',import.meta.url),'utf8');
  const html=readFileSync(new URL('../planos/assinar.html',import.meta.url),'utf8');
  assert.match(plan,/R\$ 19,99/);assert.match(html,/R\$ 19,99/);
- assert.match(html,/Cartão de crédito/);assert.match(html,/Pix, boleto ou débito/);
+ assert.match(html,/Assinar no cartão/);assert.match(html,/Pagar com Pix/);
  assert.match(html,/renovação automática/);assert.match(html,/cada mês/);
 });
 test('vendas desativadas nunca criam pagamento por acidente',async()=>{
