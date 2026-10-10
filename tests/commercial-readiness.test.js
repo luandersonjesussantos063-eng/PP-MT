@@ -22,3 +22,19 @@ test('Marketing descreve exatamente o acervo e as condições atuais',()=>{
  const privacy=read('planos/privacidade.html');
  assert.match(privacy,/não captura os dados do cartão/);
 });
+
+test('Identificação pessoa física, endereço e contatos constam na apresentação e políticas',()=>{
+ const landing=read('planos/index.html');
+ const terms=read('planos/termos.html');
+ const privacy=read('planos/privacidade.html');
+ for (const page of [landing,terms,privacy]){
+  assert.match(page,/Luanderson Jesus dos Santos/);
+  assert.match(page,/NovaByte Soluções/);
+  assert.match(page,/Avenida das Emas/);
+  assert.match(page,/2958/);
+  assert.match(page,/Lucas do Rio Verde/);
+  assert.match(page,/luandersonjesussantos063@gmail\.com/);
+ }
+ assert.match(terms,/pessoa física/);
+ assert.match(landing,/Identificação do fornecedor/);
+});
