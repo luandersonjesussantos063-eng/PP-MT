@@ -92,12 +92,20 @@ Deno.serve(makeHandler({
     path.startsWith('/preapproval/')?'subscription_status':
     path.startsWith('/authorized_payments')?'authorized_payment_status':
     path.startsWith('/v1/payments/')?'payment_verification':'other';
-   console.warn('PPMT Mercado Pago recusou etapa', {operation,status:res.status});
+   // Somente identificadores de erro com caracteres estritamente controlados.
+   // Nunca registrar mensagem livre, detalhes da resposta, access token ou email.
+   let code=null;
+   try{
+    const payload=await res.json();
+    const candidate=String(payload?.error||payload?.code||payload?.cause?.[0]?.code||'');
+    if(/^[A-Za-z0-9_-]{1,80}$/.test(candidate))code=candidate;
+   }catch{}
+   console.warn('PPMT Mercado Pago recusou etapa', {operation,status:res.status,code});
    throw new BillingError(res.status>=500?503:422,
     res.status===401||res.status===403?
     'A credencial de produção do Mercado Pago precisa ser verificada pelo administrador. Nenhuma nova cobrança foi confirmada.':
     'O Mercado Pago não concluiu a operação. Consulte o status antes de criar nova cobrança.',
-    res.status);
+    res.status,code);
   }
   return await res.json();
  }

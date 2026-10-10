@@ -13,7 +13,7 @@ async function check(){
     !flags.production_token_present?'Token de produção ausente':
     merchantStatus===401||merchantStatus===403?'API de identidade do vendedor recusou acesso (HTTP '+merchantStatus+'). Confira a API de Checkout Pro abaixo':
     merchantStatus?'Conta de recebimento não validada (HTTP '+merchantStatus+')':'Não foi possível verificar a conta recebedora';
-  $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+reason;
+  $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+reason+(flags.merchant_error_code?' · Código: '+flags.merchant_error_code:'');
   const checkoutStatus=flags.checkout_api_http_status;
   const checkLabel=flags.checkout_api_authorized?
     flags.checkout_seller_matches===true?'API de Checkout Pro aceitou o token e confirmou o recebedor':
@@ -21,7 +21,7 @@ async function check(){
     'API de Checkout Pro aceitou o token (identidade do recebedor ainda não confirmada)':
     checkoutStatus?'API de Checkout Pro recusou consulta sem cobrança (HTTP '+checkoutStatus+')':
     'API de Checkout Pro não respondeu à consulta sem cobrança';
-  $('checkout-api').textContent=(flags.checkout_api_authorized&&flags.checkout_seller_matches!==false?'✓ ':'✕ ')+checkLabel;
+  $('checkout-api').textContent=(flags.checkout_api_authorized&&flags.checkout_seller_matches!==false?'✓ ':'✕ ')+checkLabel+(flags.checkout_api_error_code?' · Código: '+flags.checkout_api_error_code:'');
   $('webhook').textContent=(flags.webhook_secret_present?'✓ ':'✕ ')+'Chave secreta do webhook';
   $('delivery').textContent=(flags.delivery_flag?'✓ ':'✕ ')+'Entrega Premium liberada';
   $('billing').textContent=(flags.billing_flag?'✓ ':'✕ ')+'Abertura comercial autorizada';

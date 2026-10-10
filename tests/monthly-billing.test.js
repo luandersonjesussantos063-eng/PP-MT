@@ -318,3 +318,13 @@ test('conta divergente ja descoberta no read-only impede criar pagamento',async(
  assert.equal(resp.status,503);
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
+
+test('erro oficial do Mercado Pago permanece código seguro sem detalhes de credenciais',async()=>{
+ const e=new BillingError(422,'Operação indisponível',400,'ds_search_query');
+ assert.equal(e.providerStatus,400);
+ assert.equal(e.providerCode,'ds_search_query');
+ const server=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
+ assert.match(server,/\^\[A-Za-z0-9_-\]\{1,80\}\$/);
+ assert.match(server,/code\}\);/);
+ assert.doesNotMatch(server,/console\.warn\([^\n]*headers|console\.warn\([^\n]*token/);
+});
