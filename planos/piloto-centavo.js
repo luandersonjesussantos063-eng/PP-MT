@@ -57,8 +57,8 @@ async function run(action){
   if(action==='check'){
    enabled=data.enabled===true;
    if(!enabled){
-    $('state').textContent='Piloto indisponível no momento. Nenhuma cobrança foi criada.';
-    if(typeof data.reason==='string')info(data.reason,true);
+    $('state').textContent=typeof data.reason==='string' ? 'Piloto bloqueado: '+data.reason : 'Piloto indisponível no momento. Nenhuma cobrança foi criada.';
+    if(typeof data.reason==='string')info('Nenhuma cobrança foi criada. Corrija a autorização do Mercado Pago antes de gerar Pix.',true);
    }else{
     const status=await runCentavoPremium('status');
     display(status);
