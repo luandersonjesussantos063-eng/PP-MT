@@ -1,13 +1,17 @@
 import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false,lastBilling=null;
+function paidFarFromExpiry(){
+ const expiry=Date.parse(lastBilling?.current_period_end);
+ return lastBilling?.premium===true && Number.isFinite(expiry) && expiry-Date.now()>7*86400000;
+}
 function canStartCard(){
- return enabled && !lastBilling?.card &&
+ return enabled && !paidFarFromExpiry() && !lastBilling?.card &&
   !['pending','creating','needs_review'].includes(lastBilling?.manual?.state);
 }
 function canStartManual(){
  const cardState=lastBilling?.card?.state;
- return enabled &&
+ return enabled && !paidFarFromExpiry() &&
   !['pending','authorized','paused','creating','needs_review'].includes(cardState) &&
   !['pending','creating','needs_review'].includes(lastBilling?.manual?.state);
 }
