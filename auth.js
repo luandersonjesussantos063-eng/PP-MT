@@ -187,3 +187,20 @@ export async function runCentavoPremium(action){
   throw new Error('A resposta do teste não corresponde a R$ 0,01.');
  return data;
 }
+
+
+// Consulta privada e somente leitura; token de produção permanece no servidor.
+export async function runMercadoPagoDiagnostic(){
+ if(!online())throw new Error('Conecte-se para verificar o Mercado Pago.');
+ const user=await verifiedUser();
+ if(!user)throw new Error('Entre na sua conta PP-MT.');
+ const {data,error}=await client().functions.invoke('ppmt-mp-readonly-diagnostic',{body:{action:'probe'}});
+ if(error){
+  let message='';
+  if(typeof error.context?.json==='function')try{message=String((await error.context.json())?.error||'');}catch{}
+  throw new Error(message.slice(0,200)||'Falha na consulta de diagnóstico.');
+ }
+ if(data?.read_only!==true || typeof data?.payments?.http_status!=='number' || typeof data?.identity?.http_status!=='number')
+  throw new Error('O servidor retornou um diagnóstico incompleto.');
+ return data;
+}
