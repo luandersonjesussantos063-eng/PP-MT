@@ -7,10 +7,20 @@ const cancelable=new Set(['authorized','pending','paused']);
 let busy=false,enabled=false,lastBilling=null,discountOffer=null;
 
 async function loadDiscount(){
- try{const offers=await myPremiumOffers();const requested=new URLSearchParams(location.search).get('oferta');const discounts=offers.filter(o=>o.kind==='monthly_discount'&&Date.parse(o.expires_at)>Date.now());discountOffer=(requested?discounts.find(o=>o.id===requested):null)||discounts[0]||null;
- const panel=$('discount-notice');if(!panel)return;panel.hidden=!discountOffer;
- if(discountOffer){$('discount-message').textContent='Oferta de '+discountOffer.discount_percent+'%: de R$ 19,99 por '+Number(discountOffer.discounted_price).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})+' no primeiro período mensal, válida até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'. A cobrança promocional ainda não está disponível.';$('manual-btn').disabled=true;$('card-btn').disabled=true;}
- }catch{discountOffer=null}
+ try{
+  const offers=await myPremiumOffers();
+  const requested=new URLSearchParams(location.search).get('oferta');
+  const discounts=offers.filter(o=>o.kind==='monthly_discount'&&Date.parse(o.expires_at)>Date.now());
+  discountOffer=(requested?discounts.find(o=>o.id===requested):null)||discounts[0]||null;
+  const panel=$('discount-notice');if(!panel)return;panel.hidden=!discountOffer;
+  if(discountOffer){
+   const cents=Math.max(1,Math.round(1999*(100-discountOffer.discount_percent)/100));
+   const amount=(cents/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+   $('discount-message').textContent='Oferta de '+discountOffer.discount_percent+'%: de R$ 19,99 por '+amount+' nesta mensalidade avulsa, válida até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'. O valor final será confirmado no Mercado Pago.';
+   const label=$('manual-btn').querySelector('small');if(label)label.textContent=amount+' por 1 mês · sem renovação automática';
+   $('card-btn').disabled=true;
+  }
+ }catch{discountOffer=null;const panel=$('discount-notice');if(panel)panel.hidden=true;}
 }
 function setBusy(on){
  busy=on;
@@ -227,9 +237,9 @@ $('google-login-btn').addEventListener('click',async()=>{
  try{await loginWithGoogle('checkout');}
  catch{setBusy(false);notice('Não foi possível entrar com Google. Tente novamente ou use e-mail e senha.');}
 });
-$('manual-btn').addEventListener('click',()=>{if(discountOffer){notice('Seu desconto está registrado, mas o pagamento promocional ainda não foi habilitado. Nenhuma cobrança foi criada.');return;}if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
+$('manual-btn').addEventListener('click',()=>{if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
 $('card-btn').addEventListener('click',()=>{
- if(discountOffer){notice('Seu desconto está registrado, mas o pagamento promocional ainda não foi habilitado. Nenhuma cobrança foi criada.');return;}if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
+ if(discountOffer){notice('Seu desconto é válido para pagamento avulso por Pix, boleto ou débito. O cartão recorrente permanece com preço normal.');return;}if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
 });
 $('switch-to-pix-btn').addEventListener('click',()=>{
  if(busy || lastBilling?.card?.state!=='pending' || lastBilling?.premium===true ||
