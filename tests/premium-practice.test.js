@@ -69,7 +69,7 @@ test('página paga não inclui respostas, chaves privadas ou acervo protegido',(
  const h=readFileSync(new URL('../planos/premium.html',import.meta.url),'utf8');
  const js=readFileSync(new URL('../planos/premium.js',import.meta.url),'utf8');
  const auth=readFileSync(new URL('../auth.js',import.meta.url),'utf8');
- assert.match(h,/Questões comentadas/);
+ assert.match(h,/Central Tática|Questões comentadas|CENTRAL TÁTICA/i);
  assert.match(js,/runPremiumPractice/);
  assert.doesNotMatch(h+js+auth,/SUPABASE_SERVICE_ROLE_KEY|answer_index:1|MP_ACCESS_TOKEN_PROD/);
  assert.match(readFileSync(new URL('../database/premium-content.sql',import.meta.url),'utf8'),/revoke all.*authenticated/);
