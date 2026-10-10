@@ -5,7 +5,7 @@ function checked<T>(r:{data:T,error:unknown}):T{
  if(r.error)throw new Error('Erro de banco de dados');return r.data;
 }
 const db={
- async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true';},
+ async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true'&&Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));},
  async token(){return Deno.env.get('MP_ACCESS_TOKEN_PROD')||null;},
  async member(id:string){return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());},
  async card(id:string){return checked(await admin.from('ppmt_monthly_cards').select('*').eq('user_id',id).maybeSingle());},
