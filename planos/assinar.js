@@ -213,14 +213,14 @@ async function load(){
    showError('Aguarde o HTTPS deste endereço ser ativado antes de usar pagamentos.');
    return;
   }
-  const user=await verifiedUser();
+  const user=await Promise.race([verifiedUser(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_auth')),12000))]);
   if(!user){show('login');return;}
   setBusy(false);
-  await action('status');
-  await loadDiscount();
+  await Promise.race([action('status'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_billing')),18000))]);
+  await Promise.race([loadDiscount(),new Promise(resolve=>setTimeout(resolve,8000))]);
   await reconcileAfterCheckout();
  }catch(e){
-  showError('Não conseguimos verificar sua sessão. Entre novamente com sua conta no PP-MT.');
+  showError('A verificação demorou demais ou a conexão falhou. Toque em Tentar novamente. Se persistir, abra no Chrome e entre novamente na sua conta.');
  }finally{setBusy(false);}
 }
 $('login-form').addEventListener('submit',async e=>{
