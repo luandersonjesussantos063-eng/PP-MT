@@ -23,9 +23,9 @@ test('versão exibida e revisão dos arquivos publicados permanecem alinhadas',(
   const runtime=app.match(/const APP_VERSION='([^']+)'/)?.[1];
   const js=html.match(/app\.js\?v=([^"&]+)/)?.[1];
   const style=html.match(/style\.css\?v=([^"&]+)/)?.[1];
-  assert.equal(runtime,'2.15.0');
-  assert.equal(js,runtime);
-  assert.equal(style,js);
+  assert.equal(runtime,'2.18.0');
+  assert.ok(js.startsWith(runtime), 'JS deve usar a mesma versão, podendo incluir sufixo de cache');
+  assert.equal(style,runtime);
   assert.ok(html.includes('V '+runtime));
 });
 
