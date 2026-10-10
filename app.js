@@ -1,6 +1,6 @@
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
-import {loginWithGoogle,studyQuota,takeGoogleReturn} from './account-services.js?v=2.18.0';
+import {loginWithGoogle,studyQuota,takeGoogleReturn,myPremiumOffers} from './account-services.js?v=2.18.0';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
@@ -86,7 +86,7 @@ async function allowStudy(kind='question',units=1){
  }finally{quotaChecking=false;}
 }
 let tab='inicio',filter={search:'',subject:'',kind:'prova',exam:''},index=0,selection=null,answered=false,queue=[],run=null,examResult=null,assistState=Object.create(null),strikeState=Object.create(null),deferredInstallPrompt=null,reviewState=null;const studyTracker={lastActivity:Date.now(),lastTick:Date.now(),localFlush:0,cloudFlush:0};
-const pages=[['inicio','⌂','Hoje'],['missao','◆','Missão diária'],['estudar','▦','Estudar'],['erros','↺','Revisar'],['simulados','◷','Simulado'],['desempenho','▥','Progresso'],['edital','▤','Cobertura do edital'],['noticias','◉','Notícias do concurso'],['livre','▷','Treino livre'],['rotina','⚙','Minha rotina'],['conteudos','▤','Comentários MT'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['favoritos','☆','Favoritos'],['plano','◇','Meu plano'],['dados','⚙','Meus dados']];
+const pages=[['inicio','⌂','Hoje'],['missao','◆','Missão diária'],['estudar','▦','Estudar'],['erros','↺','Revisar'],['simulados','◷','Simulado'],['desempenho','▥','Progresso'],['edital','▤','Cobertura do edital'],['noticias','◉','Notícias do concurso'],['livre','▷','Treino livre'],['rotina','⚙','Minha rotina'],['conteudos','▤','Comentários MT'],['provas','▧','Provas'],['mais','☰','Mais'],['materias','▦','Matérias'],['questoes','▤','Banco'],['favoritos','☆','Favoritos'],['plano','◇','Meu plano'],['ofertas','🔔','Notificações'],['dados','⚙','Meus dados']];
 const LAST_EDITAL_SUBJECTS=[
  'Língua Portuguesa',
  'História e Geografia de Mato Grosso',
@@ -436,6 +436,19 @@ function renderSubjects(){
 }
 function navigate(){if(!currentUser){renderAuth();return}let dest=location.hash.slice(1)||'inicio';if(lockStudy(dest)){toast('Conclua a missão do dia para liberar o treino livre.');dest='missao';if(location.hash!=='#missao'){location.hash='missao';return}}if(run&&dest!==(run.originTab||'simulados')){if(!confirm('Voltar ao plano? O simulado será salvo; o tempo de prova continuará correndo.')){location.hash=run.originTab||'missao';return}persistExam();run=null}tab=pages.some(p=>p[0]===dest)?dest:'inicio';if(tab==='livre'&&store.program.freeTraining){studyTracker.paused=false;noteStudyActivity()}index=0;selection=null;answered=false;render()}
 window.addEventListener('hashchange',navigate);
+async function renderMyOffers(){
+ const container=$('#content');
+ container.innerHTML='<section class="panel"><h1>🔔 Notificações e ofertas</h1><p class="muted">Benefícios exclusivos enviados para sua conta.</p><div id="offersList" role="status">Carregando suas ofertas…</div></section>';
+ const el=$('#offersList');
+ try{const offers=await myPremiumOffers();if(!el.isConnected)return;el.replaceChildren();
+ if(!offers.length){el.textContent='Você não tem ofertas ativas no momento.';return;}
+ for(const offer of offers){const card=document.createElement('section');card.className='panel';const title=document.createElement('h2'),info=document.createElement('p'),valid=document.createElement('p');valid.className='muted';
+ const until=new Date(offer.expires_at).toLocaleDateString('pt-BR');
+ if(offer.kind==='monthly_discount'){title.textContent='🎁 Desconto exclusivo de '+offer.discount_percent+'% no Premium';info.textContent='Você recebeu uma oferta especial para sua conta.';valid.textContent='Oferta válida até '+until+'.';const link=document.createElement('a');link.href='./planos/assinar.html?oferta='+encodeURIComponent(offer.id);link.className='button primary';link.textContent='Ver desconto na assinatura →';card.append(title,info,valid,link);const notice=document.createElement('p');notice.className='muted';notice.textContent='A cobrança com desconto está em preparação. O checkout ainda não aplicará o valor promocional.';card.append(notice)}
+ else{title.textContent='✓ Cortesia Premium';info.textContent='Você recebeu '+offer.days+' dia(s) de acesso Premium gratuito.';valid.textContent='Válido até '+until;card.append(title,info,valid)}
+ el.append(card)}
+ }catch{if(el.isConnected)el.textContent='Não foi possível consultar suas notificações. Tente novamente.'}
+}
 function render(){
  $('#nav').innerHTML=pages.map(([id,icon,name])=>{const locked=lockStudy(id),mobilePrimary=['inicio','estudar','erros','simulados','desempenho'].includes(id);return `<a href="#${locked?'missao':id}" class="${tab===id?'active':''} ${locked?'locked':''} ${mobilePrimary?'mobile-primary':'mobile-extra'}" ${tab===id?'aria-current="page"':''}><span class="navicon">${locked?'🔒':icon}</span>${name}</a>`}).join('');
  const c=$('#content');
@@ -453,7 +466,7 @@ function render(){
  if(tab==='simulados')renderExam();
  if(tab==='provas'){if(run)showExamQuestion();else renderArchive()}
  if(tab==='desempenho')renderLearningProgress();
- if(tab==='plano')renderMembership(c);
+ if(tab==='plano')renderMembership(c);\n if(tab==='ofertas')renderMyOffers();
  if(tab==='dados')renderData();
  if(tab!=='plano'&&quotaSnapshot)showQuotaBadge();
 }
