@@ -68,7 +68,18 @@ export function createHandler({authenticate,db,mercado}){
       if(!['check','create','status'].includes(input?.action))fail(422,'Ação desconhecida.');
       const enabled=await db.isEnabled();
       const mpToken=await db.token();
-      if(input.action==='check')return respond({amount:CENTAVO,enabled:enabled&&!!mpToken,recurring:false});
+      if(input.action==='check'){
+        if(!enabled||!mpToken)return respond({amount:CENTAVO,enabled:false,recurring:false});
+        try{
+          // GET somente leitura: validar a conta recebedora antes de habilitar o botão.
+          const seller=await mercado(mpToken,'/users/me','GET',null,null);
+          if(Number(seller?.id)!==SELLER_REAL || seller?.tags?.includes('test_user'))
+            return respond({amount:CENTAVO,enabled:false,recurring:false,reason:'A credencial salva não pertence à conta real de recebimento esperada.'});
+          return respond({amount:CENTAVO,enabled:true,recurring:false});
+        }catch{
+          return respond({amount:CENTAVO,enabled:false,recurring:false,reason:'Não foi possível validar a credencial junto ao Mercado Pago.'});
+        }
+      }
       if(!enabled||!mpToken)fail(503,'Pix real ainda não configurado. É necessário habilitar a integração com credencial de produção.');
       const mp=(path,method='GET',body=null,idempotency=null)=>mercado(mpToken,path,method,body,idempotency);
       const seller=await mp('/users/me');
