@@ -78,3 +78,14 @@ export async function saveUserState(userId, state) {
     .upsert({ user_id: userId, state, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
   if (error) throw error;
 }
+
+// Read-only membership status, evaluated using the server clock and RLS.
+export async function loadMembership(){
+ if(!online())throw new Error('Conecte-se para consultar sua assinatura.');
+ const {data:userData,error:userError}=await client().auth.getUser();
+ if(userError)throw userError;
+ if(!userData.user)throw new Error('Entre na sua conta.');
+ const {data,error}=await client().rpc('my_membership');
+ if(error)throw error;
+ return data;
+}
