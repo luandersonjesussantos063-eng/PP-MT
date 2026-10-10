@@ -17,8 +17,15 @@ const db={
  async updateCard(userId:string,fields:Record<string,unknown>){
   checked(await admin.from('ppmt_monthly_cards').update({...fields,updated_at:new Date().toISOString()}).eq('user_id',userId).select('user_id').single());
  },
- async credit(userId:string,payment:any,source:string){
+ async credit(userId:string,payment:any,source:string,reference?:string){
   if(!payment.date_approved||!Number.isFinite(Date.parse(payment.date_approved)))throw new Error('Invalid approval date');
+  if(source==='manual'){
+    if(!reference)throw new Error('Referência da mensalidade ausente.');
+    checked(await admin.rpc('ppmt_credit_verified_manual_payment',{
+      p_user_id:userId,p_payment_id:String(payment.id),p_paid_at:payment.date_approved,p_reference:reference
+    }));
+    return;
+  }
   checked(await admin.rpc('ppmt_credit_verified_monthly_payment',{
    p_user_id:userId,p_payment_id:String(payment.id),p_source:source,p_paid_at:payment.date_approved
   }));
