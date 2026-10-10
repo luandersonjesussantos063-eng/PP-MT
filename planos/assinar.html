@@ -9,9 +9,9 @@
 <meta name="description" content="Assine PP-MT Premium: R$ 19,99 por mês no cartão ou pagamento mensal por Pix, boleto ou débito.">
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
-<link rel="stylesheet" href="./assinar.css?v=2.18.3">
+<link rel="stylesheet" href="./assinar.css?v=2.18.4">
 <script type="module">
- import('./assinar.js?v=2.18.14').catch(err=>{
+ import('./assinar.js?v=2.18.15').catch(err=>{
   const panel=document.getElementById('loading-panel');
   if(panel){panel.hidden=false;panel.textContent='Não foi possível iniciar o sistema de pagamento. Código: MODULO. Tente novamente em uma nova aba do Chrome.';}
   console.error('PPMT checkout module failed',err);
@@ -28,7 +28,7 @@
   <p class="pay-amount"><strong>R$ 19,99</strong> <span>/ mês de acesso</span></p>
   <p class="pay-description">Acesso aos treinos Premium e questões sem limite diário.</p>
  </div>
- <section id="discount-notice" class="pay-panel" hidden role="status"><h2>🎁 Seu desconto Premium</h2><p id="discount-message"></p><p class="pay-fine">O preço promocional vale para uma mensalidade avulsa. Confira o valor exibido pelo Mercado Pago antes de confirmar. Assinaturas recorrentes no cartão não recebem este desconto.</p><a class="button secondary pay-wide" href="../#ofertas">Voltar às notificações</a></section><section id="loading-panel" class="pay-message" role="status">Verificando seu acesso… <p style="font-size:14px;margin:16px 0 0">Se esta tela demorar, toque em <a href="./assinar.html?reiniciar=1" style="color:#efc07a;text-decoration:underline">Recarregar pagamento</a>.</p></section>
+ <section id="discount-notice" class="pay-panel" hidden role="status"><h2>🎁 Seu desconto Premium</h2><p id="discount-message"></p><p class="pay-fine">O preço promocional vale para uma mensalidade avulsa. Confira o valor exibido pelo Mercado Pago antes de confirmar. Assinaturas recorrentes no cartão não recebem este desconto.</p><a class="button secondary pay-wide" href="../#ofertas">Ver minhas notificações</a></section><section id="loading-panel" class="pay-message" role="status">Verificando seu acesso… <p style="font-size:14px;margin:16px 0 0">Se esta tela demorar, toque em <a href="./assinar.html?reiniciar=1" style="color:#efc07a;text-decoration:underline">Recarregar pagamento</a>.</p></section>
  <section id="login-panel" class="pay-panel" hidden>
   <h2>Entre na sua conta</h2>
   <p>É só entrar para vincular o Premium ao seu progresso.</p>
@@ -54,9 +54,9 @@
    <p id="pending-message">Não precisa criar outro pagamento.</p>
    <a id="card-link" class="button primary pay-wide" hidden rel="noopener noreferrer" href="#">Continuar no Mercado Pago →</a>
    <a id="manual-link" class="button primary pay-wide" hidden rel="noopener noreferrer" href="#">Continuar no Mercado Pago →</a>
-   <button id="switch-to-pix-btn" class="button secondary pay-wide pay-switch" type="button" hidden>← Trocar para Pix</button>
-   <p id="switch-to-pix-help" class="pay-switch-note" hidden>Antes de trocar, vamos cancelar a solicitação de cartão no Mercado Pago. Nenhuma compra por Pix será criada automaticamente.</p>
-   <button id="cancel-manual-btn" class="button secondary pay-wide" type="button" hidden>Cancelar tentativa e escolher outra forma</button><button id="refresh-btn" class="button secondary pay-wide" type="button">Já paguei · Verificar agora</button>
+   <button id="change-method-btn" class="button secondary pay-wide pay-switch" type="button">← Voltar e escolher outra forma de pagamento</button>
+   <p class="pay-switch-note">Ao escolher outra forma, tentaremos encerrar o pagamento anterior antes de criar um novo.</p>
+   <button id="refresh-btn" class="button secondary pay-wide" type="button">Já paguei · Verificar agora</button>
    <p id="card-state" class="pay-detail"></p><p id="manual-state" class="pay-detail"></p>
   </section>
   <section id="offer-panel" class="pay-panel" hidden>
@@ -78,6 +78,7 @@
    <h2>Não conseguimos consultar seu pagamento agora</h2>
    <p id="error-message">Nenhuma nova cobrança será iniciada até conseguirmos conferir sua situação.</p>
    <button id="retry-btn" class="button primary pay-wide" type="button">Tentar novamente</button>
+   <button id="error-change-method-btn" class="button secondary pay-wide pay-switch" type="button">← Voltar e escolher outra forma de pagamento</button>
    <a class="pay-support-link" href="https://wa.me/5531983771576" rel="noopener noreferrer" target="_blank">Preciso de ajuda pelo WhatsApp →</a>
   </section>
   <details id="manage-panel" class="pay-details pay-manage" hidden>
