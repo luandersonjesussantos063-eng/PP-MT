@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createHmac,webcrypto} from 'node:crypto';
 import {readFileSync} from 'node:fs';
-import {makeHandler,isSeller,paidStatus,verifiedPayment,verifiedCardPayment,AMOUNT,SELLER} from '../supabase/functions/ppmt-monthly-billing/logic.js';
+import {makeHandler,BillingError,isSeller,paidStatus,verifiedPayment,verifiedCardPayment,AMOUNT,SELLER} from '../supabase/functions/ppmt-monthly-billing/logic.js';
 import {signatureParts,checkSignature,webhookHandler} from '../supabase/functions/ppmt-monthly-webhook/logic.js';
 if(!globalThis.crypto)globalThis.crypto=webcrypto;
 const ORIGIN='https://luandersonjesussantos063-eng.github.io';
