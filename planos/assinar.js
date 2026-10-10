@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.14.0';
+import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.14.1';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false;
 function notice(msg,error=false){$('feedback').hidden=!msg;$('feedback').textContent=msg||'';$('feedback').classList.toggle('is-error',error);}
@@ -22,28 +22,28 @@ function showLink(id,url){
 }
 function display(data){
  enabled=data.enabled===true;
- $('availability').textContent=enabled?'Cobranças disponíveis. Confira seu plano antes de gerar outra mensalidade.':'Cadastro e estudos gratuitos disponíveis. O checkout comercial ainda está em implantação; nenhuma cobrança nova será gerada.';
+ $('availability').textContent=enabled?'Pagamentos disponíveis.':'Pagamentos em breve. Continue estudando grátis.';
  $('card-btn').disabled=busy||!enabled;$('manual-btn').disabled=busy||!enabled;
  const valid=!!data.premium,expiry=statusDate(data.current_period_end);
- $('membership-state').textContent=valid?'Premium ativo.':'Você não possui uma mensalidade Premium ativa.';
- $('next-bill').textContent=valid&&expiry?'Acesso pago até '+expiry+'. Renove pelo site próximo ao vencimento.':'Se houver um pagamento pendente, aguarde a aprovação ou consulte novamente.';
+ $('membership-state').textContent=valid?'Premium ativo':'Plano gratuito';
+ $('next-bill').textContent=valid&&expiry?'Válido até '+expiry:'';
  if(data.card){
-  const states={pending:'Autorização do cartão pendente.',authorized:'Assinatura de cartão autorizada; cobranças mensais automáticas.',cancelled:'Cobranças futuras canceladas.',paused:'Assinatura pausada.',needs_review:'Assinatura em revisão. Não autorize outra.'};
-  $('card-state').textContent=states[data.card.state]||'Verifique sua assinatura.';
+  const states={pending:'Aguardando autorização.',authorized:'Cobrança mensal ativa.',cancelled:'Renovação cancelada.',paused:'Assinatura pausada.',needs_review:'Assinatura em análise.'};
+  $('card-state').textContent=states[data.card.state]||'Verificar assinatura.';
   showLink('card-link',data.card.checkout_url);
   $('cancel-btn').hidden=!['authorized','pending','paused'].includes(data.card.state);
   $('card-btn').disabled=true;
  }else{
-  $('card-state').textContent='Nenhuma assinatura de cartão cadastrada.';
+  $('card-state').textContent='';
   showLink('card-link',null);$('cancel-btn').hidden=true;
  }
  if(data.manual){
-  const states={pending:'Mensalidade aguardando pagamento.',paid:'Mensalidade aprovada.',needs_review:'Cobrança em revisão. Não tente pagar novamente.',creating:'Cobrança sendo preparada.'};
-  $('manual-state').textContent=states[data.manual.state]||'Consulte sua mensalidade.';
+  const states={pending:'Aguardando pagamento.',paid:'Pagamento aprovado.',needs_review:'Cobrança em análise.',creating:'Preparando pagamento.'};
+  $('manual-state').textContent=states[data.manual.state]||'Consulte o pagamento.';
   showLink('manual-link',data.manual.checkout_url);
   if(data.manual.state==='pending'||data.manual.state==='needs_review')$('manual-btn').disabled=true;
  }else{
-  $('manual-state').textContent='Nenhuma cobrança pendente.';
+  $('manual-state').textContent='';
   showLink('manual-link',null);
  }
 }
@@ -51,7 +51,7 @@ async function action(value){
  if(busy)return;busyState(true);notice('');
  try{
   const data=await runMonthlyBilling(value);
-  if(value==='card_cancel')notice('Renovação do cartão cancelada. Os pagamentos já aprovados seguem válidos até o vencimento.');
+  if(value==='card_cancel')notice('Renovação automática cancelada.');
   display(data);
  }catch(e){notice(e instanceof Error?e.message:'Não foi possível consultar.',true);}
  finally{busyState(false);}
@@ -62,7 +62,7 @@ async function load(){
   const user=await verifiedUser();
   $('login-panel').hidden=!!user;$('payment-panel').hidden=!user;
   if(user){busyState(false);await action('status');}
-  else $('availability').textContent='Entre com sua conta PP-MT para consultar seu plano.';
+  else $('availability').textContent='Entre para ver seu plano.';
  }catch{$('login-panel').hidden=false;$('payment-panel').hidden=true;notice('Não foi possível verificar sua sessão.',true);}
  finally{busyState(false);}
 }
