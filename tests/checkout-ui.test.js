@@ -19,6 +19,8 @@ test('checkout mostra somente preço, planos e mensagens essenciais',()=>{
  assert.match(html,/id="offer-panel"/);
  assert.match(html,/id="error-panel"/);
  assert.match(html,/id="pending-panel"/);
+ assert.match(html,/id="switch-to-pix-btn"/);
+ assert.match(html,/Trocar para Pix/);
  assert.match(html,/id="manage-panel"/);
  assert.doesNotMatch(html,/name="pay-method"/);
  assert.match(html,/id="paid-panel"/);
@@ -44,4 +46,7 @@ test('interface compacta mantém integração, confirmação e cancelamento',()=
  assert.match(js,/confirm\(/);
  assert.match(js,/runMonthlyBilling/);
  assert.match(js,/enabled=data\.enabled===true/);
+ assert.match(js,/cs==='pending'/);
+ assert.match(js,/action\('card_cancel',\{switchToPix:true\}\)/);
+ assert.match(js,/updated\?\.card\?\.state==='cancelled'/);
 });
