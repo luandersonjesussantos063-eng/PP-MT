@@ -153,7 +153,9 @@ test('site não carrega chaves privadas e checkout padrão permanece fechado',()
  const a=readFileSync(new URL('../auth.js',import.meta.url),'utf8');
  assert.doesNotMatch(h+j+a,/MP_ACCESS_TOKEN_PROD|SUPABASE_SERVICE_ROLE_KEY|APP_USR-/);
  const index=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
- assert.match(index,/PPMT_MONTHLY_BILLING_ENABLED/);
+ assert.match(index,/flags\.delivery_ready===true/);
+ assert.match(index,/MP_ACCESS_TOKEN_PROD/);
+ assert.match(index,/MP_WEBHOOK_SECRET/);
  assert.match(index,/ppmt_commercial_flags/);
 });
 
