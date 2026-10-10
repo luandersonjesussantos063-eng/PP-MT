@@ -52,10 +52,12 @@ export function makeHandler({authenticate,db,mp}){
    let body;try{body=JSON.parse(raw);}catch{fail(400,'JSON inválido.');}
    if(!['status','manual_checkout','card_start','card_cancel'].includes(body?.action))fail(400,'Ação inválida.');
    const enabled=await db.enabled();
-   if(body.action!=='status'&&!enabled)fail(503,'As vendas ainda não estão abertas. O pagamento real de R$ 0,01 permanece separado.');
+   if(['manual_checkout','card_start'].includes(body.action)&&!enabled)fail(503,'As vendas ainda não estão abertas. O teste Pix permanece separado.');
    const member=await db.member(user.id);
    const result={price:AMOUNT,month:true,enabled,premium:Boolean(member?.status==='active'&&member?.current_period_end&&Date.parse(member.current_period_end)>Date.now()),current_period_end:member?.current_period_end??null};
-   if(body.action==='status'&&!enabled)return output({...result,manual:null,card:null});
+   // Mesmo que novas vendas sejam suspensas, permitir consultar e cancelar assinatura existente.
+   // Se não houver token configurado, mostramos pelo menos a vigência do acesso.
+   if(body.action==='status'&&!enabled&&!(await db.token()))return output({...result,manual:null,card:null});
    const access=await db.token();
    if(!access)fail(503,'Mercado Pago de produção não configurado.');
    const mercado=(path,method='GET',payload=null,key=null)=>mp(access,path,method,payload,key);
