@@ -33,8 +33,8 @@ Esta é uma **estrutura de responsabilidades e verificações automatizáveis**,
 - Papel definido: inspecionar status de GitHub Actions, páginas de apresentação, checkout, sitemap, Supabase e novos incidentes em logs.
 - Registrar para o supervisor e o gerente: horário, sistema, status, evidência/URL, severidade e providência recomendada.
 - Criticidade alta: HTTP 401/403/422 nos pagamentos; erro de publicação; serviço indisponível; Premium concedido sem pagamento confirmado; pagamento confirmado sem liberação.
-- **Cadência solicitada: a cada 30 minutos.** A agenda nativa de tarefas neste ambiente suporta no máximo **uma execução por hora**. Não há monitoramento de 30 minutos ativo nem notificações para gerente.
-- Uma vigília horária pode ser configurada **após autorização do proprietário**. Não prometer que cinco papéis representam cinco processos contínuos.
+- **Cadência solicitada: a cada 30 minutos.** A agenda nativa de tarefas neste ambiente suporta no máximo **uma execução por hora**. Não há monitoramento a cada 30 minutos; a automação opera de hora em hora e o gerente recebe relatório agendado.
+- **Vigia horário ativado** por solicitação e autorização do proprietário em 10/10/2026. Tarefa programada verifica mudanças e notifica apenas novidades ou bloqueios materiais. O horário de execução efetivo e notificações pertencem à plataforma de tarefas. Não equivale a cinco agentes contínuos independentes.
 
 ## Regra de aceite
 
