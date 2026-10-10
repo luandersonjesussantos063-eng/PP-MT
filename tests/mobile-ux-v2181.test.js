@@ -22,7 +22,9 @@ test('interface evita mostrar anúncio grande a aluno Premium em todas as abas',
 test('plano diário aparece antes dos atalhos e sincronização bem-sucedida não ocupa altura fixa',()=>{
  assert.match(app,/today\.after\(quick\)/);
  assert.match(app,/el\.hidden=!currentUser\|\|\(!offline&&syncStatus==='saved'\)/);
- assert.match(html,/2\.18\.1/);
+ const currentVersion=app.match(/const APP_VERSION='([^']+)'/)?.[1];
+ assert.ok(currentVersion,'A versão do aplicativo deve existir');
+ assert.ok(html.includes('V '+currentVersion),'O HTML deve exibir a versão vigente');
 });
 test('revisão e tabela de desempenho usam explicação humana e pista para deslizar',()=>{
  assert.match(app,/Questão selecionada para revisar o mesmo assunto/);
