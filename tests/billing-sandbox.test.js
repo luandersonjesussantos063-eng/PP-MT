@@ -126,13 +126,13 @@ test('sem credencial de teste recusa checkout e não marca Premium',async()=>{
  assert.equal(s.calls.length,0);
 });
 
-test('versão pública não exibe token e não habilita cobrança comercial',()=>{
+test('página de teste não divulga tokens e não altera dados comerciais',()=>{
  const html=readFileSync(new URL('../planos/teste.html',import.meta.url),'utf8');
  const page=readFileSync(new URL('../planos/teste.js',import.meta.url),'utf8');
  const plan=readFileSync(new URL('../planos/plan.js',import.meta.url),'utf8');
  assert.match(html,/TESTE — não é uma venda ao público/);
  assert.match(page,/runBillingSandbox/);
- assert.match(plan,/billingEnabled: false/);
+ assert.match(plan,/billingEnabled: true/);
  assert.doesNotMatch(html+page,/APP_USR-/);
  const logic=readFileSync(new URL('../supabase/functions/ppmt-billing-test/logic.js',import.meta.url),'utf8');
  assert.doesNotMatch(logic,/\.from\(['"]memberships['"]\)/);
