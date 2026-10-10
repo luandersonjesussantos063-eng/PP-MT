@@ -10,6 +10,17 @@ test('simulacao do Mercado Pago retorna 200 sem assinatura nem credenciais',asyn
  assert.equal(response.status,200);
  assert.match(await response.text(),/TESTE RECEBIDO/);
 });
+test('simulacao real do Mercado Pago payment.updated em modo teste responde 200',async()=>{
+ const event={action:'payment.updated',api_version:'v1',data:{id:'123456'},
+ date_created:'2021-11-01T02:02:02Z',id:'123456',live_mode:false,type:'payment',user_id:740298583};
+ const response=await h(post(event));
+ assert.equal(response.status,200);
+ assert.match(await response.text(),/nenhuma cobranca ou assinatura alterada/i);
+});
+test('a URL de simulacao nao reconhece eventos marcados como producao',async()=>{
+ const response=await h(post({action:'payment.updated',data:{id:'123456'},type:'payment',live_mode:true}));
+ assert.equal(response.status,422);
+});
 test('endpoint nao aceita metodo GET ou POST fora do padrao de simulacao',async()=>{
  assert.equal((await h(new Request(endpoint))).status,405);
  assert.equal((await h(post({...payload,data:{id:'9087665'}}))).status,422);
