@@ -136,7 +136,7 @@ export async function runPixPilot(action){
 // Portal do PPMT Premium R$ 19,99/mês. Cartão recorrente; Pix/boleto/débito renovados no site.
 export async function runMonthlyBilling(action) {
  if(!online())throw new Error('Conecte-se à internet para consultar sua mensalidade.');
- if(!['status','manual_checkout','card_start','card_cancel'].includes(action))throw new Error('Ação de cobrança inválida.');
+ if(!['status','manual_checkout','card_start','card_cancel','readiness'].includes(action))throw new Error('Ação de cobrança inválida.');
  const user=await verifiedUser();
  if(!user)throw new Error('Entre na sua conta PP-MT.');
  const {data,error}=await client().functions.invoke('ppmt-monthly-billing',{body:{action}});
