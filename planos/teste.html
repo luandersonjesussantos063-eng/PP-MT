@@ -6,9 +6,9 @@
 <meta name="theme-color" content="#0b111b">
 <title>PPMT — Teste protegido de assinatura</title>
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="./style.css?v=2.13.1">
-<link rel="stylesheet" href="./teste.css?v=2.13.1">
-<script type="module" src="./teste.js?v=2.13.1"></script>
+<link rel="stylesheet" href="./style.css?v=2.13.2">
+<link rel="stylesheet" href="./teste.css?v=2.13.2">
+<script type="module" src="./teste.js?v=2.13.2"></script>
 </head>
 <body>
 <a class="skip" href="#conteudo">Ir para o conteúdo</a>
@@ -39,9 +39,12 @@
 <div class="sandbox-separator"></div>
 <form id="create-form">
 <h3>1. Gerar uma assinatura de teste</h3>
-<label for="buyer-email">E-mail do comprador de teste Mercado Pago (@testuser.com)</label>
-<input id="buyer-email" type="email" autocomplete="off" inputmode="email" maxlength="254" placeholder="comprador@testuser.com" required>
-<p class="micro">É preciso ter uma conta compradora de teste diferente da conta vendedora. O checkout só será gerado para contas autorizadas.</p>
+<h3>Encontrar sua conta compradora</h3>
+<p>O Mercado Pago mostra o usuário TESTUSER, mas não o e-mail. Clique abaixo para tentarmos recuperar o e-mail da conta compradora cadastrada, sem criar cobranças.</p>
+<button class="button secondary" id="buyer-button" type="button">Identificar comprador de teste ↻</button>
+<label for="buyer-email">E-mail confirmado do comprador de teste (@testuser.com)</label>
+<input id="buyer-email" type="email" autocomplete="off" inputmode="email" maxlength="254" placeholder="Aguardando identificação" required>
+<p class="micro">Só avance se o e-mail corresponder à conta compradora de teste. Não use dados do cartão real.</p>
 <button type="submit" class="button primary" id="create-button">Criar checkout de teste ↗</button>
 </form>
 <div id="checkout-area" hidden><h3>2. Abrir pagamento de teste</h3><p>Confira que está usando a conta compradora de teste, sem cartões reais.</p><a id="checkout-link" class="button primary" rel="noopener noreferrer" target="_blank">Abrir checkout de teste ↗</a><p class="micro">Depois volte a esta tela e clique em “Consultar situação”.</p></div>

@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runBillingSandbox} from '../auth.js?v=2.13.1';
+import {signIn,verifiedUser,runBillingSandbox} from '../auth.js?v=2.13.2';
 const el=id=>document.getElementById(id);
 const login=el('login-card'),billing=el('billing-card'),session=el('session-status'),feedback=el('feedback');
 let busy=false;
@@ -27,7 +27,7 @@ function showState(data){
 }
 function setBusy(value){
   busy=value;
-  for(const id of ['login-button','create-button','check-button','cancel-button']){
+  for(const id of ['login-button','create-button','check-button','cancel-button','buyer-button']){
     const b=el(id);if(b)b.disabled=value;
   }
 }
@@ -47,6 +47,13 @@ async function request(action,payerEmail){
   if(action==='create')showCheckout(null);
   try{
     const result=await runBillingSandbox(action,payerEmail);
+    if(action==='buyer_info'){
+      const email=String(result.buyer_email||'').trim().toLowerCase();
+      if(result.buyer_verified!==true||!/^[a-z0-9._+-]+@testuser\.com$/.test(email))throw new Error('O Mercado Pago não retornou um e-mail de teste confirmado.');
+      el('buyer-email').value=email;
+      notice('Comprador de teste identificado. O e-mail foi preenchido automaticamente. Nenhuma assinatura foi criada.');
+      return;
+    }
     showState(result);
     notice('Consulta efetuada no ambiente de teste. O Premium real permanece indisponível.');
   }catch(error){
@@ -74,6 +81,7 @@ el('create-form').addEventListener('submit',e=>{
   request('create',email);
 });
 el('check-button').addEventListener('click',()=>request('status'));
+el('buyer-button').addEventListener('click',()=>request('buyer_info'));
 el('cancel-button').addEventListener('click',()=>{
   if(window.confirm('Cancelar a assinatura de TESTE vinculada à sua conta PPMT?'))request('cancel');
 });

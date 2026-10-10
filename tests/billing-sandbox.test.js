@@ -36,6 +36,7 @@ function testHandler(overrides={}){
     async mercado(token,path,method,body){
       calls.push({token,path,method,body});
       if(path==='/users/me')return {id:SELLER,site_id:'MLB',tags:['test_user']};
+      if(path==='/users/'+BUYER)return {id:BUYER,email:'buyer@testuser.com',tags:['test_user']};
       if(path==='/preapproval'&&method==='POST')return subscription();
       if(path==='/preapproval/test-sub-123')return subscription();
       throw Error('unexpected mock request: '+path);
@@ -135,4 +136,47 @@ test('versão pública não exibe token e não habilita cobrança comercial',()=
  assert.doesNotMatch(html+page,/APP_USR-/);
  const logic=readFileSync(new URL('../supabase/functions/ppmt-billing-test/logic.js',import.meta.url),'utf8');
  assert.doesNotMatch(logic,/\.from\(['"]memberships['"]\)/);
+});
+
+test('identifica o comprador de teste via chamada somente leitura, sem criar assinatura',async()=>{
+ const s=testHandler();
+ const res=await s.handler(req('buyer_info'));
+ const data=await res.json();
+ assert.equal(res.status,200);
+ assert.deepEqual(data,{sandbox:true,buyer_email:'buyer@testuser.com',buyer_verified:true});
+ assert.equal(s.calls.filter(x=>x.method==='POST'||x.path.includes('/preapproval')).length,0);
+ assert.deepEqual(s.calls.map(x=>x.path),['/users/me','/users/'+BUYER]);
+});
+test('não divulga e-mail de outra conta ou e-mail não teste',async()=>{
+ for(const record of [{id:BUYER+1,email:'buyer@testuser.com'},{id:BUYER,email:'real@gmail.com'},{id:BUYER,email:null}]){
+  const s=testHandler({mercado:async(token,path)=>{
+    if(path==='/users/me')return {id:SELLER,site_id:'MLB',tags:['test_user']};
+    if(path==='/users/'+BUYER)return record;
+    throw Error('Unexpected path');
+  }});
+  const res=await s.handler(req('buyer_info'));
+  assert.equal(res.status,503);
+  assert.equal(JSON.stringify(await res.json()).includes('buyer_email'),false);
+ }
+});
+test('identificação do comprador exige login e permissão de testador',async()=>{
+ const withoutLogin=testHandler({authenticate:async()=>null});
+ assert.equal((await withoutLogin.handler(req('buyer_info'))).status,401);
+ assert.equal(withoutLogin.calls.length,0);
+ const withoutAccess=testHandler({db:{isTester:async()=>false}});
+ assert.equal((await withoutAccess.handler(req('buyer_info'))).status,403);
+ assert.equal(withoutAccess.calls.length,0);
+});
+
+test('tela oferece busca do comprador e preenche apenas e-mail validado',()=>{
+ const html=readFileSync(new URL('../planos/teste.html',import.meta.url),'utf8');
+ const js=readFileSync(new URL('../planos/teste.js',import.meta.url),'utf8');
+ const auth=readFileSync(new URL('../auth.js',import.meta.url),'utf8');
+ assert.match(html,/id="buyer-button"/);
+ assert.match(js,/request\('buyer_info'\)/);
+ assert.match(js,/buyer_verified/);
+ assert.match(js,/el\('buyer-email'\)\.value=email/);
+ assert.ok(js.includes(String.raw`@testuser\.com`));
+ assert.ok(!js.includes(String.raw`@testuser\\.com`));
+ assert.match(auth,/['"]buyer_info['"]/);
 });

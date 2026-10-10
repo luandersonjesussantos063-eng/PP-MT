@@ -95,7 +95,7 @@ export async function loadMembership(){
 // e-mail de comprador de teste. O token Mercado Pago nunca sai do Supabase.
 export async function runBillingSandbox(action, payerEmail) {
   if(!online())throw new Error('Conecte-se à internet para testar pagamentos.');
-  if(!['create','status','cancel'].includes(action))throw new Error('Ação inválida.');
+  if(!['create','status','cancel','buyer_info'].includes(action))throw new Error('Ação inválida.');
   const user=await verifiedUser();
   if(!user)throw new Error('Faça login com sua conta PPMT antes de continuar.');
   const body={action};

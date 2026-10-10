@@ -1,4 +1,4 @@
-# PPMT Premium — V 2.13.1
+# PPMT Premium — V 2.13.2
 
 ## Entregue
 - Página pública de apresentação em `planos/`, com cadastro, entrada no app, exemplo interativo e plano mensal previsto de R$ 19,90.
@@ -22,7 +22,7 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Advisor do Supabase: sem alerta novo de RLS. Aviso preexistente de proteção contra senhas vazadas desativada: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
 - Esta versão não modifica `user_state` nem bloqueia os alunos existentes.
 
-## Integração de testes (V 2.13.1)
+## Integração de testes (V 2.13.2)
 
 - Página técnica de homologação em `planos/teste.html`. Não é checkout comercial. Somente testadores com cadastro aprovado em `billing_sandbox_testers` podem acessar a função de teste.
 - Função `ppmt-billing-test` com `verify_jwt = true` e confirmação de usuário no servidor; lógica versionada em `supabase/functions/ppmt-billing-test/`. A credencial de teste fica no banco/segredo do Supabase, nunca no GitHub.
@@ -30,3 +30,9 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Criar uma assinatura de teste **não modifica** a tabela `memberships`. Teste aprovado não equivale a liberação Premium.
 - Não aplicar ainda limite gratuito de 10 questões/dia. O acervo atual está estático e disponível em cache; o paywall real exige conteúdo entregue por backend após autorização.
 - Para iniciar o teste, o administrador deverá incluir seu usuário de login PPMT na lista de testadores (mediante confirmação da conta) e possuir comprador de teste separado. Não usar cartão real.
+
+## V 2.13.2 — Identificação do comprador de teste
+- Adicionada consulta somente leitura do usuário de teste comprador pelo ID fixo previamente configurado, usando token de teste protegido no Supabase.
+- Requer sessão autenticada e liberação como testador; só exibe e-mail `@testuser.com` se a API confirmar que pertence ao comprador esperado.
+- Se a API não fornecer o e-mail, o sistema informa a limitação sem inventar endereço. Nenhuma assinatura é criada por essa consulta.
+- Cobranças comerciais e acessos Premium permanecem desativados.

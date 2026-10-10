@@ -46,8 +46,22 @@ export function createHandler({authenticate, db, mercado}) {
    if (raw.length > 2048) fail(400,'Solicitação muito grande.');
    let input;
    try { input = JSON.parse(raw); } catch { fail(400,'Solicitação inválida.'); }
-   if (!['create','status','cancel'].includes(input?.action)) fail(400,'Ação inválida.');
+   if (!['create','status','cancel','buyer_info'].includes(input?.action)) fail(400,'Ação inválida.');
    // Request user_id, amount, provider_id and redirects are never accepted.
+   // Consulta somente a conta compradora de TESTE previamente configurada.
+   // Não cria, cobra ou altera assinaturas; nunca revela dados fora do e-mail validado.
+   if (input.action === 'buyer_info') {
+     const token = await db.token();
+     if (!token) fail(503,'Credencial de teste ainda não configurada.');
+     const mp = (path) => mercado(token,path,'GET');
+     assertSeller(await mp('/users/me'));
+     let buyer;
+     try { buyer = await mp('/users/' + BUYER); }
+     catch { fail(503,'O Mercado Pago não liberou a identificação do comprador por esta API. Não vamos inventar o e-mail.'); }
+     const email = typeof buyer?.email === 'string' ? buyer.email.trim().toLowerCase() : '';
+     if (Number(buyer?.id) !== BUYER || !isSandboxBuyerEmail(email)) fail(503,'O Mercado Pago não forneceu um e-mail de teste validado para este comprador.');
+     return respond({sandbox:true,buyer_email:email,buyer_verified:true});
+   }
    let row = await db.get(user.id);
    if (input.action !== 'create' && !row) return respond({sandbox:true,state:'none',payment_confirmed:false});
    const token = await db.token();
