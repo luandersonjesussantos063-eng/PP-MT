@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="./style.css?v=2.15.0">
 <link rel="stylesheet" href="./assinar.css?v=2.18.3">
 <script type="module">
- import('./assinar.js?v=2.18.13').catch(err=>{
+ import('./assinar.js?v=2.18.14').catch(err=>{
   const panel=document.getElementById('loading-panel');
   if(panel){panel.hidden=false;panel.textContent='Não foi possível iniciar o sistema de pagamento. Código: MODULO. Tente novamente em uma nova aba do Chrome.';}
   console.error('PPMT checkout module failed',err);
@@ -56,7 +56,7 @@
    <a id="manual-link" class="button primary pay-wide" hidden rel="noopener noreferrer" href="#">Continuar no Mercado Pago →</a>
    <button id="switch-to-pix-btn" class="button secondary pay-wide pay-switch" type="button" hidden>← Trocar para Pix</button>
    <p id="switch-to-pix-help" class="pay-switch-note" hidden>Antes de trocar, vamos cancelar a solicitação de cartão no Mercado Pago. Nenhuma compra por Pix será criada automaticamente.</p>
-   <button id="refresh-btn" class="button secondary pay-wide" type="button">Já paguei · Verificar agora</button>
+   <button id="cancel-manual-btn" class="button secondary pay-wide" type="button" hidden>Cancelar tentativa e escolher outra forma</button><button id="refresh-btn" class="button secondary pay-wide" type="button">Já paguei · Verificar agora</button>
    <p id="card-state" class="pay-detail"></p><p id="manual-state" class="pay-detail"></p>
   </section>
   <section id="offer-panel" class="pay-panel" hidden>
