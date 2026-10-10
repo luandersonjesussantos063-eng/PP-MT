@@ -1,21 +1,36 @@
-.pay-main{max-width:1060px;padding-top:65px;padding-bottom:85px}
-.pay-main h1{font-size:clamp(46px,6vw,76px);line-height:1.06;max-width:870px}
-.pay-price{display:flex;align-items:baseline;gap:14px;margin:20px 0 24px}
-.pay-price strong{font-size:clamp(46px,6vw,70px);color:#f2b65c}.pay-price span{color:#a8b6c6;font-weight:700}
-.pay-main>.lead{max-width:740px;line-height:1.7}
-.pay-warning,.pay-feedback{border:1px solid #50617c;border-radius:10px;padding:18px;background:#152031;line-height:1.6;margin:25px 0;color:#ecf2fa}
+.pay-main{max-width:940px;padding-top:55px;padding-bottom:74px}
+.pay-heading{text-align:center}
+.pay-heading .eyebrow{letter-spacing:2px}
+.pay-heading h1{font-size:clamp(35px,5vw,54px);line-height:1.1;margin:13px 0 12px}
+.pay-price{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:10px 0 28px}
+.pay-price strong{font-size:clamp(53px,8vw,78px);line-height:1;color:#f2b65c;letter-spacing:-2px}
+.pay-price span{color:#a8b6c6;font-size:18px;font-weight:700}
+.pay-warning,.pay-feedback{border:1px solid #3c4f68;border-radius:10px;padding:12px 16px;background:#152031;color:#e3eaf2;line-height:1.5;margin:18px 0;font-size:13px;text-align:center}
 .pay-feedback.is-error{border-color:#a04d56;background:#3d252d}
-.pay-panel{background:linear-gradient(150deg,#141f2e,#101722);border:1px solid #334158;padding:29px;border-radius:15px;margin-top:25px}
-.pay-panel h2{font-size:28px;margin:8px 0 16px}
-.pay-panel p{line-height:1.65;color:#c5d0df}
+.pay-panel{background:linear-gradient(145deg,#172335,#0f1825);border:1px solid #36455c;padding:26px;border-radius:15px}
+.pay-panel h2{font-size:25px;margin:12px 0 15px}
+.pay-panel p{line-height:1.6;color:#c5d0df;font-size:14px}
 .pay-panel label{display:block;margin:16px 0 7px;font-size:13px}
 .pay-panel input{width:100%;padding:13px;background:#0b1320;border:1px solid #475870;color:#fff;border-radius:8px}
-.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:23px;margin-top:12px}
-.pay-grid .pay-panel{margin:0}.pay-option{display:flex;flex-direction:column}
-.pay-option>p:not(.eyebrow){flex-grow:1}.pay-option .button{margin-top:12px;text-align:center}
-.pay-icon{display:inline-grid;place-items:center;width:50px;height:50px;border-radius:10px;background:#203b5a;color:#e9b764;font-size:30px}
-.pay-detail{font-size:13px!important;color:#c5d9ee!important}
-.pay-note{font-size:13px;line-height:1.7;color:#aebdce;margin:24px 0}
-.pay-faq p{margin:13px 0;font-size:14px}
-.pay-action:disabled{opacity:.52;cursor:not-allowed}
-@media(max-width:740px){.pay-main{padding:36px 16px 60px}.pay-grid{grid-template-columns:1fr}.pay-panel{padding:20px}.pay-main h1{font-size:46px}}
+.pay-login{max-width:500px;margin:28px auto}
+.pay-login .button{margin-top:18px}
+.pay-status{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid #36455c;border-radius:11px;background:#111d2b;padding:13px 18px;margin:20px 0}
+.pay-status strong{color:#fff;font-size:14px}
+.pay-status p{margin:3px 0 0;color:#b6c9df;font-size:13px}
+.pay-status .button{flex:none}
+.pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}
+.pay-option{display:flex;flex-direction:column;min-height:315px}
+.pay-option h2{font-size:23px;margin:15px 0 10px}
+.pay-option>p:not(.pay-detail){flex:1;margin:0 0 14px}
+.pay-option>p strong,.pay-option>p span{display:block}
+.pay-option>p strong{color:#fff}
+.pay-option>p span{margin-top:5px;color:#aebed2;font-size:13px}
+.pay-option .button{margin-top:10px;text-align:center}
+.pay-icon{display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:#243c59;color:#ffc978;font-size:26px}
+.pay-detail{font-size:12px!important;color:#aebed2!important;margin:9px 0 0!important}
+.pay-detail:empty{display:none}
+.pay-action:disabled{opacity:.5;cursor:not-allowed}
+.pay-small{color:#9eafc4;text-align:center;font-size:12px;line-height:1.6;margin:18px auto 8px;max-width:620px}
+.pay-links{display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;margin:10px 0 0}
+.pay-links a{color:#d4e5f9;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:700px){.pay-main{padding:34px 18px 52px}.pay-grid{grid-template-columns:1fr}.pay-panel{padding:21px}.pay-option{min-height:0}.pay-status{flex-wrap:wrap}.pay-status .button{width:100%}.pay-heading h1{font-size:36px}.pay-price strong{font-size:64px}}
