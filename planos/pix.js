@@ -51,8 +51,8 @@ async function checkReady(){
     const data=await runPixPilot('check');
     ready=data.enabled===true;
     $('readiness').textContent=ready
-      ? 'Integração real pronta para gerar um Pix de R$ 0,01 (sujeita à aceitação do Mercado Pago).'
-      : 'Aguardando habilitação segura da credencial Mercado Pago de produção. Nenhuma cobrança será criada.';
+      ? 'Conta recebedora de produção validada. Pix de R$ 0,01 pronto para tentativa (o Mercado Pago ainda pode recusar o valor mínimo).'
+      : (typeof data.reason==='string'&&data.reason.length<220 ? data.reason : 'Aguardando habilitação da credencial Mercado Pago de produção. Nenhuma cobrança será criada.');
     if(ready)await fetchOrder('status',true);
   }catch(e){ready=false;info(e.message||'Não foi possível consultar a integração.',true);}
   finally{busy(false);}
