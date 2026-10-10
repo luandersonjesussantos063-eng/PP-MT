@@ -26,7 +26,8 @@ function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=fals
    return card;
   },
   async openOrder(){return order;},
-  async claimOrder(uid){order={user_id:uid,id:'22222222-2222-4222-8222-222222222222',expires_at:new Date(Date.now()+600000).toISOString()};return order;},
+  async activeDiscount(){return null;},
+  async claimOrder(uid,benefit=null,amount=19.99){order={user_id:uid,id:'22222222-2222-4222-8222-222222222222',expected_amount:amount,benefit_id:benefit?.id||null,expires_at:new Date(Date.now()+600000).toISOString()};return order;},
   async updateOrder(id,patch){order={...order,...patch};},
   async credit(){throw Error('No mock payments approved');},async void(){throw Error('No refund mock');}
  };
