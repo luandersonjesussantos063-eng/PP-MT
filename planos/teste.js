@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runBillingSandbox} from '../auth.js?v=2.13.0';
+import {signIn,verifiedUser,runBillingSandbox} from '../auth.js?v=2.13.1';
 const el=id=>document.getElementById(id);
 const login=el('login-card'),billing=el('billing-card'),session=el('session-status'),feedback=el('feedback');
 let busy=false;
