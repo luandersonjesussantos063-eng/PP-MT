@@ -7,16 +7,16 @@ test('Retorno do checkout reconcilia com servidor sem confiar no redirect',()=>{
  assert.match(code,/reconcileAfterCheckout/);
  assert.match(code,/await action\('status'\)/);
  assert.match(code,/data\?\.premium===true/);
- assert.match(code,/não pague de novo/i);
+ assert.match(code,/não pague (de novo|novamente)/i);
  assert.doesNotMatch(code,/resultado==='aprovado'\)\s*.*premium\s*=\s*true/i);
 });
 test('Marketing descreve exatamente o acervo e as condições atuais',()=>{
  const page=read('planos/index.html');
  assert.match(page,/ACESSO EXCLUSIVO/);
- assert.match(page,/sem limite diário de 10 questões/);
+ assert.match(page,/20 questões por dia · 1 simulado por semana/);
  assert.doesNotMatch(page,/PREMIUM · EM BREVE/);
  const legal=read('planos/termos.html');
- assert.match(legal,/31 questões exclusivas/);
+ assert.match(legal,/64 questões exclusivas/);
  assert.match(legal,/7 dias/);
  assert.match(legal,/wa\.me\/5531983771576/);
  const privacy=read('planos/privacidade.html');
