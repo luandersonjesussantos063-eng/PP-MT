@@ -1,11 +1,17 @@
 import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
-import {loginWithGoogle} from '../account-services.js?v=2.18.0';
+import {loginWithGoogle,myPremiumOffers} from '../account-services.js?v=2.18.0';
 
 const $=id=>document.getElementById(id);
 const pendingStates=new Set(['pending','creating','needs_review']);
 const cancelable=new Set(['authorized','pending','paused']);
-let busy=false,enabled=false,lastBilling=null;
+let busy=false,enabled=false,lastBilling=null,discountOffer=null;
 
+async function loadDiscount(){
+ try{const offers=await myPremiumOffers();const requested=new URLSearchParams(location.search).get('oferta');const discounts=offers.filter(o=>o.kind==='monthly_discount'&&Date.parse(o.expires_at)>Date.now());discountOffer=(requested?discounts.find(o=>o.id===requested):null)||discounts[0]||null;
+ const panel=$('discount-notice');if(!panel)return;panel.hidden=!discountOffer;
+ if(discountOffer){$('discount-message').textContent='Você recebeu '+discountOffer.discount_percent+'% de desconto, válido até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'.';$('manual-btn').disabled=true;$('card-btn').disabled=true;}
+ }catch{discountOffer=null}
+}
 function setBusy(on){
  busy=on;
  for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','switch-to-pix-btn']){
@@ -201,6 +207,7 @@ async function load(){
   if(!user){show('login');return;}
   setBusy(false);
   await action('status');
+  await loadDiscount();
   await reconcileAfterCheckout();
  }catch(e){
   showError('Não conseguimos verificar sua sessão. Entre novamente com sua conta no PP-MT.');
@@ -220,9 +227,9 @@ $('google-login-btn').addEventListener('click',async()=>{
  try{await loginWithGoogle('checkout');}
  catch{setBusy(false);notice('Não foi possível entrar com Google. Tente novamente ou use e-mail e senha.');}
 });
-$('manual-btn').addEventListener('click',()=>{if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
+$('manual-btn').addEventListener('click',()=>{if(discountOffer){notice('Seu desconto está registrado, mas o pagamento promocional ainda não foi habilitado. Nenhuma cobrança foi criada.');return;}if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
 $('card-btn').addEventListener('click',()=>{
- if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
+ if(discountOffer){notice('Seu desconto está registrado, mas o pagamento promocional ainda não foi habilitado. Nenhuma cobrança foi criada.');return;}if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
 });
 $('switch-to-pix-btn').addEventListener('click',()=>{
  if(busy || lastBilling?.card?.state!=='pending' || lastBilling?.premium===true ||
