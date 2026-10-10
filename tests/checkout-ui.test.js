@@ -15,7 +15,7 @@ test('checkout mostra somente preço, planos e mensagens essenciais',()=>{
  assert.match(html,/id="manual-btn"/);
  assert.match(html,/id="refresh-btn"/);
  assert.doesNotMatch(html,/pay-faq|Como funcionam as mensalidades\?/);
- assert.ok(html.length<4000,'página deve ser compacta');
+ assert.ok(html.length<4800,'página deve ser compacta, incluindo o login Google');
 });
 test('termos preservam informações de cobrança mensal e cancelamento',()=>{
  const html=read('assinar.html'),terms=read('termos.html');
