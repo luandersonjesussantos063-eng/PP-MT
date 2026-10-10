@@ -89,9 +89,17 @@ export function makeHandler({authenticate,db,mp}){
    if(['manual_checkout','card_start'].includes(body.action)&&!enabled)fail(503,'As vendas ainda não estão abertas. O teste Pix permanece separado.');
    const member=await db.member(user.id);
    const result={price:AMOUNT,month:true,enabled,premium:Boolean(member?.status==='active'&&member?.current_period_end&&Date.parse(member.current_period_end)>Date.now()),current_period_end:member?.current_period_end??null};
-   // Mesmo que novas vendas sejam suspensas, permitir consultar e cancelar assinatura existente.
-   // Se não houver token configurado, mostramos pelo menos a vigência do acesso.
-   if(body.action==='status'&&!enabled&&!(await db.token()))return output({...result,manual:null,card:null});
+   // Status consulta primeiro o estado verificado no banco; sem cobrança e sem dependência do Mercado Pago.
+   if(body.action==='status'){
+    const [localCard,localOrder]=await Promise.all([db.card(user.id),db.openOrder(user.id)]);
+    const snapshot={
+     card:localCard?{state:localCard.state,checkout_url:localCard.state==='pending'?safeUrl(localCard.checkout_url,true):null}:null,
+     manual:localOrder?{state:localOrder.state,checkout_url:localOrder.state==='pending'?safeUrl(localOrder.checkout_url):null}:null
+    };
+    if(!localCard?.provider_id&&!localOrder?.provider_preference_id)
+     return output({...result,...snapshot,provider_sync_available:true});
+    if(!(await db.token()))return output({...result,...snapshot,provider_sync_available:false});
+   }
    const access=await db.token();
    if(!access)fail(503,'Mercado Pago de produção não configurado.');
    const mercado=(path,method='GET',payload=null,key=null)=>mp(access,path,method,payload,key);
@@ -111,7 +119,8 @@ export function makeHandler({authenticate,db,mp}){
       fail(503,'A conta recebedora do Checkout Pro não corresponde à conta do PP-MT.');
     }
    };
-   await ensureSellerAccess();
+   // Validar conta recebedora antes de qualquer operação de criação/cancelamento.
+   if(body.action!=='status')await ensureSellerAccess();
    const syncCard=async(card)=>{
     if(!card?.provider_id)return card;
     const sub=await mercado('/preapproval/'+encodeURIComponent(card.provider_id));
@@ -245,14 +254,24 @@ export function makeHandler({authenticate,db,mp}){
     order=await syncManual(order);
     return output({...result,manual:{state:order.state,checkout_url:order.checkout_url}});
    }
-   if(card)card=await syncCard(card);
-   if(order)order=await syncManual(order);
+   let providerSyncAvailable=true;
+   const originalCard=card,originalOrder=order;
+   try{
+    if(card)card=await syncCard(card);
+    if(order)order=await syncManual(order);
+   }catch(err){
+    // Não apagar Premium verificado no banco nem desbloquear uma nova cobrança por falha do provedor.
+    if(!(err instanceof BillingError)&&!(err instanceof TypeError)&&err?.name!=='TimeoutError'&&err?.name!=='AbortError')throw err;
+    providerSyncAvailable=false;
+    card=originalCard;order=originalOrder;
+   }
    const updated=await db.member(user.id);
    return output({...result,
     premium:updated?.status==='active'&&Date.parse(updated.current_period_end)>Date.now(),
     current_period_end:updated?.current_period_end??null,
-    card:card?{state:card.state,checkout_url:card.checkout_url||null}:null,
-    manual:order?{state:order.state,checkout_url:order.checkout_url||null}:null
+    provider_sync_available:providerSyncAvailable,
+    card:card?{state:card.state,checkout_url:card.state==='pending'?safeUrl(card.checkout_url,true):null}:null,
+    manual:order?{state:order.state,checkout_url:order.state==='pending'?safeUrl(order.checkout_url):null}:null
    });
   }catch(e){return output({error:e instanceof BillingError?e.message:'Consulta indisponível. Não gere outra cobrança sem verificar a situação.'},e instanceof BillingError?e.status:503);}
  };
