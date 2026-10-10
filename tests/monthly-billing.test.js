@@ -47,6 +47,8 @@ function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=fals
    id:'pref123',collector_id:checkoutSeller,external_reference:body.external_reference,
    init_point:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref123'};
   if(path.startsWith('/v1/payments/search'))return {results:[]};
+  if(path==='/preapproval/subscriber123'&&method==='PUT')return {
+   id:'subscriber123',status:'cancelled'};
   if(path==='/preapproval/subscriber123')return {
    id:'subscriber123',status:'pending',collector_id:SELLER,external_reference:card.external_reference,
    auto_recurring:{transaction_amount:AMOUNT,frequency:1,frequency_type:'months',currency_id:'BRL'},
@@ -427,4 +429,37 @@ test('Cartão permite nova autorização depois de cancelamento confirmado, sem 
  assert.equal(data.price,19.99);
  assert.equal(h.calls.filter(x=>x.path==='/preapproval'&&x.method==='POST').length,1);
  assert.equal(h.calls.some(x=>x.path==='/preapproval/oldCancelledSub'),false);
+});
+
+test('aluno troca cartão pendente por Pix: servidor cancela antes de liberar pagamento manual',async()=>{
+ const h=harness({enabled:true});
+ const start=await h.fn(request('card_start'));
+ assert.equal(start.status,200);
+ assert.equal((await start.json()).card.state,'pending');
+ const cancel=await h.fn(request('card_cancel'));
+ assert.equal(cancel.status,200);
+ const cancelled=await cancel.json();
+ assert.equal(cancelled.card.state,'cancelled');
+ assert.ok(h.calls.some(c=>c.path==='/preapproval/subscriber123'&&c.method==='PUT'&&c.body.status==='cancelled'));
+ const now=await h.fn(request('status'));
+ assert.equal(now.status,200);
+ assert.equal((await now.json()).card.state,'cancelled');
+ assert.equal(h.calls.filter(c=>c.path==='/checkout/preferences').length,0,'não gera Pix só por cancelar');
+ const switchPay=await h.fn(request('manual_checkout'));
+ assert.equal(switchPay.status,200);
+ const manual=await switchPay.json();
+ assert.equal(manual.manual.state,'pending');
+ assert.equal(manual.price,19.99);
+ assert.equal(h.calls.filter(c=>c.path==='/checkout/preferences'&&c.method==='POST').length,1);
+});
+test('sem confirmação de cancelamento do cartão, não oferece novo pagamento por Pix',async()=>{
+ const h=harness({enabled:true,providerOffline:true,initialCard:{
+  provider_id:'subscriber123',state:'pending',
+  external_reference:'11111111-1111-4111-8111-111111111111',checkout_url:null
+ }});
+ const cancelled=await h.fn(request('card_cancel'));
+ assert.notEqual(cancelled.status,200);
+ assert.equal((await h.fn(request('status'))).status,200);
+ assert.equal((await h.fn(request('manual_checkout'))).status!==200,true);
+ assert.equal(h.calls.filter(c=>c.path==='/checkout/preferences'&&c.method==='POST').length,0);
 });
