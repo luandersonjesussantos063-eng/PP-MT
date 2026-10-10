@@ -3,6 +3,8 @@
 export const AMOUNT=19.99;
 export const SELLER=740298583;
 export const ORIGIN='https://luandersonjesussantos063-eng.github.io';
+export const NOVABYTE_ORIGIN='https://ppmt.novabytesolucoes.com.br';
+export const ALLOWED_ORIGINS=new Set([ORIGIN,NOVABYTE_ORIGIN]);
 export const BACK_URL=ORIGIN+'/PP-MT/planos/assinar.html';
 export const WEBHOOK_URL='https://fermfbmhwlafwopwndoj.supabase.co/functions/v1/ppmt-monthly-webhook';
 export class BillingError extends Error {
@@ -37,9 +39,13 @@ export function paidStatus(p){
 }
 export function makeHandler({authenticate,db,mp}){
  return async(req)=>{
-  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':ORIGIN,'Vary':'Origin','Access-Control-Allow-Headers':'authorization, apikey, content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS'};
+  const incomingOrigin=req.headers.get('Origin');
+  const permitted=!incomingOrigin||ALLOWED_ORIGINS.has(incomingOrigin);
+  const trustedOrigin=permitted&&incomingOrigin?incomingOrigin:ORIGIN;
+  const returnUrl=trustedOrigin===NOVABYTE_ORIGIN?NOVABYTE_ORIGIN+'/planos/assinar.html':BACK_URL;
+  const headers={'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':trustedOrigin,'Vary':'Origin','Access-Control-Allow-Headers':'authorization, apikey, content-type,x-client-info','Access-Control-Allow-Methods':'POST,OPTIONS'};
   const output=(x,status=200)=>new Response(JSON.stringify(x),{status,headers});
-  if(req.headers.get('Origin')&&req.headers.get('Origin')!==ORIGIN)return output({error:'Origem não autorizada.'},403);
+  if(!permitted)return output({error:'Origem não autorizada.'},403);
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
   if(req.method!=='POST')return output({error:'Use POST.'},405);
   try{
@@ -54,6 +60,7 @@ export function makeHandler({authenticate,db,mp}){
    if(body.action==='readiness'){
     if(!await db.isTester(user.id))fail(403,'Diagnóstico restrito ao administrador.');
     const flags=await db.diagnostics();
+    const flowChecks=await db.verifiedFlows();
     const token=await db.token();
     let merchant_valid=false,merchant_http_status=null,merchant_error_code=null;
     let checkout_api_authorized=false,checkout_api_http_status=null,checkout_seller_matches=null,checkout_api_error_code=null;
@@ -74,7 +81,8 @@ export function makeHandler({authenticate,db,mp}){
     return output({price:AMOUNT,month:true,enabled:await db.enabled(),pilot_enabled:await db.privatePilot(user.id),checks:{
       merchant_valid,merchant_http_status,merchant_error_code,production_token_present:Boolean(token),webhook_secret_present:flags.webhook_secret_present,
       checkout_api_authorized,checkout_api_http_status,checkout_api_error_code,checkout_seller_matches,
-      delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
+      delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag,
+      ...flowChecks
     }});
    }
    const enabled=(await db.enabled()) || (await db.privatePilot(user.id));
@@ -150,9 +158,20 @@ export function makeHandler({authenticate,db,mp}){
    if(body.action==='card_cancel'){
     if(!card?.provider_id)fail(409,'Não há assinatura de cartão para cancelar.');
     const sub=await mercado('/preapproval/'+encodeURIComponent(card.provider_id));
-    if(sub.status!=='cancelled')await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
+    if(String(sub?.id)!==String(card.provider_id)||
+       String(sub?.external_reference)!==String(card.external_reference)||
+       Number(sub?.collector_id)!==SELLER ||
+       Number(sub?.auto_recurring?.transaction_amount)!==AMOUNT ||
+       sub?.auto_recurring?.currency_id!=='BRL')
+       fail(502,'Não foi possível validar sua assinatura antes do cancelamento.');
+    if(sub.status!=='cancelled'){
+      const canceled=await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
+      if(canceled?.status!=='cancelled'||String(canceled?.id)!==String(card.provider_id))
+        fail(503,'O cancelamento ainda não foi confirmado no Mercado Pago. Verifique novamente antes de repetir.');
+    }
     await db.updateCard(user.id,{state:'cancelled',checkout_url:null});
-    return output({...result,message:'Renovação automática cancelada. Pagamentos já aprovados permanecem válidos até seu vencimento.'});
+    return output({...result,card:{state:'cancelled',checkout_url:null},
+      message:'Renovação automática cancelada. Pagamentos já aprovados permanecem válidos até seu vencimento.'});
    }
    if(body.action==='card_start'){
     const waiting=await db.openOrder(user.id);
@@ -162,32 +181,43 @@ export function makeHandler({authenticate,db,mp}){
     if(card) {
       if(!card.provider_id)fail(409,'Há uma solicitação de assinatura em revisão. Não criaremos outra cobrança.');
       card=await syncCard(card);
-      if(card.state==='cancelled')fail(409,'Você já cancelou sua assinatura de cartão. Contate o suporte para reativação.');
-      return output({...result,card:{state:card.state,checkout_url:card.checkout_url}});
+      if(card.state!=='cancelled')
+        return output({...result,card:{state:card.state,checkout_url:card.checkout_url}});
+      if(member?.status==='active'&&member.current_period_end&&Date.parse(member.current_period_end)-Date.now()>7*86400000)
+        fail(409,'Seu período Premium já está pago. Volte nos últimos 7 dias para assinar novamente.');
+      card=await db.recycleCancelledCard(user.id);
+      if(!card)fail(409,'Uma nova autorização de cartão já está em preparação. Consulte o status antes de repetir.');
+    } else {
+      card=await db.claimCard(user.id);
+      if(!card)fail(409,'A assinatura está sendo preparada. Consulte novamente.');
     }
-    card=await db.claimCard(user.id);
-    if(!card)fail(409,'A assinatura está sendo preparada. Consulte novamente.');
     try{
       const sub=await mercado('/preapproval','POST',{
        reason:'PPMT Premium — R$ 19,99 por mês',
        external_reference:card.external_reference,
        payer_email:user.email,
        auto_recurring:{frequency:1,frequency_type:'months',transaction_amount:AMOUNT,currency_id:'BRL'},
-       back_url:BACK_URL,status:'pending'
+       back_url:returnUrl,status:'pending'
       },card.external_reference);
       if(!sub?.id||String(sub.external_reference)!==card.external_reference||
         Number(sub.collector_id)!==SELLER||Number(sub.auto_recurring?.transaction_amount)!==AMOUNT||
         sub.auto_recurring?.frequency!==1||sub.auto_recurring?.frequency_type!=='months')
         fail(502,'A assinatura retornada não corresponde ao plano de R$ 19,99.');
-      await db.updateCard(user.id,{provider_id:sub.id,state:'pending',checkout_url:safeUrl(sub.init_point,true)});
-      return output({...result,card:{state:'pending',checkout_url:safeUrl(sub.init_point,true)}});
+      const url=safeUrl(sub.init_point,true);
+      if(!url)fail(502,'O Mercado Pago não forneceu um link de autorização de cartão válido. A assinatura ficou em revisão.');
+      await db.updateCard(user.id,{provider_id:sub.id,state:'pending',checkout_url:url});
+      return output({...result,card:{state:'pending',checkout_url:url}});
     }catch(e){await db.updateCard(user.id,{state:'needs_review'});throw e;}
    }
    let order=await db.openOrder(user.id);
    if(body.action==='manual_checkout'){
-    if(card?.provider_id){
+    if(card){
+      if(!card.provider_id)fail(409,'Sua solicitação de assinatura no cartão está em revisão. Não criaremos uma segunda cobrança.');
       const checked=await syncCard(card);
-      if(checked.state==='authorized')fail(409,'Sua assinatura do cartão já renova automaticamente. Cancele a renovação antes de solicitar uma cobrança manual.');
+      if(['pending','authorized','paused'].includes(checked.state))
+        fail(409,'Já existe uma assinatura de cartão. Cancele a renovação antes de gerar uma cobrança manual.');
+      if(checked.state==='needs_review')
+        fail(409,'Sua assinatura no cartão está em revisão. Não criaremos uma segunda cobrança.');
     }
     if(member?.status==='active'&&member.current_period_end && Date.parse(member.current_period_end)-Date.now()>7*86400000)
       fail(409,'Seu plano já está ativo. A próxima mensalidade poderá ser paga nos últimos 7 dias de vigência.');
@@ -199,7 +229,7 @@ export function makeHandler({authenticate,db,mp}){
         items:[{id:'ppmt-premium-30d',title:'PPMT Premium — 1 mês',description:'Acesso mensal, renovação manual por Pix, boleto ou cartão de débito',quantity:1,currency_id:'BRL',unit_price:AMOUNT}],
         payer:{email:user.email},
         external_reference:order.id,
-        back_urls:{success:BACK_URL+'?resultado=aprovado',pending:BACK_URL+'?resultado=pendente',failure:BACK_URL+'?resultado=falhou'},
+        back_urls:{success:returnUrl+'?resultado=aprovado',pending:returnUrl+'?resultado=pendente',failure:returnUrl+'?resultado=falhou'},
         notification_url:WEBHOOK_URL,
         expires:true,expiration_date_from:new Date().toISOString(),expiration_date_to:new Date(order.expires_at).toISOString(),
         statement_descriptor:'PPMT'
