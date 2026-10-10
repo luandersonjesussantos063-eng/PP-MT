@@ -324,7 +324,9 @@ test('erro oficial do Mercado Pago permanece código seguro sem detalhes de cred
  assert.equal(e.providerStatus,400);
  assert.equal(e.providerCode,'ds_search_query');
  const server=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
- assert.match(server,/\^\[A-Za-z0-9_-\]\{1,80\}\$/);
+ const parser=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/provider-error.js',import.meta.url),'utf8');
+ assert.match(parser,/\^\[A-Za-z0-9_-\]\{1,80\}\$/);
+ assert.match(server,/code=providerErrorCode\(payload\)/);
  assert.match(server,/code\}\);/);
  assert.doesNotMatch(server,/console\.warn\([^\n]*headers|console\.warn\([^\n]*token/);
 });
