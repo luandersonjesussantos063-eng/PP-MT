@@ -8,7 +8,7 @@ let busy=false,enabled=false,lastBilling=null;
 
 function setBusy(on){
  busy=on;
- for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn']){
+ for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','switch-to-pix-btn']){
   const el=$(id);if(el)el.disabled=on;
  }
 }
@@ -59,6 +59,11 @@ function render(data){
  lastBilling=data;
  const card=data.card,manual=data.manual,cs=card?.state,ms=manual?.state;
  const hasPending=pendingStates.has(cs)||pendingStates.has(ms)||(cs==='authorized'&&!data.premium)||cs==='paused';
+ // A troca só é oferecida enquanto a autorização do cartão ainda não foi concluída.
+ // O servidor revalida e cancela no provedor antes de exibir novas opções.
+ const maySwitchToPix=cs==='pending' && !pendingStates.has(ms) && data.premium!==true;
+ $('switch-to-pix-btn').hidden=!maySwitchToPix;
+ $('switch-to-pix-help').hidden=!maySwitchToPix;
  const manages=cancelable.has(cs);
  $('manage-panel').hidden=!manages;
  $('cancel-btn').hidden=!manages;
@@ -105,7 +110,7 @@ function render(data){
  }
  show('offer');
 }
-async function action(value){
+async function action(value,{switchToPix=false}={}){
  if(busy)return null;
  setBusy(true);notice('');
  try{
@@ -115,9 +120,19 @@ async function action(value){
    return data;
   }
   if(value==='card_cancel'){
+   // Uma falha na consulta posterior nunca é tratada como autorização para cobrar.
    const updated=await runMonthlyBilling('status');
    render(updated);
-   notice('Solicitação de cartão cancelada. Se havia período já pago, ele permanece válido.',true);
+   if(switchToPix){
+    if(updated?.card?.state==='cancelled' && updated?.premium===false &&
+       !['creating','pending','needs_review'].includes(updated?.manual?.state)){
+      notice('Autorização do cartão cancelada no Mercado Pago. Agora você pode escolher Pagar com Pix.',true);
+    }else{
+      notice('Aguarde a confirmação do cancelamento antes de escolher Pix. Nenhum pagamento foi criado.');
+    }
+   }else{
+    notice('Solicitação de cartão cancelada. Se havia período já pago, ele permanece válido.',true);
+   }
    return updated;
   }
   // Nunca redirecionar antes de confirmar a origem HTTPS do provedor.
@@ -208,6 +223,13 @@ $('google-login-btn').addEventListener('click',async()=>{
 $('manual-btn').addEventListener('click',()=>{if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
 $('card-btn').addEventListener('click',()=>{
  if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
+});
+$('switch-to-pix-btn').addEventListener('click',()=>{
+ if(busy || lastBilling?.card?.state!=='pending' || lastBilling?.premium===true ||
+    ['creating','pending','needs_review'].includes(lastBilling?.manual?.state))return;
+ if(window.confirm('Trocar cartão por Pix? Vamos cancelar sua autorização PENDENTE no Mercado Pago. Nenhuma cobrança Pix será criada até você escolher Pagar com Pix.')){
+  action('card_cancel',{switchToPix:true});
+ }
 });
 $('refresh-btn').addEventListener('click',()=>action('status'));
 $('retry-btn').addEventListener('click',()=>action('status'));
