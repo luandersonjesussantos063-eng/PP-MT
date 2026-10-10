@@ -332,3 +332,47 @@ test('erro oficial do Mercado Pago permanece código seguro sem detalhes de cred
  assert.match(server,/code\}\);/);
  assert.doesNotMatch(server,/console\.warn\([^\n]*headers|console\.warn\([^\n]*token/);
 });
+
+test('consulta plano gratuito sem depender de API externa ou criar cobrança',async()=>{
+ const h=harness({enabled:true,providerOffline:true});
+ const response=await h.fn(request('status'));
+ assert.equal(response.status,200);
+ const data=await response.json();
+ assert.equal(data.premium,false);
+ assert.equal(data.price,19.99);
+ assert.equal(data.provider_sync_available,true);
+ assert.equal(data.manual,null);
+ assert.equal(h.calls.length,0,'status sem pagamento não deve consultar Mercado Pago');
+});
+test('se o provedor falha, mensalidade já iniciada permanece visível sem criar nova cobrança',async()=>{
+ const h=harness({enabled:true,providerOffline:true,initialOrder:{
+  id:'22222222-2222-4222-8222-222222222222',user_id:'u',
+  state:'pending',provider_preference_id:'pref123',
+  checkout_url:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref123',
+  expires_at:new Date(Date.now()+86400000).toISOString()
+ }});
+ const response=await h.fn(request('status'));
+ assert.equal(response.status,200);
+ const data=await response.json();
+ assert.equal(data.provider_sync_available,false);
+ assert.equal(data.manual.state,'pending');
+ assert.match(data.manual.checkout_url,/mercadopago.com.br/);
+ assert.equal(data.premium,false);
+ assert.equal(h.calls.filter(x=>x.method==='POST').length,0);
+});
+test('Premium confirmado no banco continua ativo mesmo que provedor de cobrança esteja fora do ar',async()=>{
+ const h=harness({enabled:true,providerOffline:true,
+  initialMember:{status:'active',current_period_end:new Date(Date.now()+7*86400000).toISOString()},
+  initialCard:{
+   state:'authorized',provider_id:'subscriber123',
+   external_reference:'11111111-1111-4111-8111-111111111111',checkout_url:null
+  }
+ });
+ const response=await h.fn(request('status'));
+ assert.equal(response.status,200);
+ const data=await response.json();
+ assert.equal(data.premium,true);
+ assert.equal(data.provider_sync_available,false);
+ assert.equal(data.card.state,'authorized');
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
