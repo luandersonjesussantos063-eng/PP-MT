@@ -1,0 +1,20 @@
+name: Validar integração de pagamentos de teste
+on:
+  push:
+    branches: [feat/mercadopago-sandbox-ui-20261009]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: node --check auth.js && node --check planos/teste.js && node --check supabase/functions/ppmt-billing-test/logic.js
+      - run: npm test

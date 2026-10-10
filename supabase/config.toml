@@ -1,0 +1,2 @@
+[functions.ppmt-billing-test]
+verify_jwt = true

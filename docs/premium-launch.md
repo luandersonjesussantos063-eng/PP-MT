@@ -1,4 +1,4 @@
-# PPMT Premium — V 2.13.0
+# PPMT Premium — V 2.13.1
 
 ## Entregue
 - Página pública de apresentação em `planos/`, com cadastro, entrada no app, exemplo interativo e plano mensal previsto de R$ 19,90.
@@ -21,3 +21,12 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Sem QA visual em navegador nesta sessão (plugin de controle de navegador indisponível).
 - Advisor do Supabase: sem alerta novo de RLS. Aviso preexistente de proteção contra senhas vazadas desativada: https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection
 - Esta versão não modifica `user_state` nem bloqueia os alunos existentes.
+
+## Integração de testes (V 2.13.1)
+
+- Página técnica de homologação em `planos/teste.html`. Não é checkout comercial. Somente testadores com cadastro aprovado em `billing_sandbox_testers` podem acessar a função de teste.
+- Função `ppmt-billing-test` com `verify_jwt = true` e confirmação de usuário no servidor; lógica versionada em `supabase/functions/ppmt-billing-test/`. A credencial de teste fica no banco/segredo do Supabase, nunca no GitHub.
+- A assinatura de teste é conferida no Mercado Pago com vendedor/comprador de teste, valor de R$ 19,90, BRL, frequência mensal e `live_mode = false` para pagamentos aprovados.
+- Criar uma assinatura de teste **não modifica** a tabela `memberships`. Teste aprovado não equivale a liberação Premium.
+- Não aplicar ainda limite gratuito de 10 questões/dia. O acervo atual está estático e disponível em cache; o paywall real exige conteúdo entregue por backend após autorização.
+- Para iniciar o teste, o administrador deverá incluir seu usuário de login PPMT na lista de testadores (mediante confirmação da conta) e possuir comprador de teste separado. Não usar cartão real.

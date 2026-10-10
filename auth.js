@@ -89,3 +89,25 @@ export async function loadMembership(){
  if(error)throw error;
  return data;
 }
+
+
+// Teste de assinaturas: exige usuário verificado, envia apenas a ação e, na criação,
+// e-mail de comprador de teste. O token Mercado Pago nunca sai do Supabase.
+export async function runBillingSandbox(action, payerEmail) {
+  if(!online())throw new Error('Conecte-se à internet para testar pagamentos.');
+  if(!['create','status','cancel'].includes(action))throw new Error('Ação inválida.');
+  const user=await verifiedUser();
+  if(!user)throw new Error('Faça login com sua conta PPMT antes de continuar.');
+  const body={action};
+  if(action==='create')body.payer_email=String(payerEmail||'').trim().toLowerCase();
+  const {data,error}=await client().functions.invoke('ppmt-billing-test',{body});
+  if(error){
+    let message='';
+    if(error.context && typeof error.context.json==='function'){
+      try{message=String((await error.context.json())?.error||'');}catch{}
+    }
+    throw new Error(message.slice(0,220)||'A consulta de teste falhou. Confira sua autorização e tente novamente.');
+  }
+  if(data?.sandbox!==true)throw new Error('Resposta de teste inválida.');
+  return data;
+}
