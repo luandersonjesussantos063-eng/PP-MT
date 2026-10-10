@@ -53,3 +53,22 @@
 .pay-contact{text-align:center;font-size:12px;color:#9dadbf}
 .pay-contact a{color:#e7cb92}
 @media(max-width:480px){.pay-simple{padding-top:28px}.pay-panel{padding:21px 16px}.pay-head h1{font-size:33px}.pay-amount strong{font-size:55px}.pay-choice{padding:14px 11px;gap:9px}.pay-choice-icon{width:36px;height:36px}.pay-choice strong{font-size:15px}.pay-choice small{font-size:11px}.pay-choice-arrow{font-size:20px}}
+
+/* V2.18.3 — troca de método sem iniciar nova cobrança */
+#pending-panel .pay-switch{
+ background:transparent!important;
+ color:#e8c488!important;
+ border:1px solid #a78b65!important;
+ box-shadow:none!important;
+ margin-top:12px;
+ min-height:47px
+}
+#pending-panel .pay-switch:hover{background:#e0bd811a!important}
+#pending-panel .pay-switch:disabled{opacity:.55;cursor:wait}
+#pending-panel .pay-switch-note{
+ font-size:11px;
+ line-height:1.55;
+ text-align:center;
+ color:#b4c4d7;
+ margin:8px 0 12px
+}
