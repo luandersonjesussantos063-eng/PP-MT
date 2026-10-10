@@ -21,11 +21,11 @@ export const safeUrl=(url,card=false)=>{
   return (u.pathname==='/checkout/v1/redirect'||u.pathname.startsWith('/checkout/')||u.pathname.startsWith('/sales/checkout/'))?u.href:null;
  }catch{return null;}
 };
-export function verifiedPayment(payment,reference){
+export function verifiedPayment(payment,reference,expectedAmount=AMOUNT){
  return payment &&
   payment.live_mode===true &&
   Number(payment.collector_id)===SELLER &&
-  Number(payment.transaction_amount)===AMOUNT &&
+  Number(payment.transaction_amount)===Number(expectedAmount) &&
   payment.currency_id==='BRL' &&
   String(payment.external_reference||'')===String(reference) &&
   typeof payment.id!=='undefined' &&
@@ -56,7 +56,7 @@ export function makeHandler({authenticate,db,mp}){
    if(Number(req.headers.get('content-length')||'0')>512)fail(413,'Requisição muito grande.');
    const raw=await req.text();if(raw.length>512)fail(413,'Requisição muito grande.');
    let body;try{body=JSON.parse(raw);}catch{fail(400,'JSON inválido.');}
-   if(!['status','manual_checkout','card_start','card_cancel','readiness'].includes(body?.action))fail(400,'Ação inválida.');
+   if(!['status','manual_checkout','card_start','card_cancel','cancel_manual','readiness'].includes(body?.action))fail(400,'Ação inválida.');
    if(body.action==='readiness'){
     if(!await db.isTester(user.id))fail(403,'Diagnóstico restrito ao administrador.');
     const flags=await db.diagnostics();
@@ -152,7 +152,7 @@ export function makeHandler({authenticate,db,mp}){
     for(const brief of (response.results||[]).slice(0,25)){
       if(!/^[0-9]{1,25}$/.test(String(brief?.id||'')))continue;
       const p=await mercado('/v1/payments/'+brief.id);
-      if(!verifiedPayment(p,order.id))continue;
+      if(!verifiedPayment(p,order.id,order.expected_amount))continue;
       if(paidStatus(p)){await db.credit(user.id,p,'manual',order.id);paid=true;}
       else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0)await db.void(p.id);
     }
@@ -221,6 +221,25 @@ export function makeHandler({authenticate,db,mp}){
     }catch(e){await db.updateCard(user.id,{state:'needs_review'});throw e;}
    }
    let order=await db.openOrder(user.id);
+   if(body.action==='cancel_manual'){
+    if(!order)fail(409,'Nenhuma cobrança avulsa pendente.');
+    if(!order.provider_preference_id)fail(409,'Cobrança ainda em preparação. Tente novamente em instantes.');
+    const checked=await syncManual(order);
+    if(checked.state==='paid')fail(409,'Pagamento já confirmado. Não é possível cancelar.');
+    const found=await mercado('/v1/payments/search?external_reference='+encodeURIComponent(order.id)+'&limit=50');
+    if(!Array.isArray(found?.results)||found.results.length>0)fail(409,'Existe uma transação vinculada à cobrança. Não é seguro substituí-la.');
+    const pref=await mercado('/checkout/preferences/'+encodeURIComponent(order.provider_preference_id));
+    if(String(pref?.id)!==String(order.provider_preference_id)||Number(pref?.collector_id)!==SELLER||String(pref?.external_reference)!==String(order.id))fail(502,'Não foi possível validar a cobrança anterior.');
+    const before=new Date(Date.now()-120000).toISOString();
+    const start=new Date(Date.now()-3600000).toISOString();
+    await mercado('/checkout/preferences/'+encodeURIComponent(order.provider_preference_id),'PUT',{expires:true,expiration_date_from:start,expiration_date_to:before});
+    const confirmed=await mercado('/checkout/preferences/'+encodeURIComponent(order.provider_preference_id));
+    if(confirmed?.expires!==true||Date.parse(confirmed.expiration_date_to)>Date.now())fail(503,'Não foi possível confirmar o encerramento da cobrança antiga.');
+    const recheck=await mercado('/v1/payments/search?external_reference='+encodeURIComponent(order.id)+'&limit=50');
+    if(!Array.isArray(recheck?.results)||recheck.results.length>0)fail(409,'Foi encontrada uma transação. Não será criada outra cobrança.');
+    await db.updateOrder(order.id,{state:'expired',checkout_url:null});
+    return output({...result,manual:{state:'expired',checkout_url:null},message:'Tentativa encerrada. Escolha outra forma de pagamento.'});
+   }
    if(body.action==='manual_checkout'){
     if(card){
       if(!card.provider_id)fail(409,'Sua solicitação de assinatura no cartão está em revisão. Não criaremos uma segunda cobrança.');
@@ -233,12 +252,16 @@ export function makeHandler({authenticate,db,mp}){
     }
     if(member?.status==='active'&&member.current_period_end && Date.parse(member.current_period_end)-Date.now()>7*86400000)
       fail(409,'Seu plano já está ativo. A próxima mensalidade poderá ser paga nos últimos 7 dias de vigência.');
+    const discount=await db.activeDiscount(user.id);
+    const promoCents=discount?Math.max(1,Math.round(1999*(100-discount.discount_percent)/100)):1999;
+    const promoAmount=promoCents/100;
+    if(order && discount && order.benefit_id!==discount.id)fail(409,'Há um pagamento anterior pendente. Não criaremos outra cobrança com preço diferente. Solicite suporte.');
     if(!order) {
-      order=await db.claimOrder(user.id);
+      order=await db.claimOrder(user.id,discount,promoAmount);
       if(!order)fail(409,'Uma cobrança já está em preparação.');
       try{
        const response=await mercado('/checkout/preferences','POST',{
-        items:[{id:'ppmt-premium-30d',title:'PPMT Premium — 1 mês',description:'Acesso mensal, renovação manual por Pix, boleto ou cartão de débito',quantity:1,currency_id:'BRL',unit_price:AMOUNT}],
+        items:[{id:'ppmt-premium-30d',title:'PPMT Premium — 1 mês',description:'Acesso mensal, renovação manual por Pix, boleto ou cartão de débito',quantity:1,currency_id:'BRL',unit_price:Number(order.expected_amount)}],
         payer:{email:user.email},
         external_reference:order.id,
         back_urls:{success:returnUrl+'?resultado=aprovado',pending:returnUrl+'?resultado=pendente',failure:returnUrl+'?resultado=falhou'},
@@ -251,11 +274,11 @@ export function makeHandler({authenticate,db,mp}){
           String(response.external_reference||'')!==order.id)
         fail(502,'O checkout retornado não corresponde à conta recebedora ou ao pedido de R$ 19,99.');
        await db.updateOrder(order.id,{provider_preference_id:String(response.id),checkout_url:url,state:'pending'});
-       return output({...result,manual:{state:'pending',checkout_url:url}});
+       return output({...result,price:Number(order.expected_amount),discount_percent:discount?.discount_percent||0,manual:{state:'pending',checkout_url:url}});
       }catch(e){await db.updateOrder(order.id,{state:'needs_review'});throw e;}
     }
     order=await syncManual(order);
-    return output({...result,manual:{state:order.state,checkout_url:order.checkout_url}});
+    return output({...result,price:Number(order.expected_amount),discount_percent:discount?.discount_percent||0,manual:{state:order.state,checkout_url:order.checkout_url}});
    }
    let providerSyncAvailable=true;
    const originalCard=card,originalOrder=order;
