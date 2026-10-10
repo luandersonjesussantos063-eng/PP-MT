@@ -1,5 +1,5 @@
 import {renderMembership} from './planos/account.js?v=2.16.0';
-import {loginWithGoogle,studyQuota} from './account-services.js?v=2.17.0';
+import {loginWithGoogle,studyQuota,takeGoogleReturn} from './account-services.js?v=2.17.0';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
@@ -125,7 +125,14 @@ function renderAuth(){currentUser=null;syncConnectionUI();$('#nav').innerHTML=''
   try{await loginWithGoogle();}
   catch(e){googleBtn.disabled=false;$('#authHint').textContent=e?.message||'Não foi possível acessar o Google. Tente entrar com e-mail e senha.';}
  };
-async function bootstrap(){const user=await getCurrentUser();if(user)await loadAccount(user);else renderAuth()}
+async function bootstrap(){
+ const user=await getCurrentUser();
+ if(user){
+  const destination=takeGoogleReturn();
+  if(destination&&location.pathname!==destination){location.replace(location.origin+destination);return;}
+  await loadAccount(user);
+ }else renderAuth();
+}
 function title(t,d){return `<h1>${t}</h1><p class="muted">${d}</p>`}
 function todayStudySeconds(){ensureProgram();return Math.max(0,Number(store.program.studySeconds[localDay()])||0)}
 function studyGoalSeconds(){ensureProgram();return (store.program.shortDay===localDay()?10:minutesFor(store.program.profile))*60}
