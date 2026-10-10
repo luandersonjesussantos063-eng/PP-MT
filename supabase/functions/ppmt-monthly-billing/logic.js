@@ -56,12 +56,23 @@ export function makeHandler({authenticate,db,mp}){
     const flags=await db.diagnostics();
     const token=await db.token();
     let merchant_valid=false,merchant_http_status=null;
+    let checkout_api_authorized=false,checkout_api_http_status=null,checkout_seller_matches=null;
     if(token){
+     // API de identidade Mercado Livre pode recusar escopo mesmo se a API de cobrancas aceitar o token.
      try{merchant_valid=isSeller(await mp(token,'/users/me'));merchant_http_status=200;}
      catch(err){if(err instanceof BillingError&&Number.isInteger(err.providerStatus))merchant_http_status=err.providerStatus;}
+     // GET read-only: nao cria preferencia, pedido ou cobranca. Usar API propria do Checkout Pro.
+     try{
+      const preferences=await mp(token,'/checkout/preferences/search?limit=1');
+      checkout_api_authorized=true;
+      checkout_api_http_status=200;
+      const first=Array.isArray(preferences?.elements)?preferences.elements[0]:null;
+      if(first&&first.collector_id!=null)checkout_seller_matches=Number(first.collector_id)===SELLER;
+     }catch(err){if(err instanceof BillingError&&Number.isInteger(err.providerStatus))checkout_api_http_status=err.providerStatus;}
     }
     return output({price:AMOUNT,month:true,enabled:await db.enabled(),pilot_enabled:await db.privatePilot(user.id),checks:{
       merchant_valid,merchant_http_status,production_token_present:Boolean(token),webhook_secret_present:flags.webhook_secret_present,
+      checkout_api_authorized,checkout_api_http_status,checkout_seller_matches,
       delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
     }});
    }

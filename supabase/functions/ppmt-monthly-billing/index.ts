@@ -87,6 +87,7 @@ Deno.serve(makeHandler({
    // Log apenas da etapa e do HTTP; sem token, e-mail, pedido ou resposta do provedor.
    const operation=path==='/users/me'?'merchant_validation':
     path==='/checkout/preferences'?'manual_checkout':
+    path.startsWith('/checkout/preferences/search')?'checkout_api_readonly':
     path==='/preapproval'?'card_subscription':
     path.startsWith('/preapproval/')?'subscription_status':
     path.startsWith('/authorized_payments')?'authorized_payment_status':

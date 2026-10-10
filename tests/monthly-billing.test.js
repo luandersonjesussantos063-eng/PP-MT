@@ -26,6 +26,7 @@ function harness({enabled=false,pilot=false,seller=SELLER}={}){
  const mp=async(t,path,method,body,key)=>{
   calls.push({path,method,body,key});
   if(path==='/users/me')return {id:seller,site_id:'MLB',tags:[]};
+  if(path==='/checkout/preferences/search?limit=1')return {elements:[{collector_id:seller}]};
   if(path==='/preapproval'&&method==='POST')return {
    id:'subscriber123',collector_id:SELLER,external_reference:card.external_reference,
    auto_recurring:{transaction_amount:AMOUNT,frequency:1,frequency_type:'months',currency_id:'BRL'},
@@ -260,6 +261,9 @@ test('diagnóstico privado separa token de produção ausente, HTTP rejeitado e 
  assert.equal(data.checks.merchant_valid,true);
  assert.equal(data.checks.merchant_http_status,200);
  assert.equal(data.checks.production_token_present,true);
+ assert.equal(data.checks.checkout_api_authorized,true);
+ assert.equal(data.checks.checkout_api_http_status,200);
+ assert.equal(data.checks.checkout_seller_matches,true);
  const merchantUi=readFileSync(new URL('../planos/diagnostico.js',import.meta.url),'utf8');
  assert.match(merchantUi,/merchant_http_status/);
  assert.match(merchantUi,/production_token_present/);
@@ -271,4 +275,15 @@ test('validação da conta usa endpoint de identidade documentado pelo Mercado P
  assert.match(src,/path==='\/users\/me'\?'https:\/\/api\.mercadolibre\.com':'https:\/\/api\.mercadopago\.com'/);
  assert.match(src,/await fetch\(host\+path,/);
  assert.match(src,/redirect:'error'/);
+});
+
+test('preflight usa pesquisa read-only da API de Checkout Pro sem criar cobranca',async()=>{
+ const h=harness();
+ const res=await h.fn(request('readiness'));
+ assert.equal(res.status,200);
+ const checks=(await res.json()).checks;
+ assert.equal(checks.checkout_api_authorized,true);
+ assert.equal(checks.checkout_seller_matches,true);
+ assert.ok(h.calls.some(c=>c.path==='/checkout/preferences/search?limit=1'&&c.method==='GET'));
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
