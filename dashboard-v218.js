@@ -25,19 +25,13 @@ export function commandDashboard({
    </div>
    <div class="command-insignia" aria-hidden="true"><div class="command-insignia-ring"><img src="./icon.svg" alt=""></div><span>DISCIPLINA · HONRA · FOCO</span></div>
   </div>
-  <div class="command-footer"><span>◈ PREPARAÇÃO POLICIAL</span><span>◈ MISSÕES DIÁRIAS</span><span>◈ EVOLUÇÃO CONTÍNUA</span></div>
+  <div class="command-footer"><span>${premium?'✦ ACESSO PREMIUM ATIVO':'◈ PREPARAÇÃO POLICIAL'}</span><span>◈ MISSÕES DIÁRIAS</span><span>◈ EVOLUÇÃO CONTÍNUA</span></div>
  </section>
  <section class="command-metrics" aria-label="Seu desempenho até agora">
   <div class="command-metric"><span class="command-metric-ico" aria-hidden="true">◷</span><small>TEMPO ESTUDADO HOJE</small><strong data-study-time>${safe(String(Math.floor(seconds/3600)).padStart(2,'0')+':'+String(Math.floor(seconds%3600/60)).padStart(2,'0')+':'+String(Math.floor(seconds%60)).padStart(2,'0'))}</strong><span>Meta: ${goalMin?goalMin+' min':'descanso ou estudo livre'}</span></div>
   <div class="command-metric"><span class="command-metric-ico" aria-hidden="true">↗</span><small>SEQUÊNCIA ATUAL</small><strong>${safe(streak)} ${streak===1?'dia':'dias'}</strong><span>Constância na preparação</span></div>
   <div class="command-metric"><span class="command-metric-ico" aria-hidden="true">✦</span><small>EXPERIÊNCIA</small><strong>${safe(xp)} XP</strong><span>Patente: ${safe(rank)}</span></div>
   <div class="command-metric"><span class="command-metric-ico" aria-hidden="true">↺</span><small>REVISÕES PENDENTES</small><strong>${safe(pending)}</strong><span>${pending===0?'Tudo em dia':'Pontos para reforçar'}</span></div>
- </section>
- <section class="command-overview">
-  <div class="command-overview-top"><div><small>SEU DESEMPENHO DIÁRIO</small><h2>Continue avançando.</h2><p>${safe(missionLabel)}</p></div><span class="command-overview-rate" data-study-percent>${progress}%</span></div>
-  <div class="command-progress-track"><i data-study-progress style="width:${progress}%"></i></div>
-  <div class="command-overview-bottom"><span>${minutes} min estudados · ${goalMin} min planejados</span><span>${safe(completed)} ${completed===1?'bloco concluído':'blocos concluídos'}</span></div>
-  <div class="command-quota" data-command-quota><span>${premium?'✦ Plano Premium: sem limite de questões e simulados':remaining!==null?'◷ Plano Grátis: '+remaining+' questões disponíveis hoje':'◷ Seu limite de questões é consultado na conta'}</span><a href="#plano">${premium?'Meu plano':'Conhecer Premium'} ↗</a></div>
  </section>
  <section class="command-quick"><div class="command-quick-heading"><div><small>ACESSO RÁPIDO</small><h2>Qual sua próxima missão?</h2></div><span>Escolha seu foco →</span></div>
   <div class="command-quick-grid">
