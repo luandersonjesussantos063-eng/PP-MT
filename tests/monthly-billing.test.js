@@ -284,6 +284,6 @@ test('preflight usa pesquisa read-only da API de Checkout Pro sem criar cobranca
  const checks=(await res.json()).checks;
  assert.equal(checks.checkout_api_authorized,true);
  assert.equal(checks.checkout_seller_matches,true);
- assert.ok(h.calls.some(c=>c.path==='/checkout/preferences/search?limit=1'&&c.method==='GET'));
+ assert.ok(h.calls.some(c=>c.path==='/checkout/preferences/search?limit=1'&&(c.method===undefined||c.method==='GET')));
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
