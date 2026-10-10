@@ -45,8 +45,9 @@ function existingLink(id,value,card=false){
  else a.removeAttribute('href');
  return !!url;
 }
-function showError(message=''){
- $('error-message').textContent=message||'Não foi possível confirmar sua situação agora. Nenhuma nova cobrança foi criada por esta consulta.';
+function showError(message='',title='Não conseguimos consultar seu pagamento agora'){
+ $('error-panel').querySelector('h2').textContent=title;
+ $('error-message').textContent=message||'Não foi possível confirmar sua situação agora. Consulte seu plano antes de criar outra cobrança.';
  $('manage-panel').hidden=true;
  show('error');
 }
@@ -137,11 +138,20 @@ async function action(value){
    return null;
   }
   // Falhar após o POST não comprova que nenhuma cobrança foi registrada.
+  const reason=String(e instanceof Error?e.message:'O provedor não confirmou a operação.').slice(0,220);
   try{
    const current=await runMonthlyBilling('status');
    render(current);
-   if(value==='status')notice('Não foi possível confirmar todos os dados. Confira sua situação novamente.');
-   else notice('Não foi possível concluir a operação. Confira a situação antes de tentar novamente.');
+   const waiting=['pending','creating','needs_review'].includes(current?.manual?.state)||
+    ['pending','creating','needs_review','authorized','paused'].includes(current?.card?.state);
+   if(current?.premium===true){
+    notice('Seu Premium está ativo. Verifique o histórico antes de realizar outra compra.',true);
+   }else if(waiting){
+    notice('Operação em verificação. '+reason+' Não realize outra compra antes de confirmar.',false);
+   }else{
+    showError(reason+' Confira os dados e tente novamente apenas depois de verificar seu plano.',
+      'Não foi possível iniciar o pagamento');
+   }
   }catch{
    showError('Não conseguimos verificar o pagamento neste momento. Não tente outra cobrança até confirmar sua situação.');
   }
