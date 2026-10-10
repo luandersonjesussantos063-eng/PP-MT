@@ -376,3 +376,20 @@ test('Premium confirmado no banco continua ativo mesmo que provedor de cobrança
  assert.equal(data.card.state,'authorized');
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
+
+test('cartão já cancelado permite abrir opções sem consultar o Mercado Pago',async()=>{
+ const h=harness({enabled:true,providerOffline:true,initialCard:{
+  state:'cancelled',provider_id:'subscriber123',
+  external_reference:'11111111-1111-4111-8111-111111111111',
+  checkout_url:null
+ }});
+ const response=await h.fn(request('status'));
+ assert.equal(response.status,200,'O status gratuito deve abrir mesmo se o Mercado Pago está indisponível');
+ const data=await response.json();
+ assert.equal(data.premium,false);
+ assert.equal(data.enabled,true);
+ assert.equal(data.card?.state,'cancelled');
+ assert.equal(data.provider_sync_available,true);
+ assert.equal(h.calls.length,0,'Consultar assinatura cancelada não deve depender do Mercado Pago');
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
