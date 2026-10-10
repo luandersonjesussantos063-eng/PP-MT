@@ -42,3 +42,11 @@ export async function studyQuota(action='status',units=1,eventId=null){
  if(!data||typeof data.allowed!=='boolean')throw new Error('Resposta de limite inválida.');
  return data;
 }
+
+export async function myPremiumOffers(){
+ const {data:sessionData,error:sessionError}=await supabase.auth.getSession();
+ if(sessionError||!sessionData.session)throw new Error('Entre na sua conta para consultar as notificações.');
+ const {data,error}=await supabase.functions.invoke('ppmt-my-offers',{headers:{Authorization:'Bearer '+sessionData.session.access_token}});
+ if(error||!Array.isArray(data?.offers))throw new Error('Não foi possível carregar as ofertas.');
+ return data.offers;
+}
