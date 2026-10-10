@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b111b">
+<title>PP-MT · Segundo Pix de R$ 0,01 — Webhook</title>
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css?v=2.15.0">
+<link rel="stylesheet" href="./pix.css?v=2.15.0">
+</head>
+<body>
+<header class="top"><a class="brand" href="../"><img src="../icon.svg" width="42" height="46" alt=""><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a><nav><a href="./piloto-centavo.html">Primeiro teste</a><a href="./diagnostico.html">Diagnóstico</a></nav></header>
+<main class="wrap pix-layout" id="conteudo">
+<p class="eyebrow">ADMINISTRADOR · VERIFICAÇÃO DE WEBHOOK</p>
+<h1>Segundo Pix de <em>R$ 0,01</em></h1>
+<p class="lead">Teste real de notificação de pagamento. Sem assinatura, sem renovação e sem alterar seu Premium atual.</p>
+<section class="pix-warning"><strong>Somente uma cobrança adicional por conta.</strong>
+<p>O Pix é real: confirme o valor e o recebedor no seu banco antes de pagar. A geração do código não cobra automaticamente e não libera um novo período Premium. O plano público de R$ 19,99/mês permanece fechado.</p></section>
+<p id="session" class="pix-info" role="status">Verificando login…</p>
+<section id="login-panel" class="pix-card" hidden>
+<h2>Entrar no PP-MT</h2><form id="login-form">
+<label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required>
+<label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
+<button id="login-btn" class="button primary" type="submit">Entrar</button></form></section>
+<section id="retest-panel" class="pix-card" hidden>
+<h2>Confirmação do segundo teste</h2>
+<p id="state" class="pix-info" role="status" aria-live="polite">Verificando disponibilidade…</p>
+<div class="pix-actions">
+<button id="create" class="button primary" type="button" disabled>Gerar segundo Pix REAL de R$ 0,01</button>
+<button id="refresh" class="button secondary" type="button">Verificar pagamento e webhook ↻</button>
+</div>
+<div id="code-panel" hidden>
+<h3>Pix copia e cola</h3>
+<label for="pix-code">Código Pix</label><textarea id="pix-code" rows="5" readonly></textarea>
+<button class="button secondary" id="copy" type="button">Copiar Pix</button>
+<a id="ticket" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Abrir Mercado Pago ↗</a>
+<p class="micro">Pague somente uma vez. Depois clique em “Verificar pagamento e webhook”.</p>
+</div>
+<p id="webhook-status" role="status" class="pix-info" hidden></p>
+</section>
+<p id="feedback" class="pix-info" role="alert" hidden></p>
+<p class="micro">O webhook é marcado como validado apenas quando a assinatura é autenticada e o pagamento é consultado na API oficial. Se aparecer pagamento aprovado sem webhook autenticado, envie o resultado para investigação.</p>
+</main>
+<footer class="wrap"><a href="../">PPMT</a><p>NovaByte Soluções · Reteste privado</p></footer>
+<script type="module">
+import {createClient} from '../assets/vendor/supabase-2.117.2.js';
+const db=createClient('https://fermfbmhwlafwopwndoj.supabase.co','sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+let busy=false,enabled=false,created=false;
+function setBusy(value){
+ busy=value;
+ $('create').disabled=value||!enabled||created;
+ $('refresh').disabled=value;
+ $('login-btn').disabled=value;
+}
+function notice(message,error=false){
+ const box=$('feedback');box.hidden=!message;box.textContent=message||'';
+ box.classList.toggle('error',error);
+}
+function ticketUrl(value){
+ try{
+  const x=new URL(value);
+  return x.protocol==='https:'&&['www.mercadopago.com.br','mercadopago.com.br'].includes(x.hostname)&&!x.port&&!x.username&&!x.password?x.href:null;
+ }catch{return null;}
+}
+async function call(action){
+ const {data,error}=await db.functions.invoke('ppmt-webhook-centavo-retest',{body:{action}});
+ if(error){
+  let msg='';if(typeof error.context?.json==='function')try{msg=String((await error.context.json())?.error||'');}catch{}
+  throw new Error(msg.slice(0,220)||'A consulta falhou. Verifique o status antes de tentar novamente.');
+ }
+ if(data?.retest!==true||Number(data?.amount)!==0.01||data?.recurring!==false)
+  throw new Error('O servidor retornou dados inesperados.');
+ return data;
+}
+function display(data){
+ const state=String(data.state||'none');
+ created=state!=='none';
+ $('code-panel').hidden=true;
+ $('webhook-status').hidden=state==='none';
+ if(state==='approved')$('state').textContent='✓ Segundo pagamento de R$ 0,01 aprovado.';
+ else if(state==='pending')$('state').textContent='Segundo Pix gerado. Aguardando pagamento.';
+ else if(state==='none')$('state').textContent='Nenhum segundo Pix foi gerado nesta conta.';
+ else $('state').textContent='Pagamento em situação '+state+'. Consulte o suporte antes de tentar novamente.';
+ if(state==='pending'){
+  const qr=typeof data.pix_code==='string'?data.pix_code:'';
+  $('pix-code').value=qr;
+  const t=ticketUrl(data.ticket_url);
+  $('ticket').hidden=!t;
+  if(t)$('ticket').href=t;else $('ticket').removeAttribute('href');
+  $('code-panel').hidden=!(qr||t);
+ }
+ if(state!=='none'){
+  $('webhook-status').textContent=data.webhook_verified===true
+   ?'✓ Webhook REAL autenticado pelo servidor. A notificação foi associada ao Pix.'
+   :'Webhook real ainda não autenticado. Mesmo após pagar, aguarde e consulte novamente.';
+ }
+ setBusy(busy);
+}
+async function run(action){
+ if(busy)return;
+ setBusy(true);notice('');
+ try{
+  if(action==='check'){
+   const c=await call('check');
+   enabled=c.enabled===true;
+   if(!enabled){$('state').textContent=c.reason||'Teste não autorizado.';created=true;}
+   else display(await call('status'));
+  }else{
+   const data=await call(action);
+   if(action==='create'&&data.state==='pending')notice('Segundo Pix criado. Confira R$ 0,01 no seu banco antes de pagar.');
+   display(data);
+  }
+ }catch(e){
+  if(action==='create')created=true;
+  notice(e?.message||'Falha ao consultar reteste.',true);
+ }finally{setBusy(false);}
+}
+async function load(){
+ setBusy(true);
+ try{
+  const {data,error}=await db.auth.getUser();if(error)throw error;
+  const logged=Boolean(data?.user);
+  $('login-panel').hidden=logged;$('retest-panel').hidden=!logged;
+  $('session').textContent=logged?'Conta PP-MT conectada.':'Entre na conta PP-MT para continuar.';
+  setBusy(false);
+  if(logged)await run('check');
+ }catch{
+  $('login-panel').hidden=false;$('retest-panel').hidden=true;
+  $('session').textContent='Entre na sua conta PP-MT.';
+ }finally{setBusy(false);}
+}
+$('login-form').addEventListener('submit',async e=>{
+ e.preventDefault();if(busy)return;setBusy(true);notice('');
+ try{
+  const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+  if(error)throw error;
+  $('password').value='';
+  setBusy(false);await load();
+ }catch{notice('Confira e-mail, senha e confirmação da conta.',true);}
+ finally{setBusy(false);}
+});
+$('create').addEventListener('click',()=>{
+ if(busy||!enabled||created)return;
+ if(window.confirm('Autoriza gerar UM segundo Pix REAL de R$ 0,01 para testar o webhook? O Premium atual não será alterado.'))run('create');
+});
+$('refresh').addEventListener('click',()=>run('status'));
+$('copy').addEventListener('click',async()=>{
+ const code=$('pix-code').value;if(!code)return;
+ try{await navigator.clipboard.writeText(code);notice('Pix copiado.');}
+ catch{$('pix-code').select();notice('Selecione e copie o código acima.');}
+});
+load();
+</script>
+</body></html>
