@@ -16,6 +16,8 @@ async function loadDiscount(){
   if(discountOffer){
    const cents=Math.max(1,Math.round(1999*(100-discountOffer.discount_percent)/100));
    const amount=(cents/100).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+   const headline=document.querySelector('.pay-amount strong');if(headline)headline.textContent=amount;
+   document.title='PP-MT Premium • Oferta '+amount;
    $('discount-message').textContent='Oferta de '+discountOffer.discount_percent+'%: de R$ 19,99 por '+amount+' nesta mensalidade avulsa, válida até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'. O valor final será confirmado no Mercado Pago.';
    const label=$('manual-btn').querySelector('small');if(label)label.textContent=amount+' por 1 mês · sem renovação automática';
    $('card-btn').disabled=true;
