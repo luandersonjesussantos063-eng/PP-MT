@@ -28,7 +28,7 @@ async function check(){
   $('delivery').textContent=(flags.delivery_flag?'✓ ':'✕ ')+'Entrega Premium liberada';
   $('billing').textContent=(flags.billing_flag?'✓ ':'✕ ')+'Abertura comercial autorizada';
   $('pilot').textContent=result.pilot_enabled?'✓ Piloto comercial privado autorizado.':'✕ Piloto comercial privado desligado.';
-  $('sales').textContent=result.enabled?'Checkout habilitado. Faça conferência completa antes de divulgar.':'Vendas bloqueadas até completar as validações.';
+  $('sales').textContent=flags.billing_flag?'Vendas públicas autorizadas no servidor — confira os fluxos pagos antes de divulgar.':result.pilot_enabled?'Somente piloto privado autorizado. Vendas públicas ainda bloqueadas.':'Vendas públicas e testes comerciais bloqueados.';
   show('status-box',true);$('message').textContent='';
  }catch(e){$('message').textContent=e?.message||'Não foi possível consultar.';}
 }
