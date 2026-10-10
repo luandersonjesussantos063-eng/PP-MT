@@ -167,3 +167,16 @@ test('identificação do comprador exige login e permissão de testador',async()
  assert.equal((await withoutAccess.handler(req('buyer_info'))).status,403);
  assert.equal(withoutAccess.calls.length,0);
 });
+
+test('tela oferece busca do comprador e preenche apenas e-mail validado',()=>{
+ const html=readFileSync(new URL('../planos/teste.html',import.meta.url),'utf8');
+ const js=readFileSync(new URL('../planos/teste.js',import.meta.url),'utf8');
+ const auth=readFileSync(new URL('../auth.js',import.meta.url),'utf8');
+ assert.match(html,/id="buyer-button"/);
+ assert.match(js,/request\('buyer_info'\)/);
+ assert.match(js,/buyer_verified/);
+ assert.match(js,/el\('buyer-email'\)\.value=email/);
+ assert.ok(js.includes(String.raw`@testuser\.com`));
+ assert.ok(!js.includes(String.raw`@testuser\\.com`));
+ assert.match(auth,/['"]buyer_info['"]/);
+});
