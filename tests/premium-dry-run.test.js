@@ -107,7 +107,7 @@ test('ciclo sem cobrança: bloqueado, checkout fictício, webhook HMAC, Premium,
  let response=await f.practice(f.practiceRequest('next'));
  assert.equal(response.status,402,'Acesso livre não revela conteúdo Premium');
  response=await f.bill(f.billingRequest('manual_checkout'));
- assert.equal(response.status,200);
+ assert.equal(response.status,200,await response.text());
  const checkout=await response.json();
  assert.equal(checkout.price,19.99);
  assert.equal(checkout.manual.state,'pending');
