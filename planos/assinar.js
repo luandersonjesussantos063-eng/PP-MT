@@ -20,13 +20,13 @@ async function loadDiscount(){
    document.title='PP-MT Premium • Oferta '+amount;
    $('discount-message').textContent='Oferta de '+discountOffer.discount_percent+'%: de R$ 19,99 por '+amount+' nesta mensalidade avulsa, válida até '+new Date(discountOffer.expires_at).toLocaleDateString('pt-BR')+'. O valor final será confirmado no Mercado Pago.';
    const label=$('manual-btn').querySelector('small');if(label)label.textContent=amount+' por 1 mês · sem renovação automática';
-   $('card-btn').disabled=true;
+   // Oferta só reduz pagamentos avulsos. Cartão recorrente continua com preço integral.
   }
  }catch{discountOffer=null;const panel=$('discount-notice');if(panel)panel.hidden=true;}
 }
 function setBusy(on){
  busy=on;
- for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','switch-to-pix-btn','cancel-manual-btn']){
+ for(const id of ['login-btn','google-login-btn','manual-btn','card-btn','refresh-btn','retry-btn','cancel-btn','change-method-btn','error-change-method-btn']){
   const el=$(id);if(el)el.disabled=on;
  }
 }
@@ -77,12 +77,8 @@ function render(data){
  lastBilling=data;
  const card=data.card,manual=data.manual,cs=card?.state,ms=manual?.state;
  const hasPending=pendingStates.has(cs)||pendingStates.has(ms)||(cs==='authorized'&&!data.premium)||cs==='paused';
- // A troca só é oferecida enquanto a autorização do cartão ainda não foi concluída.
- // O servidor revalida e cancela no provedor antes de exibir novas opções.
- const maySwitchToPix=cs==='pending' && !pendingStates.has(ms) && data.premium!==true;
- $('switch-to-pix-btn').hidden=!maySwitchToPix;
- $('cancel-manual-btn').hidden=!(manualPending&&data.premium!==true);
- $('switch-to-pix-help').hidden=!maySwitchToPix;
+ const manualPending=pendingStates.has(ms);
+ // Botão para trocar forma de pagamento aparece em qualquer tentativa pendente.
  const manages=cancelable.has(cs);
  $('manage-panel').hidden=!manages;
  $('cancel-btn').hidden=!manages;
@@ -101,7 +97,6 @@ function render(data){
   $('card-state').textContent='';
   $('manual-state').textContent='';
   const cardPending=pendingStates.has(cs)||cs==='authorized'||cs==='paused';
-  const manualPending=pendingStates.has(ms);
   const cardLink=existingLink('card-link',cardPending&&cs==='pending'?card.checkout_url:null,true);
   const oldPriceOffer=Boolean(discountOffer);
   const manualLink=existingLink('manual-link',!oldPriceOffer&&manualPending&&ms==='pending'?manual.checkout_url:null,false);
@@ -203,6 +198,49 @@ async function action(value,{switchToPix=false}={}){
   return null;
  }finally{setBusy(false);}
 }
+// Navegar e mudar de ideia é livre. O pagamento só é criado após validar o anterior.
+async function startMethod(method){
+ if(busy)return;
+ setBusy(true);notice('');
+ try{
+  const status=await runMonthlyBilling('status');
+  if(status.premium===true){render(status);notice('Seu Premium já está ativo.',true);return;}
+  if(status.enabled!==true){render(status);notice('Os pagamentos estão temporariamente indisponíveis.');return;}
+  const card=status.card?.state,manual=status.manual?.state;
+  let data;
+  if(method==='manual'){
+   if(['pending','authorized','paused'].includes(card)){
+    const stopped=await runMonthlyBilling('card_cancel');
+    if(stopped.card?.state!=='cancelled')throw new Error('O cancelamento do cartão não foi confirmado. Nenhum Pix foi criado.');
+   }else if(['creating','needs_review'].includes(card)){
+    throw new Error('O cartão está em análise; tente novamente quando a autorização for concluída ou cancelada.');
+   }
+   // O preço de uma oferta não substitui silenciosamente um checkout antigo.
+   if(discountOffer&&pendingStates.has(manual)){
+    const stopped=await runMonthlyBilling('cancel_manual');
+    if(stopped.manual?.state!=='expired')throw new Error('Pagamento anterior não encerrado. Nenhuma nova cobrança foi criada.');
+   }
+   data=await runMonthlyBilling('manual_checkout');
+  }else{
+   if(pendingStates.has(manual)){
+    const stopped=await runMonthlyBilling('cancel_manual');
+    if(stopped.manual?.state!=='expired')throw new Error('Pagamento anterior não encerrado. Nenhuma nova assinatura foi criada.');
+   }
+   data=await runMonthlyBilling('card_start');
+  }
+  render(data);
+  const url=method==='manual'?safeLink(data?.manual?.checkout_url):safeLink(data?.card?.checkout_url,true);
+  if(url){window.location.assign(url);return data;}
+  notice('Tentativa registrada. Use “Continuar no Mercado Pago” ou volte para escolher outra forma.');
+  return data;
+ }catch(e){
+  const message=String(e instanceof Error?e.message:'Não foi possível iniciar esta forma de pagamento.').slice(0,220);
+  try{render(await runMonthlyBilling('status'));}
+  catch{showError('Não foi possível verificar a tentativa anterior. Você pode voltar e escolher outra forma.');}
+  notice(message);
+  return null;
+ }finally{setBusy(false);}
+}
 async function reconcileAfterCheckout(){
  const outcome=new URLSearchParams(location.search).get('resultado');
  if(!['aprovado','pendente','falhou'].includes(outcome))return;
@@ -250,18 +288,17 @@ $('google-login-btn').addEventListener('click',async()=>{
  try{await loginWithGoogle('checkout');}
  catch{setBusy(false);notice('Não foi possível entrar com Google. Tente novamente ou use e-mail e senha.');}
 });
-$('manual-btn').addEventListener('click',()=>{if(!busy&&enabled&&lastBilling?.premium===false)action('manual_checkout')});
+$('manual-btn').addEventListener('click',()=>{if(!busy)startMethod('manual')});
 $('card-btn').addEventListener('click',()=>{
- if(discountOffer){notice('Seu desconto é válido para pagamento avulso por Pix, boleto ou débito. O cartão recorrente permanece com preço normal.');return;}if(!busy&&enabled&&lastBilling?.premium===false&&window.confirm('Confirmar assinatura de R$ 19,99 POR MÊS no cartão? Há renovação automática até o cancelamento.'))action('card_start');
+ if(!busy&&window.confirm('O desconto não vale para o cartão recorrente. Assinar por R$ 19,99 POR MÊS no cartão com renovação automática?'))startMethod('card');
 });
-$('switch-to-pix-btn').addEventListener('click',()=>{
- if(busy || lastBilling?.card?.state!=='pending' || lastBilling?.premium===true ||
-    ['creating','pending','needs_review'].includes(lastBilling?.manual?.state))return;
- if(window.confirm('Trocar cartão por Pix? Vamos cancelar sua autorização PENDENTE no Mercado Pago. Nenhuma cobrança Pix será criada até você escolher Pagar com Pix.')){
-  action('card_cancel',{switchToPix:true});
- }
-});
-$('cancel-manual-btn').addEventListener('click',()=>{if(!busy&&lastBilling?.manual?.state==='pending'&&window.confirm('Cancelar esta tentativa e escolher outra forma? O sistema verificará se não há transação em andamento.'))action('cancel_manual');});
+function openPaymentOptions(){
+ if(busy)return;
+ notice('Escolha outra forma de pagamento. A tentativa anterior será encerrada antes de uma nova cobrança.');
+ show('offer');
+}
+$('change-method-btn').addEventListener('click',openPaymentOptions);
+$('error-change-method-btn').addEventListener('click',openPaymentOptions);
 $('refresh-btn').addEventListener('click',()=>action('status'));
 $('retry-btn').addEventListener('click',()=>action('status'));
 $('cancel-btn').addEventListener('click',()=>{
