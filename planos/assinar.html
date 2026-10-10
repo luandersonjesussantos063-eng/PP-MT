@@ -9,8 +9,8 @@
 <meta name="description" content="Assine PP-MT Premium: R$ 19,99 por mês no cartão ou pagamento mensal por Pix, boleto ou débito.">
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
-<link rel="stylesheet" href="./assinar.css?v=2.18.2">
-<script type="module" src="./assinar.js?v=2.18.2"></script>
+<link rel="stylesheet" href="./assinar.css?v=2.18.3">
+<script type="module" src="./assinar.js?v=2.18.3"></script>
 </head>
 <body>
 <a class="skip" href="#conteudo">Ir para o conteúdo</a>
@@ -48,6 +48,8 @@
    <p id="pending-message">Não precisa criar outro pagamento.</p>
    <a id="card-link" class="button primary pay-wide" hidden rel="noopener noreferrer" href="#">Continuar no Mercado Pago →</a>
    <a id="manual-link" class="button primary pay-wide" hidden rel="noopener noreferrer" href="#">Continuar no Mercado Pago →</a>
+   <button id="switch-to-pix-btn" class="button secondary pay-wide pay-switch" type="button" hidden>← Trocar para Pix</button>
+   <p id="switch-to-pix-help" class="pay-switch-note" hidden>Antes de trocar, vamos cancelar a solicitação de cartão no Mercado Pago. Nenhuma compra por Pix será criada automaticamente.</p>
    <button id="refresh-btn" class="button secondary pay-wide" type="button">Já paguei · Verificar agora</button>
    <p id="card-state" class="pay-detail"></p><p id="manual-state" class="pay-detail"></p>
   </section>
