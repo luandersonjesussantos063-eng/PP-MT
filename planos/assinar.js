@@ -61,7 +61,7 @@ async function load(){
  try{
   const user=await verifiedUser();
   $('login-panel').hidden=!!user;$('payment-panel').hidden=!user;
-  if(user)await action('status');
+  if(user){busyState(false);await action('status');}
   else $('availability').textContent='Entre com sua conta PP-MT para consultar seu plano.';
  }catch{$('login-panel').hidden=false;$('payment-panel').hidden=true;notice('Não foi possível verificar sua sessão.',true);}
  finally{busyState(false);}
