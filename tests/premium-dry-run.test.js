@@ -51,7 +51,8 @@ function fixtures(){
   if(path==='/checkout/preferences'&&method==='POST'){
    assert.equal(body.items[0].unit_price,19.99);
    assert.equal(body.external_reference,ORDER);
-   return {id:'pref-mock-only',init_point:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=simulado'};
+   return {id:'pref-mock-only',collector_id:SELLER,external_reference:ORDER,
+    init_point:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=simulado'};
   }
   if(path.startsWith('/v1/payments/search'))return {results:order?.state==='paid'?[{id:PAYMENT}]:[]};
   if(path==='/v1/payments/'+PAYMENT)return {...payment};
