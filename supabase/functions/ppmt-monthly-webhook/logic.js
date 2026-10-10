@@ -28,16 +28,29 @@ export function webhookHandler({secret,token,db,mp}){
   if(req.method!=='POST')return respond(405);
   const url=new URL(req.url);
   const resourceId=url.searchParams.get('data.id')||'';
-  const approved=await checkSignature({
-   secret:await secret(),signature:req.headers.get('x-signature'),
-   requestId:req.headers.get('x-request-id'),id:resourceId
-  });
-  if(!approved)return respond(401);
+  const secretValue=await secret();
+  const signature=req.headers.get('x-signature');
+  const requestId=req.headers.get('x-request-id');
+  const approved=await checkSignature({secret:secretValue,signature,requestId,id:resourceId});
+  if(!approved){
+   // Somente flags diagnósticas; nunca registrar URL completa, segredo, HMAC ou identificador.
+   const parts=signatureParts(signature);
+   console.warn('PPMT webhook: assinatura não validada', {
+    secret_configured:Boolean(secretValue),
+    signature_present:Boolean(signature),
+    signature_format_valid:Boolean(parts),
+    request_id_present:Boolean(requestId),
+    resource_id_present:Boolean(resourceId),
+    timestamp_recent:Boolean(parts&&Math.abs(Date.now()-(parts.ts.length>12?Number(parts.ts):Number(parts.ts)*1000))<=24*60*60*1000)
+   });
+   return respond(401);
+  }
   const text=await req.text();if(text.length>4096)return respond(413);
   let event;try{event=JSON.parse(text);}catch{return respond(400);}
   const kind=String(event.type||'');
   if(!['payment','subscription_preapproval','subscription_authorized_payment'].includes(kind))return respond();
-  if(String(event.data?.id||'').toLowerCase()!==resourceId.toLowerCase()||Number(event.user_id)!==SELLER)return respond(400);
+  if(String(event.data?.id||'').toLowerCase()!==resourceId.toLowerCase()||
+     (event.user_id!=null&&Number(event.user_id)!==SELLER))return respond(400);
   const access=await token();if(!access)return respond(503);
   const get=path=>mp(access,path);
   // A operação pode se repetir: os IDs de transações têm UNIQUE no banco.
@@ -59,9 +72,12 @@ export function webhookHandler({secret,token,db,mp}){
    if(kind==='subscription_preapproval'||kind==='subscription_authorized_payment'){
     let card=null;
     if(kind==='subscription_preapproval'){
-     const sub=await get('/preapproval/'+encodeURIComponent(resourceId));
+     // Simulações assinadas com IDs fictícios devem ser reconhecidas sem tocar em alunos.
+     // Assinaturas desconhecidas não podem gerar crédito nem exigir consulta à API.
+     card=await db.cardByProvider(resourceId);
+     if(!card?.provider_id)return respond();
+     const sub=await get('/preapproval/'+encodeURIComponent(card.provider_id));
      if(Number(sub?.collector_id)!==SELLER)return respond();
-     card=await db.cardByProvider(sub.id);
     }else{
      // O ID desta notificação representa uma fatura autorizada.
      const invoice=await get('/authorized_payments/'+encodeURIComponent(resourceId));
