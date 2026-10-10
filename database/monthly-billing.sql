@@ -55,6 +55,7 @@ language plpgsql security definer set search_path=''
 as $$
 declare
   v_new boolean := false;
+  v_rows integer := 0;
   v_end timestamptz;
 begin
   if auth.role() <> 'service_role' then
@@ -70,7 +71,8 @@ begin
   insert into public.ppmt_monthly_payments(provider_payment_id,user_id,source,paid_at)
   values(p_payment_id,p_user_id,p_source,p_paid_at)
   on conflict(provider_payment_id) do nothing;
-  get diagnostics v_new=row_count;
+  get diagnostics v_rows=row_count;
+  v_new := (v_rows>0);
   if v_new then
     insert into public.memberships(user_id,status,current_period_end)
     values(p_user_id,'active',greatest(now(),p_paid_at)+interval '1 month')
