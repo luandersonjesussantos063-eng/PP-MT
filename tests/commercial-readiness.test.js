@@ -5,7 +5,7 @@ const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 test('Retorno do checkout reconcilia com servidor sem confiar no redirect',()=>{
  const code=read('planos/assinar.js');
  assert.match(code,/reconcileAfterCheckout/);
- assert.match(code,/await action\('status'\)/);
+ assert.match(code,/await runMonthlyBilling\('status'\)/);
  assert.match(code,/data\?\.premium===true/);
  assert.match(code,/não pague (de novo|novamente)/i);
  assert.doesNotMatch(code,/resultado==='aprovado'\)\s*.*premium\s*=\s*true/i);
