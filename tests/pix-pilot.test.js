@@ -61,7 +61,7 @@ test('check informa R$ 0,01 e configuração sem criar cobrança',async()=>{
  assert.equal(res.status,200);
  const body=await res.json();
  assert.deepEqual(body,{amount:0.01,enabled:true,recurring:false});
- assert.deepEqual(a.events.map(e=>({path:e.path,method:e.method})),[{path:'/users/me',method:undefined}]);
+ assert.deepEqual(a.events.map(e=>({path:e.path,method:e.method})),[{path:'/users/me',method:'GET'}]);
 });
 test('cria pagamento via Pix com valor imposto no backend, sem vincular Premium',async()=>{
  const a=setup();
