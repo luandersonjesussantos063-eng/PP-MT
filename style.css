@@ -565,3 +565,17 @@ nav a.active{background:#29313a;color:var(--accent)}
 .plan-secondary-link{margin-top:15px;text-align:center;color:#e9c58c;font-size:12px}
 .plan-fineprint{color:#9ba2a9;font-size:12px;line-height:1.65}
 @media(max-width:700px){.plan-tier-grid{grid-template-columns:1fr}.plan-tier-head{min-height:0}.plan-hero-actions{flex-direction:column}.plan-hero-actions .button{width:100%;text-align:center}}
+
+/* V2.17 Login Google e cota de estudo */
+.oauth-divider{display:flex;align-items:center;gap:12px;margin:17px 0 13px;color:#b5bdc8;font-size:12px}
+.oauth-divider::before,.oauth-divider::after{content:"";height:1px;background:#49515a;flex:1}
+.google-login-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:48px;padding:12px 16px;border:1px solid #aeb8c5;border-radius:11px;background:#fff;color:#263141;font-size:15px;font-weight:700}
+.google-login-btn:hover{background:#edf4fb;border-color:#e5b978}
+.google-login-btn:disabled{opacity:.7}
+.study-quota-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 17px;border:1px solid #665238;border-radius:13px;background:linear-gradient(100deg,#29251e,#1b2129);margin:0 0 17px;color:#e6dac7}
+.study-quota-banner strong{font-size:10px;letter-spacing:1.1px;color:#efd195}
+.study-quota-banner span{font-size:12px;color:#d9e1e9}
+.study-quota-banner a{margin-left:auto;font-size:12px;color:#f4d19a;font-weight:800;text-decoration:none}
+.study-quota-banner.is-premium{border-color:#4f746c;background:linear-gradient(100deg,#153a38,#182536)}
+.study-quota-banner.is-premium strong{color:#bfe6d7}
+@media(max-width:650px){.study-quota-banner{align-items:flex-start;flex-direction:column}.study-quota-banner a{margin-left:0}}
