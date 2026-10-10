@@ -14,5 +14,5 @@
 <p id="message" role="status"></p>
 <p class="premium-note"><a class="button secondary" href="./piloto-centavo.html">Abrir piloto Premium de R$ 0,01 ↗</a></p>
 <p class="premium-note"><a class="button secondary" href="./assinar.html">Conferir mensalidade real de R$ 19,99 ↗</a> · Apenas administradores autorizados conseguem criar a cobrança nesta fase. Este checkout utiliza dinheiro real e é separado do piloto de um centavo.</p>
-<p class="premium-note">O indicador de segredo confirma apenas que ele existe no servidor; não comprova que a notificação do Mercado Pago foi configurada e testada.</p>
+<p class="premium-note"><strong>Atenção ao webhook:</strong> o indicador de segredo confirma apenas que existe uma chave no servidor; não comprova que as notificações reais são aceitas. No Mercado Pago, confira se os eventos <strong>Pagamentos</strong> e <strong>Planos e assinaturas</strong> enviam notificações com <strong>HTTP 200</strong>. Se houver HTTP 401, compare a assinatura secreta da aplicação de produção com <code>MP_WEBHOOK_SECRET</code> em Supabase → Edge Functions → Secrets. Nunca compartilhe essa chave.</p>
 </main><footer class="wrap">NovaByte Soluções · Área restrita</footer></body></html>
