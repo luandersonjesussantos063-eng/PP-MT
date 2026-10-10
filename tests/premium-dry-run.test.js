@@ -26,10 +26,10 @@ function fixtures(){
  const recorded=new Set(),attempts=[];
  const db={
   enabled:async()=>true, privatePilot:async()=>false,token:async()=>'LOCAL_FAKE_TOKEN',
-  member:async()=>member,card:async()=>null,openOrder:async()=>order,
-  claimOrder:async()=>{
+  member:async()=>member,card:async()=>null,openOrder:async()=>order,activeDiscount:async()=>null,
+  claimOrder:async(_uid,_discount=null,amount=19.99)=>{
    if(order)return null;
-   order={id:ORDER,user_id:USER.id,state:'creating',
+   order={id:ORDER,user_id:USER.id,state:'creating',expected_amount:amount,
     expires_at:new Date(Date.now()+600000).toISOString()};
    return {...order};
   },
