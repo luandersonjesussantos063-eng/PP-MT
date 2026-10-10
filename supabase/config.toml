@@ -3,3 +3,9 @@ verify_jwt = true
 
 [functions.ppmt-pix-pilot]
 verify_jwt = true
+
+[functions.ppmt-monthly-billing]
+verify_jwt = true
+
+[functions.ppmt-monthly-webhook]
+verify_jwt = false
