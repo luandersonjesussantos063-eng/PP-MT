@@ -4,7 +4,7 @@ import {loginWithGoogle,studyQuota,takeGoogleReturn,myPremiumOffers} from './acc
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=2.19.4';
+import {createNotificationCenter} from './notifications.js?v=2.19.5';
 import {createProgressSync} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 import {AUTHORIAL_MT_QUESTIONS} from './authorial-mt.js?v=2.15.0';
@@ -24,7 +24,7 @@ import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction} from './auth.js?v=2.19.2';
 import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=2.15.0';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.19.4';
+const APP_VERSION='2.19.5';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -121,7 +121,7 @@ window.addEventListener('offline',syncConnectionUI);
 window.addEventListener('online',()=>{if(currentUser)save();syncConnectionUI()});
 function save(){if(!currentUser)return false;try{ensureProgram();store.program.reviews=scheduleCorrectReviews(store.attempts,store.program.reviews||{});store.updatedAt=new Date().toISOString();localStorage.setItem(userKey(),JSON.stringify(store));progressSync.queue(currentUser.id,store);syncConnectionUI();return true}catch{toast('Não foi possível salvar neste navegador. Exporte um backup.');return false}}
 function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('#toast').style.display='none',4200)}
-function accountUI(){syncConnectionUI();const el=$('#account');if(!el)return;if(!currentUser){el.innerHTML='';return}const isAdmin=currentUser.app_metadata?.ppmt_admin===true;el.innerHTML=`<a href="#ofertas" class="account-logout" id="notificationBell" aria-label="Notificações e descontos" title="Notificações" style="position:relative;display:inline-flex;align-items:center;justify-content:center;font-size:19px;min-width:36px;min-height:36px;text-decoration:none;opacity:.86">🔔</a><span class="account-email">${esc(currentUser.email||'Usuário')}</span>${isAdmin?'<a href="./admin/" class="account-logout" aria-label="Abrir painel administrativo PP-MT" title="Central de Comando">⚙ Administração</a>':''}<button id="logout" class="account-logout">Sair</button>`;notificationCenter.paintBell();$('#logout').onclick=async()=>{if(!confirm('Sair da sua conta?'))return;try{await notificationCenter.unregisterOnLogout();await signOut();notificationCenter.stop();currentUser=null;store=emptyStore();renderAuth()}catch(e){toast(e.message||'Não foi possível sair.')}}}
+function accountUI(){syncConnectionUI();const el=$('#account');if(!el)return;if(!currentUser){el.innerHTML='';return}const isAdmin=currentUser.app_metadata?.ppmt_admin===true;el.innerHTML=`<a href="#ofertas" class="notification-trigger" id="notificationBell" aria-label="Abrir notificações" title="Notificações"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="notification-dot" hidden aria-hidden="true"></span></a><span class="account-email">${esc(currentUser.email||'Usuário')}</span>${isAdmin?'<a href="./admin/" class="account-logout" aria-label="Abrir painel administrativo PP-MT" title="Central de Comando">⚙ Administração</a>':''}<button id="logout" class="account-logout">Sair</button>`;notificationCenter.paintBell();$('#logout').onclick=async()=>{if(!confirm('Sair da sua conta?'))return;try{await notificationCenter.unregisterOnLogout();await signOut();notificationCenter.stop();currentUser=null;store=emptyStore();renderAuth()}catch(e){toast(e.message||'Não foi possível sair.')}}}
 async function loadAccount(user){run=null;reviewState=null;assistState=Object.create(null);strikeState=Object.create(null);currentUser=user;let cloud=null;try{cloud=await Promise.race([loadUserState(user.id),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),10000))])}catch{toast('Não foi possível carregar seus dados da nuvem.')}
  let local=null;try{const raw=localStorage.getItem(userKey(user.id));if(raw){const parsed=JSON.parse(raw);if(validStore(parsed))local=parsed}}catch{}
  if(local&&(progressSync.pending(user.id)||!cloud||Date.parse(local.updatedAt||0)>Date.parse(cloud.updatedAt||0)))store=normalizeStore(local);
