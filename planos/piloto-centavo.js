@@ -58,6 +58,7 @@ async function run(action){
    enabled=data.enabled===true;
    if(!enabled){
     $('state').textContent='Piloto indisponível no momento. Nenhuma cobrança foi criada.';
+    if(typeof data.reason==='string')info(data.reason,true);
    }else{
     const status=await runCentavoPremium('status');
     display(status);
@@ -66,7 +67,13 @@ async function run(action){
    display(data);
    if(action==='create'&&data.state==='pending')info('Pix gerado. Pague somente R$ 0,01 e depois verifique o status.');
   }
- }catch(e){info(e?.message||'Não foi possível consultar o teste.',true);}
+ }catch(e){
+  if(action==='create'){
+   created=true;
+   $('state').textContent='Não foi possível confirmar a criação da cobrança. Verifique o status antes de tentar novamente.';
+  }
+  info(e?.message||'Não foi possível consultar o teste.',true);
+ }
  finally{controls(false);}
 }
 async function load(){
