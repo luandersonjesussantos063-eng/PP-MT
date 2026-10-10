@@ -96,7 +96,7 @@ export function makeHandler({authenticate,db,mp}){
      card:localCard?{state:localCard.state,checkout_url:localCard.state==='pending'?safeUrl(localCard.checkout_url,true):null}:null,
      manual:localOrder?{state:localOrder.state,checkout_url:localOrder.state==='pending'?safeUrl(localOrder.checkout_url):null}:null
     };
-    if(!localCard?.provider_id&&!localOrder?.provider_preference_id)
+    if((!localCard?.provider_id||localCard.state==='cancelled')&&!localOrder?.provider_preference_id)
      return output({...result,...snapshot,provider_sync_available:true});
     if(!(await db.token()))return output({...result,...snapshot,provider_sync_available:false});
    }
