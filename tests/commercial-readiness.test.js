@@ -38,3 +38,10 @@ test('Identificação pessoa física, endereço e contatos constam na apresenta�
  assert.match(terms,/pessoa física/);
  assert.match(landing,/Identificação do fornecedor/);
 });
+
+test('CPF do fornecedor informado está visível nas páginas de venda',()=>{
+ const offer=read('planos/index.html');
+ const terms=read('planos/termos.html');
+ assert.match(offer,/CPF do fornecedor:\s*<strong>\d{3}\.\d{3}\.\d{3}-\d{2}<\/strong>/);
+ assert.match(terms,/CPF do fornecedor:<\/strong>\s*\d{3}\.\d{3}\.\d{3}-\d{2}/);
+});
