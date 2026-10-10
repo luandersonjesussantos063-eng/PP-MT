@@ -101,11 +101,6 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
    toast('Avisos deste aparelho desativados.');drawIfOpen();
   }catch{toast('Não foi possível desativar. Verifique sua conexão.')}
  }
- async function testDelivery(){
-  if(!supported()||Notification.permission!=='granted'){toast('Primeiro ative as notificações neste aparelho.');return;}
-  try{await registerPush('test',null);toast('Teste enviado pelo servidor. Confira os avisos do aparelho.');}
-  catch{toast('O envio de teste não foi confirmado. Ative os alertas e tente novamente.');}
- }
  function drawIfOpen(){const panel=document.querySelector('#notificationHub');if(panel)draw(panel,false)}
  async function renderInbox(panel){
   if(!panel)return;
@@ -117,18 +112,22 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
  }
  function draw(panel,mark=false){
   if(mark)markRead();
+  const settingsOpen=panel.querySelector('#ppmtNoticeSettings')?.open===true;
   const cards=items.map(item=>{
    const entry=item.kind==='offer' ? (()=>{const o=item.offer||{};const link=o.kind==='monthly_discount'?' <a class="button primary" href="./planos/assinar.html?oferta='+encodeURIComponent(o.id||'')+'">Ver desconto →</a>':'';return '<p class="muted">Oferta válida até '+esc(o.expires_at?new Date(o.expires_at).toLocaleDateString('pt-BR'):'data informada no checkout')+'. Confira o valor antes de pagar.</p>'+link;})()
      :'<p class="muted">'+esc(item.source||'Órgão oficial')+'</p><a class="button secondary" href="#noticias">Conferir publicação e fonte oficial →</a>';
    return '<article class="card ppmt-notice-card"><div class="row"><strong>'+esc(item.title)+'</strong><small>'+esc(item.date?new Date(item.date).toLocaleDateString('pt-BR'):'')+'</small></div><p>'+esc(item.body)+'</p>'+entry+'</article>';
   }).join('');
-  panel.innerHTML='<section class="card ppmt-notice-config"><h2>🔔 Central de notificações</h2><p class="muted">Avisos de descontos, cortesias e publicações oficiais da Polícia Penal MT.</p><p>'+esc(statusText())+'</p><div class="row"><button id="ppmtEnablePush" class="primary">Ativar alertas no aparelho</button><button id="ppmtDisablePush" class="secondary">Desativar neste aparelho</button><button id="ppmtTestPush" class="secondary">Testar notificação</button><button id="ppmtRefreshNotices" class="secondary">Atualizar</button></div><p class="muted">As notificações dependem da permissão do aparelho e da conexão. Confirme sempre prazos e editais na fonte oficial.</p></section><div class="ppmt-notice-list">'+(cards||'<section class="card"><p>Sem notificações no momento.</p></section>')+'</div>';
+  // Keep the notification inbox focused on the notices; configuration is optional and collapsed.
+  panel.innerHTML='<div class="ppmt-notice-header"><div><h2>Notificações</h2><p class="muted">Avisos e novidades da Polícia Penal de Mato Grosso.</p></div></div>'
+   +'<div class="ppmt-notice-list">'+(cards||'<section class="card ppmt-notice-empty"><p>Você está em dia. Nenhuma notificação por enquanto.</p></section>')+'</div>'
+   +'<details class="ppmt-notice-settings" id="ppmtNoticeSettings"'+(settingsOpen?' open':'')+'><summary>Configurar alertas no aparelho</summary>'
+   +'<div class="ppmt-notice-settings-body"><p class="muted">'+esc(statusText())+'</p>'
+   +'<div class="row"><button id="ppmtEnablePush" class="secondary">Ativar alertas</button><button id="ppmtDisablePush" class="secondary">Desativar neste aparelho</button></div></div></details>';
   const on=id=>panel.querySelector(id);
   on('#ppmtEnablePush')?.addEventListener('click',enable);
   on('#ppmtDisablePush')?.addEventListener('click',disable);
-  on('#ppmtRefreshNotices')?.addEventListener('click',()=>refresh({notify:false}));
-  on('#ppmtTestPush')?.addEventListener('click',testDelivery);
-  if(!supported()){on('#ppmtEnablePush').disabled=true;on('#ppmtDisablePush').disabled=true;on('#ppmtTestPush').disabled=true;}
+  if(!supported()){on('#ppmtEnablePush').disabled=true;on('#ppmtDisablePush').disabled=true;}
  }
  function start(user){
   stop();if(!user?.id)return;
