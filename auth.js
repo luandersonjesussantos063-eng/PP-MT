@@ -209,7 +209,7 @@ export async function runMercadoPagoDiagnostic(){
 
 /** Registers or removes a Web Push endpoint belonging to the verified logged-in user. */
 export async function pushSubscriptionAction(action, subscription){
- if(!['subscribe','unsubscribe'].includes(action))throw new Error('Ação de notificações inválida.');
+ if(!['subscribe','unsubscribe','test'].includes(action))throw new Error('Ação de notificações inválida.');
  if(!navigator.onLine)throw new Error('Conecte-se à internet.');
  const user=await verifiedUser();
  if(!user)throw new Error('Entre na conta para ativar avisos.');
