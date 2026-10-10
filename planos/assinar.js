@@ -100,7 +100,13 @@ function render(data){
   const cardPending=pendingStates.has(cs)||cs==='authorized'||cs==='paused';
   const manualPending=pendingStates.has(ms);
   const cardLink=existingLink('card-link',cardPending&&cs==='pending'?card.checkout_url:null,true);
-  const manualLink=existingLink('manual-link',manualPending&&ms==='pending'?manual.checkout_url:null,false);
+  const oldPriceOffer=Boolean(discountOffer);
+  const manualLink=existingLink('manual-link',!oldPriceOffer&&manualPending&&ms==='pending'?manual.checkout_url:null,false);
+  if(oldPriceOffer&&manualPending){
+   $('pending-message').textContent='Há uma cobrança anterior pendente que pode estar com o preço integral. Não utilize o link antigo. Aguarde a conferência e entre em contato com o suporte para regularizar antes de pagar com desconto.';
+   $('manual-state').textContent='Pagamento anterior bloqueado nesta tela por segurança.';
+   show('pending');return;
+  }
   if(data.provider_sync_available===false){
    $('pending-message').textContent='Seu pagamento está registrado, mas o Mercado Pago não respondeu à verificação agora. Não faça outro pagamento.';
   }else if(cs==='authorized'&&!data.premium){
@@ -215,8 +221,8 @@ async function load(){
   if(!user){show('login');return;}
   setBusy(false);
   const data=await Promise.race([runMonthlyBilling('status'),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout_billing')),11000))]);
+  await Promise.race([loadDiscount(),new Promise(resolve=>setTimeout(resolve,5500))]);
   render(data);
-  void loadDiscount().catch(()=>{});
   await reconcileAfterCheckout();
  }catch(e){
   showError('Não foi possível concluir a verificação de acesso. Toque em Tentar novamente; se persistir, abra no Chrome e entre na sua conta.');
