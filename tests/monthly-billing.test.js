@@ -213,3 +213,43 @@ test('webhook tolera espacos externos do segredo mas rejeita assinatura falsa',a
  assert.equal(await checkSignature({secret:'  '+secret+String.fromCharCode(10),signature,requestId,id}),true);
  assert.equal(await checkSignature({secret,signature:signature.replace(/v1=[a-f0-9]+/, 'v1='+'0'.repeat(64)),requestId,id}),false);
 });
+
+test('webhook real reconhece simulacao assinada de pagamento sem consultar API ou liberar plano',async()=>{
+ const secret='SIMULATOR_ONLY_SECRET',id='123456',requestId='mp-sim-2026',ts=String(Math.floor(Date.now()/1000));
+ const manifest='id:'+id+';request-id:'+requestId+';ts:'+ts+';';
+ const signature='ts='+ts+',v1='+createHmac('sha256',secret).update(manifest).digest('hex');
+ let dbCalls=0,mpCalls=0,tokenCalls=0;
+ const handler=webhookHandler({
+  secret:async()=>secret,token:async()=>{tokenCalls++;return 'SECRET_TEST_ONLY';},
+  db:{orderById:async()=>{dbCalls++;return null;},credit:async()=>{dbCalls++;}},
+  mp:async()=>{mpCalls++;throw Error('Nunca consultar ID ficticio no provedor');}
+ });
+ const body={action:'payment.updated',api_version:'v1',data:{id},
+   date_created:'2021-11-01T02:02:02Z',id,live_mode:false,type:'payment',user_id:SELLER};
+ const url='https://example.supabase.co/functions/v1/ppmt-monthly-webhook?data.id=123456&type=payment';
+ const headers={'x-signature':signature,'x-request-id':requestId,'content-type':'application/json'};
+ const ok=await handler(new Request(url,{method:'POST',headers,body:JSON.stringify(body)}));
+ assert.equal(ok.status,200);
+ assert.equal(dbCalls,0);
+ assert.equal(mpCalls,0);
+ assert.equal(tokenCalls,0);
+ const previousWarn=console.warn;console.warn=()=>{};
+ try{
+  const bad=await handler(new Request(url,{method:'POST',headers:{...headers,'x-signature':'ts='+ts+',v1='+'0'.repeat(64)},body:JSON.stringify(body)}));
+  assert.equal(bad.status,401);
+ }finally{console.warn=previousWarn;}
+ assert.equal(dbCalls,0);assert.equal(mpCalls,0);
+});
+test('webhook nao desativa assinatura e nao ignora evento real por ter ID de teste',async()=>{
+ const secret='SIMULATOR_ONLY_SECRET',id='123456',requestId='mp-sim-live',ts=String(Math.floor(Date.now()/1000));
+ const signature='ts='+ts+',v1='+createHmac('sha256',secret).update('id:'+id+';request-id:'+requestId+';ts:'+ts+';').digest('hex');
+ let mpCalls=0;
+ const handler=webhookHandler({secret:async()=>secret,token:async()=>'TEST_TOKEN',
+  db:{},mp:async()=>{mpCalls++;throw Error('Provider unavailable');}});
+ const result=await handler(new Request('https://example.supabase.co/functions/v1/ppmt-monthly-webhook?data.id=123456',{
+  method:'POST',headers:{'x-signature':signature,'x-request-id':requestId,'content-type':'application/json'},
+  body:JSON.stringify({action:'payment.updated',data:{id},id,type:'payment',live_mode:true,user_id:SELLER})
+ }));
+ assert.equal(result.status,503);
+ assert.equal(mpCalls,1);
+});
