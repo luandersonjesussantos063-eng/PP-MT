@@ -9,3 +9,6 @@ verify_jwt = true
 
 [functions.ppmt-monthly-webhook]
 verify_jwt = false
+
+[functions.ppmt-premium-practice]
+verify_jwt = true
