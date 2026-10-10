@@ -34,3 +34,8 @@
 .pay-links{display:flex;align-items:center;justify-content:center;gap:12px;font-size:13px;margin:10px 0 0}
 .pay-links a{color:#d4e5f9;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:700px){.pay-main{padding:34px 18px 52px}.pay-grid{grid-template-columns:1fr}.pay-panel{padding:21px}.pay-option{min-height:0}.pay-status{flex-wrap:wrap}.pay-status .button{width:100%}.pay-heading h1{font-size:36px}.pay-price strong{font-size:64px}}
+
+/* Login Google opcional: coexistente com e-mail e senha */
+.google-login-alt{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;background:#fff!important;border:1px solid #adb9c6!important;color:#202e40!important;font-weight:750!important}
+.google-login-alt:hover{background:#edf4fb!important}
+.google-mark{display:inline-grid;place-items:center;font-weight:900;font-size:20px;background:conic-gradient(#4285f4 0 25%,#34a853 25% 45%,#fbbc05 45% 65%,#ea4335 65% 85%);-webkit-background-clip:text;background-clip:text;color:transparent}
