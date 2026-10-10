@@ -50,7 +50,9 @@ jobs:
           fi
       - run: npm ci
       - run: npm run build:vendor && npm run build:syllabus && npm run build:offline
-      - run: node --check app.js && node --check help.js && node --check auth.js
+      - name: Atualizar sitemap das páginas públicas
+        run: python3 tools/build_seo_sitemap.py
+      - run: node --check app.js && node --check help.js && node --check auth.js && node --check analytics.js
       - run: npm test
       - uses: actions/configure-pages@v5
       - name: Preparar arquivos públicos
