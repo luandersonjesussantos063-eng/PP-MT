@@ -13,6 +13,8 @@ function harness({enabled=false,seller=SELLER}={}){
  const calls=[];let card=null,order=null,member=null;
  const db={
   async enabled(){return enabled;},async token(){return 'FAKE_ONLY';},
+  async isTester(){return true;},
+  async diagnostics(){return {webhook_secret_present:false,delivery_flag:false,billing_flag:false};},
   async member(){return member;},async card(){return card;},
   async claimCard(uid){card={user_id:uid,external_reference:'11111111-1111-4111-8111-111111111111'};return card;},
   async updateCard(uid,patch){card={...card,...patch};},
@@ -136,4 +138,16 @@ test('site não carrega chaves privadas e checkout padrão permanece fechado',()
  const index=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
  assert.match(index,/PPMT_MONTHLY_BILLING_ENABLED/);
  assert.match(index,/PPMT_PREMIUM_DELIVERY_READY/);
+});
+
+test('checklist do administrador usa somente indicadores, não mostra segredos',async()=>{
+ const h=harness();
+ const res=await h.fn(request('readiness'));
+ assert.equal(res.status,200);
+ const data=await res.json();
+ assert.equal(data.checks.webhook_secret_present,false);
+ assert.equal(data.checks.merchant_valid,true);
+ assert.equal(data.enabled,false);
+ assert.doesNotMatch(JSON.stringify(data),/FAKE_ONLY/);
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
