@@ -58,12 +58,14 @@ async function request(action,payerEmail){
 el('login-form').addEventListener('submit',async e=>{
   e.preventDefault();if(busy)return;
   setBusy(true);notice('');
+  let loggedIn=false;
   try{
     await signIn(el('user-email').value.trim(),el('user-password').value);
     el('user-password').value='';
+    loggedIn=true;
   }catch{notice('Não foi possível entrar. Confira e-mail, senha e confirmação da conta.',true);}
   finally{setBusy(false);}
-  await loadSession();
+  if(loggedIn)await loadSession();
 });
 el('create-form').addEventListener('submit',e=>{
   e.preventDefault();
