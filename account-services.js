@@ -5,13 +5,20 @@ const supabase=createClient(
  'sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN',
  {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
 );
+// Rota relativa ao aplicativo permite manter o GitHub Pages como endereço antigo
+// e usar um subdomínio próprio sem misturar cookies ou sessões entre origens.
+const APP_ROOT=new URL('./',import.meta.url);
+const AUTH_DESTINATIONS=new Map([
+ ['checkout',new URL('planos/assinar.html',APP_ROOT).pathname],
+ ['premium',new URL('planos/premium.html',APP_ROOT).pathname]
+]);
 export async function loginWithGoogle(destination='app'){
- const routes={app:null,checkout:'/PP-MT/planos/assinar.html',premium:'/PP-MT/planos/premium.html'};
- if(!(destination in routes))throw new Error('Destino de login inválido.');
- if(routes[destination])sessionStorage.setItem('ppmt-google-oauth-return',routes[destination]);
+ if(destination!=='app'&&!AUTH_DESTINATIONS.has(destination))throw new Error('Destino de login inválido.');
+ const returnPath=AUTH_DESTINATIONS.get(destination);
+ if(returnPath)sessionStorage.setItem('ppmt-google-oauth-return',returnPath);
  else sessionStorage.removeItem('ppmt-google-oauth-return');
  if(navigator.onLine===false)throw new Error('É necessário estar conectado para entrar com Google.');
- const redirectTo='https://luandersonjesussantos063-eng.github.io/PP-MT/';
+ const redirectTo=APP_ROOT.href;
  const {data,error}=await supabase.auth.signInWithOAuth({
   provider:'google',options:{redirectTo,queryParams:{prompt:'select_account'}}
  });
@@ -21,7 +28,7 @@ export async function loginWithGoogle(destination='app'){
 export function takeGoogleReturn(){
  const target=sessionStorage.getItem('ppmt-google-oauth-return');
  sessionStorage.removeItem('ppmt-google-oauth-return');
- if(['/PP-MT/planos/assinar.html','/PP-MT/planos/premium.html'].includes(target))return target;
+ if([...AUTH_DESTINATIONS.values()].includes(target))return target;
  return null;
 }
 export async function studyQuota(action='status',units=1,eventId=null){
