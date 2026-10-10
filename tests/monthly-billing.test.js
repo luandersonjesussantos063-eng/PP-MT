@@ -210,6 +210,6 @@ test('webhook segue manifesto do SDK Mercado Pago inclusive ID com maiusculas',a
 test('webhook tolera espacos externos do segredo mas rejeita assinatura falsa',async()=>{
  const secret='SEGREDO_SOMENTE_TESTE',id='123456',requestId='pedido-assinado-09',ts=String(Date.now());
  const signature='ts='+ts+',v1='+createHmac('sha256',secret).update('id:'+id+';request-id:'+requestId+';ts:'+ts+';').digest('hex');
- assert.equal(await checkSignature({secret:'  '+secret+'\\n',signature,requestId,id}),true);
+ assert.equal(await checkSignature({secret:'  '+secret+String.fromCharCode(10),signature,requestId,id}),true);
  assert.equal(await checkSignature({secret,signature:signature.replace(/v1=[a-f0-9]+/, 'v1='+'0'.repeat(64)),requestId,id}),false);
 });
