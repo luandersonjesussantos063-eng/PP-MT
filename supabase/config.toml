@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.ppmt-premium-practice]
 verify_jwt = true
+
+[functions.ppmt-webhook-connectivity-test]
+verify_jwt = false
