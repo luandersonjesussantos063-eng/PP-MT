@@ -7,19 +7,21 @@ const read=(name)=>readFileSync(new URL('../planos/'+name,import.meta.url),'utf8
 test('checkout mostra somente preço, planos e mensagens essenciais',()=>{
  const html=read('assinar.html');
  assert.match(html,/R\$ 19,99/);
- assert.match(html,/Cartão de crédito/);
- assert.match(html,/Pix, boleto ou débito/);
- assert.match(html,/Renovação automática no cartão/);
+ assert.match(html,/Assinar no cartão/);
+ assert.match(html,/Pagar com Pix/);
+ assert.match(html,/Boleto ou débito/);
+ assert.match(html,/renovação automática/i);
  assert.match(html,/sem renovação automática/);
  assert.match(html,/id="card-btn"/);
  assert.match(html,/id="manual-btn"/);
  assert.match(html,/id="refresh-btn"/);
  assert.doesNotMatch(html,/pay-faq|Como funcionam as mensalidades\?/);
- assert.match(html,/id="payment-choices"/);
+ assert.match(html,/id="offer-panel"/);
+ assert.match(html,/id="error-panel"/);
  assert.match(html,/id="pending-panel"/);
  assert.match(html,/id="manage-panel"/);
- assert.match(html,/name="pay-method" value="card"/);
- assert.match(html,/name="pay-method" value="manual"/);
+ assert.doesNotMatch(html,/name="pay-method"/);
+ assert.match(html,/id="paid-panel"/);
  assert.ok(html.length<8000,'página mantém estrutura compacta e estados separados');
 });
 test('termos preservam informações de cobrança mensal e cancelamento',()=>{
