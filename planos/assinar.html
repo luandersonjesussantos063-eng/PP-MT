@@ -5,70 +5,104 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0b111b">
-<title>Assinar PPMT Premium | R$ 19,99/mês</title>
+<title>Assinar PP-MT Premium | R$ 19,99</title>
+<meta name="description" content="PP-MT Premium por R$ 19,99: escolha cartão com renovação automática ou pagamento mensal manual via Mercado Pago.">
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
-<link rel="stylesheet" href="./assinar.css?v=2.17.0-google">
-<script type="module" src="./assinar.js?v=2.18.0-domain1"></script>
+<link rel="stylesheet" href="./assinar.css?v=2.18.1">
+<script type="module" src="./assinar.js?v=2.18.1"></script>
 </head>
 <body>
 <a class="skip" href="#conteudo">Ir ao conteúdo</a>
 <header class="top">
-  <a class="brand" href="../"><img src="../icon.svg" width="42" height="46" alt=""><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a>
-  <nav aria-label="Navegação"><a href="./">Voltar</a><a href="../#plano">Meu plano ↗</a></nav>
+ <a class="brand" href="../"><img src="../icon.svg" width="42" height="46" alt=""><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a>
+ <nav aria-label="Navegação"><a href="./">Voltar</a><a href="../#plano">Meu plano ↗</a></nav>
 </header>
 <main class="wrap pay-main" id="conteudo">
-  <div class="pay-heading">
-    <p class="eyebrow">PPMT PREMIUM</p>
-    <h1>Escolha como pagar</h1>
-    <div class="pay-price"><strong>R$ 19,99</strong><span>/mês</span></div>
-  </div>
-  <p id="availability" class="pay-warning" role="status">Verificando disponibilidade…</p>
+ <div class="pay-heading">
+  <p class="eyebrow">PP-MT · PLANO PREMIUM</p>
+  <h1>Seu próximo nível começa aqui.</h1>
+  <div class="pay-price"><strong>R$ 19,99</strong><span>por mês de acesso</span></div>
+  <p class="pay-intro">Escolha a forma de pagamento. Você confirma os dados no Mercado Pago.</p>
+ </div>
+ <p id="availability" class="pay-warning" role="status">Verificando seu plano e as formas de pagamento…</p>
 
-  <section id="login-panel" class="pay-panel pay-login" hidden>
-    <h2>Entre na sua conta</h2>
-    <form id="login-form">
-      <label for="buyer-email">E-mail</label>
-      <input id="buyer-email" type="email" autocomplete="username" required>
-      <label for="buyer-pass">Senha</label>
-      <input id="buyer-pass" type="password" autocomplete="current-password" required>
-      <button id="login-btn" type="submit" class="button primary">Entrar</button><button type="button" class="button google-login-alt" id="google-login-btn"><span class="google-mark" aria-hidden="true">G</span> Entrar com Google</button>
-    </form>
+ <section id="login-panel" class="pay-panel pay-login" hidden>
+  <div class="pay-step">ACESSO À SUA CONTA</div>
+  <h2>Entre para continuar</h2>
+  <p>Seu Premium será vinculado à mesma conta que guarda o progresso nos estudos.</p>
+  <button type="button" class="button google-login-alt" id="google-login-btn"><span class="google-mark" aria-hidden="true">G</span> Continuar com Google</button>
+  <div class="pay-or"><span>ou entre com seu e-mail</span></div>
+  <form id="login-form">
+   <label for="buyer-email">E-mail</label><input id="buyer-email" type="email" autocomplete="username" required placeholder="seu@email.com">
+   <label for="buyer-pass">Senha</label><input id="buyer-pass" type="password" autocomplete="current-password" required>
+   <button id="login-btn" type="submit" class="button primary pay-full">Entrar com e-mail</button>
+  </form>
+ </section>
+
+ <section id="payment-panel" hidden>
+  <section class="pay-account" aria-label="Situação da sua conta">
+   <div><small>SUA CONTA</small><strong id="membership-state" aria-live="polite">Consultando…</strong><p id="next-bill" class="pay-detail"></p></div>
+   <button class="button secondary pay-refresh" id="refresh-btn" type="button">↻ Verificar situação</button>
   </section>
 
-  <section id="payment-panel" hidden>
-    <div class="pay-status">
-      <div><strong>Meu plano</strong><p id="membership-state" aria-live="polite">Consultando…</p><p id="next-bill" class="pay-detail"></p></div>
-      <a class="button secondary" href="./premium.html">Treino Premium ↗</a><button class="button secondary" id="refresh-btn" type="button">Atualizar ↻</button>
-    </div>
-    <div class="pay-grid">
-      <article class="pay-panel pay-option">
-        <div class="pay-icon" aria-hidden="true">↻</div>
-        <h2>Cartão de crédito</h2>
-        <p><strong>R$ 19,99 a cada mês.</strong><span> Renovação automática no cartão. Cancele quando quiser.</span></p>
-        <button class="button primary pay-action" id="card-btn" type="button" disabled>Assinar no cartão ↗</button>
-        <a id="card-link" class="button secondary" hidden rel="noopener noreferrer" target="_blank">Continuar pagamento ↗</a>
-        <button class="button secondary" id="cancel-btn" type="button" hidden>Cancelar renovação</button>
-        <p id="card-state" class="pay-detail" role="status"></p>
-      </article>
-      <article class="pay-panel pay-option">
-        <div class="pay-icon" aria-hidden="true">⌁</div>
-        <h2>Pix, boleto ou débito</h2>
-        <p><strong>R$ 19,99 a cada mês.</strong><span> Pague pelo site, sem renovação automática.</span></p>
-        <button class="button primary pay-action" id="manual-btn" type="button" disabled>Pagar mensalidade ↗</button>
-        <a id="manual-link" class="button secondary" hidden rel="noopener noreferrer" target="_blank">Abrir pagamento ↗</a>
-        <p id="manual-state" class="pay-detail" role="status"></p>
-      </article>
-    </div>
+  <section id="paid-panel" class="pay-success" hidden>
+   <span class="pay-state-icon" aria-hidden="true">✓</span>
+   <h2>Seu Premium está ativo!</h2>
+   <p>Você já tem acesso à Central Tática. Não precisa fazer outro pagamento agora.</p>
+   <a class="button primary pay-full" href="./premium.html">Abrir Central Tática ↗</a>
   </section>
-  <p id="feedback" class="pay-feedback" role="alert" hidden></p>
-  <p class="pay-small">O Premium só é liberado após confirmação oficial do pagamento. Antes de pagar novamente, use “Atualizar” para conferir sua situação. O teste privado de R$ 0,01 não é uma assinatura mensal.</p>
-  <p class="pay-small">Suporte: <a href="https://wa.me/5531983771576" target="_blank" rel="noopener noreferrer">WhatsApp NovaByte Soluções ↗</a>.</p>
-  <div class="pay-links">
-    <a href="./termos.html">Termos de assinatura</a>
-    <span aria-hidden="true">·</span>
-    <a href="./privacidade.html">Privacidade</a>
-  </div>
+
+  <section id="pending-panel" class="pay-pending" hidden aria-live="polite">
+   <span class="pay-state-icon" aria-hidden="true">◷</span>
+   <h2>Você já iniciou um pagamento</h2>
+   <p id="pending-message">Vamos consultar o status antes de iniciar uma nova cobrança.</p>
+   <a id="card-link" class="button primary pay-full" hidden rel="noopener noreferrer" target="_blank">Continuar autorização no Mercado Pago ↗</a>
+   <a id="manual-link" class="button primary pay-full" hidden rel="noopener noreferrer" target="_blank">Abrir meu pagamento no Mercado Pago ↗</a>
+   <p id="card-state" class="pay-detail" role="status"></p>
+   <p id="manual-state" class="pay-detail" role="status"></p>
+   <p class="pay-notice">Já pagou? Use “Verificar situação”. A liberação depende da confirmação oficial.</p>
+  </section>
+
+  <section id="payment-choices" class="pay-choices" hidden>
+   <div class="pay-step">PASSO 1 DE 2</div>
+   <h2>Como prefere pagar?</h2>
+   <p class="pay-help">As duas opções dão acesso ao mesmo Premium.</p>
+   <div class="pay-methods" role="radiogroup" aria-label="Forma de pagamento">
+    <label class="pay-method" id="method-card">
+     <input type="radio" name="pay-method" value="card">
+     <span class="pay-method-icon" aria-hidden="true">▣</span>
+     <span class="pay-method-copy"><strong>Cartão de crédito</strong><small>Renovação automática no cartão</small><span>R$ 19,99 cobrados mensalmente. Você pode cancelar a renovação quando quiser.</span></span>
+     <span class="pay-method-check" aria-hidden="true">✓</span>
+    </label>
+    <label class="pay-method" id="method-manual">
+     <input type="radio" name="pay-method" value="manual">
+     <span class="pay-method-icon" aria-hidden="true">◇</span>
+     <span class="pay-method-copy"><strong>Pix, boleto ou débito</strong><small>Sem cobrança automática</small><span>R$ 19,99 por período de 1 mês. Você paga novamente somente se desejar renovar.</span></span>
+     <span class="pay-method-check" aria-hidden="true">✓</span>
+    </label>
+   </div>
+   <div id="pay-next" class="pay-next" hidden>
+    <div class="pay-step">PASSO 2 DE 2</div>
+    <h3 id="pay-next-title">Confira sua escolha</h3>
+    <p id="pay-next-detail"></p>
+    <button class="button primary pay-full" id="card-btn" type="button" disabled hidden>Continuar com cartão ↗</button>
+    <button class="button primary pay-full" id="manual-btn" type="button" disabled hidden>Continuar com Pix, boleto ou débito ↗</button>
+    <p class="pay-secure">🔒 Você só conclui o pagamento no ambiente seguro do Mercado Pago.</p>
+   </div>
+  </section>
+
+  <details id="manage-panel" class="pay-manage" hidden>
+   <summary>Gerenciar renovação automática</summary>
+   <p>Ao cancelar a renovação, não serão feitas novas cobranças automáticas. O período já pago permanece disponível até vencer.</p>
+   <button class="button secondary" id="cancel-btn" type="button" hidden>Cancelar renovação futura</button>
+  </details>
+ </section>
+
+ <p id="feedback" class="pay-feedback" role="alert" hidden></p>
+ <p class="pay-small">O Premium é liberado somente após a confirmação oficial do Mercado Pago. Não inicie outro pagamento se já houver uma cobrança pendente.</p>
+ <p class="pay-small">Precisa de ajuda? <a href="https://wa.me/5531983771576" target="_blank" rel="noopener noreferrer">Fale com a NovaByte no WhatsApp ↗</a>.</p>
+ <div class="pay-links"><a href="./termos.html">Termos de assinatura</a><span aria-hidden="true">·</span><a href="./privacidade.html">Privacidade</a></div>
 </main>
 <footer class="wrap"><a class="brand" href="./">PPMT</a><p>NovaByte Soluções</p></footer>
 </body>
