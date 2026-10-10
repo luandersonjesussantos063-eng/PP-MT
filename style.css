@@ -536,3 +536,32 @@ nav a.active{background:#29313a;color:var(--accent)}
 .performance-table caption{text-align:left;padding-bottom:14px}.performance-table th,.performance-table td{padding:14px 8px;border-bottom:1px solid var(--line);text-align:center}
 .performance-table th:first-child{text-align:left;width:40%;min-width:120px}.performance-table thead th{color:var(--muted);font-size:12px}.performance-table tbody th{font-weight:500}
 @media(max-width:380px){.performance-general{padding:16px 12px}.performance-chart{gap:10px}.performance-count strong{font-size:24px}}
+
+/* Central comercial · Grátis x Premium */
+.plan-presentation{display:grid;gap:20px;max-width:1040px;margin:0 auto 44px}
+.plan-hero{padding:clamp(24px,4vw,44px);border:1px solid #546077;border-radius:22px;background:radial-gradient(circle at top right,#3d3540aa,transparent 50%),linear-gradient(130deg,#152235,#1b2d46)}
+.plan-hero .plan-kicker{color:#ebc27d;font-size:10px;font-weight:800;letter-spacing:2px}
+.plan-hero h1{font-size:clamp(36px,6vw,59px);line-height:1.1;letter-spacing:-1.5px;margin:10px 0 14px}
+.plan-hero h1 em{font-style:normal;color:#e9bd74}
+.plan-hero p{color:#d7dce6;line-height:1.7;max-width:700px}
+.plan-current{display:inline-flex;align-items:center;border:1px solid #5a6270;padding:11px 14px;border-radius:10px;font-size:13px;background:#1c2a3a;margin-top:8px;color:#cbd6e5}
+.plan-current.is-active{border-color:#527b66;color:#a9e1c1}
+.plan-hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.plan-tier-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:16px}
+.plan-tier{border:1px solid #4a4b4e;background:#1b1e25;padding:clamp(18px,3vw,27px);border-radius:18px;display:flex;flex-direction:column}
+.plan-tier-head{min-height:164px}
+.plan-tier-head>span,.plan-exclusive{color:#c4c5cc;font-size:10px;font-weight:800;letter-spacing:1.7px}
+.plan-tier h2{font-size:29px;margin:10px 0}
+.plan-price{font-weight:900;font-size:36px;letter-spacing:-1px}
+.plan-price small{font-size:13px;color:#cfccca;font-weight:400}
+.plan-tier-head p{font-size:13px;color:#c9cbd1;line-height:1.5}
+.plan-tier ul{margin:5px 0 27px;padding-left:19px;display:grid;gap:12px;line-height:1.5;font-size:13px;flex:1}
+.plan-tier li::marker{color:#b4a789}
+.plan-tier .button{align-self:stretch;text-align:center}
+.plan-paid{border-color:#a18552;background:linear-gradient(170deg,#2a2e35,#24201c 80%);box-shadow:0 0 0 1px #886a3e33}
+.plan-paid .plan-exclusive{color:#efc683}
+.plan-paid .plan-price{color:#efc683}
+.plan-paid li::marker{color:#efc683}
+.plan-secondary-link{margin-top:15px;text-align:center;color:#e9c58c;font-size:12px}
+.plan-fineprint{color:#9ba2a9;font-size:12px;line-height:1.65}
+@media(max-width:700px){.plan-tier-grid{grid-template-columns:1fr}.plan-tier-head{min-height:0}.plan-hero-actions{flex-direction:column}.plan-hero-actions .button{width:100%;text-align:center}}
