@@ -355,8 +355,8 @@ function renderErrorReview(){
    if(test.generated||test.practiceKind==='application'){store.program.generatedReviews||=[];store.program.generatedReviews.push({originalId:q.id,selected:r.selected,correct,at:new Date().toISOString(),generation:test.generation,kind:test.practiceKind||'adaptation',exerciseId:test.id,conceptId:q.conceptId,mode:r.retention?'retention':'review-transfer'})}else{store.attempts.push({id:test.id,selected:r.selected,correct,at:new Date().toISOString(),mode:r.retention?'retention':'review-transfer',reviewOf:q.id})}
    markErrorMastered(q.id,correct);renderErrorReview();
   };
-  btn.onclick=e=>{e.preventDefault();activate()};
-  btn.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}};
+  btn.onclick=e=>{e.preventDefault();return activate()};
+  btn.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();return activate()}};
  });
  $('#reviewNext')?.addEventListener('click',advanceReview);
 }
