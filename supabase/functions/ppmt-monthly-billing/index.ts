@@ -14,8 +14,10 @@ const db={
  },
  async enabled(){
   const flags=await this.flags();
+  // Controle público centralizado na flag do banco: permite desligar novos pagamentos
+  // imediatamente, sem redeploy e sem afetar cancelamentos e pedidos existentes.
   return flags.public_sales_enabled===true && flags.delivery_ready===true &&
-   Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true' &&
+   Boolean(Deno.env.get('MP_ACCESS_TOKEN_PROD')) &&
    Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));
  },
  async privatePilot(id:string){
@@ -33,17 +35,43 @@ const db={
   return {
    webhook_secret_present:Boolean(Deno.env.get('MP_WEBHOOK_SECRET')),
    delivery_flag:flags.delivery_ready===true,
-   billing_flag:flags.public_sales_enabled===true &&
-    Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true',
+   billing_flag:flags.public_sales_enabled===true && flags.delivery_ready===true &&
+    Boolean(Deno.env.get('MP_ACCESS_TOKEN_PROD')) &&
+    Boolean(Deno.env.get('MP_WEBHOOK_SECRET')),
    private_pilot_flag:flags.private_pilot_enabled===true
   };
  },
- async token(){return Deno.env.get('MP_ACCESS_TOKEN_PROD')||null;},
+ async verifiedFlows(){
+  // Totais somente para administradores autenticados no action=readiness.
+  // Nenhuma cobrança ou assinatura é criada nesta consulta.
+  const [webhook,manual,card]=await Promise.all([
+   admin.from('ppmt_webhook_centavo_retest').select('id',{count:'exact',head:true})
+    .eq('state','approved').not('webhook_verified_at','is',null),
+   admin.from('ppmt_monthly_payments').select('provider_payment_id',{count:'exact',head:true})
+    .eq('refunded',false).eq('source','manual'),
+   admin.from('ppmt_monthly_payments').select('provider_payment_id',{count:'exact',head:true})
+    .eq('refunded',false).eq('source','card')
+  ]);
+  if(webhook.error||manual.error||card.error)throw new Error('Indicadores comerciais indisponíveis.');
+  return {webhook_real_verified:(webhook.count??0)>0,
+   manual_monthly_verified:(manual.count??0)>0,
+   card_monthly_verified:(card.count??0)>0};
+ },
+  async token(){return Deno.env.get('MP_ACCESS_TOKEN_PROD')||null;},
  async member(id:string){return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());},
  async card(id:string){return checked(await admin.from('ppmt_monthly_cards').select('*').eq('user_id',id).maybeSingle());},
  async claimCard(id:string){
   const r=await admin.from('ppmt_monthly_cards').insert({user_id:id}).select('*').single();
   if(r.error?.code==='23505')return null;return checked(r);
+ },
+ async recycleCancelledCard(userId:string){
+  // Criar uma nova referencia apenas após verificar cancelamento no provedor.
+  // Condição de estado impede dois checkouts simultâneos na mesma conta.
+  const r=await admin.from('ppmt_monthly_cards')
+   .update({provider_id:null,external_reference:crypto.randomUUID(),checkout_url:null,
+     state:'creating',updated_at:new Date().toISOString()})
+   .eq('user_id',userId).eq('state','cancelled').select('*').maybeSingle();
+  return checked(r);
  },
  async updateCard(userId:string,fields:Record<string,unknown>){
   checked(await admin.from('ppmt_monthly_cards').update({...fields,updated_at:new Date().toISOString()}).eq('user_id',userId).select('user_id').single());
@@ -51,8 +79,18 @@ const db={
  async openOrder(id:string){
   return checked(await admin.from('ppmt_monthly_orders').select('*').eq('user_id',id).in('state',['creating','pending','needs_review']).order('created_at',{ascending:false}).limit(1).maybeSingle());
  },
- async claimOrder(id:string){
-  const r=await admin.from('ppmt_monthly_orders').insert({user_id:id}).select('*').single();
+ async activeDiscount(id:string){
+  const {data,error}=await admin.from('ppmt_admin_benefits').select('id,discount_percent,expires_at').eq('user_id',id).eq('kind','monthly_discount').eq('status','active').gt('expires_at',new Date().toISOString()).order('created_at',{ascending:false}).limit(15);
+  if(error)throw new Error('Discount lookup unavailable');
+  for(const benefit of data||[]){
+   const {data:used,error:usedError}=await admin.from('ppmt_monthly_orders').select('id').eq('benefit_id',benefit.id).eq('state','paid').limit(1);
+   if(usedError)throw new Error('Discount history unavailable');
+   if(!used?.length)return benefit;
+  }
+  return null;
+ },
+ async claimOrder(id:string,benefit:any=null,amount:number=19.99){
+  const r=await admin.from('ppmt_monthly_orders').insert({user_id:id,benefit_id:benefit?.id||null,expected_amount:amount}).select('*').single();
   if(r.error?.code==='23505')return null;return checked(r);
  },
  async updateOrder(id:string,fields:Record<string,unknown>){
@@ -64,7 +102,7 @@ const db={
   if(source==='manual'){
     if(!reference)throw new Error('Referência da mensalidade ausente.');
     checked(await admin.rpc('ppmt_credit_verified_manual_payment',{
-      p_user_id:userId,p_payment_id:String(payment.id),p_paid_at:payment.date_approved,p_reference:reference
+      p_user_id:userId,p_payment_id:String(payment.id),p_paid_at:payment.date_approved,p_reference:reference,p_amount:Number(payment.transaction_amount)
     }));
     return;
   }
