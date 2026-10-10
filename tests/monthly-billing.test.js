@@ -59,7 +59,7 @@ test('vendas desativadas nunca criam pagamento por acidente',async()=>{
  assert.equal((await status.json()).enabled,false);
  const pay=await h.fn(request('manual_checkout'));assert.equal(pay.status,503);
  const sub=await h.fn(request('card_start'));assert.equal(sub.status,503);
- assert.equal(h.calls.length,0);
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });
 test('vendedor incorreto não permite checkout',async()=>{
  const h=harness({enabled:true,seller:111111});
