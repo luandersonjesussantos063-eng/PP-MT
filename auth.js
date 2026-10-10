@@ -111,3 +111,23 @@ export async function runBillingSandbox(action, payerEmail) {
   if(data?.sandbox!==true)throw new Error('Resposta de teste inválida.');
   return data;
 }
+
+
+// Piloto real e restrito: compra ÚNICA por Pix, valor fixado no servidor (R$ 0,01).
+// A função não altera memberships; não é assinatura nem paywall.
+export async function runPixPilot(action){
+  if(!online())throw new Error('Conecte-se à internet para consultar o Pix.');
+  if(!['check','create','status'].includes(action))throw new Error('Ação Pix inválida.');
+  const user=await verifiedUser();
+  if(!user)throw new Error('Entre na sua conta PPMT.');
+  const {data,error}=await client().functions.invoke('ppmt-pix-pilot',{body:{action}});
+  if(error){
+    let message='';
+    if(typeof error.context?.json==='function'){
+      try{message=String((await error.context.json())?.error||'');}catch{}
+    }
+    throw new Error(message.slice(0,230)||'A consulta Pix falhou; verifique o status antes de repetir.');
+  }
+  if(Number(data?.amount)!==0.01)throw new Error('O valor do Pix retornado não corresponde a R$ 0,01.');
+  return data;
+}

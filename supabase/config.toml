@@ -1,2 +1,5 @@
 [functions.ppmt-billing-test]
 verify_jwt = true
+
+[functions.ppmt-pix-pilot]
+verify_jwt = true
