@@ -1,6 +1,16 @@
 import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
 const $=id=>document.getElementById(id);
-let busy=false,enabled=false;
+let busy=false,enabled=false,lastBilling=null;
+function canStartCard(){
+ return enabled && !lastBilling?.card &&
+  !['pending','creating','needs_review'].includes(lastBilling?.manual?.state);
+}
+function canStartManual(){
+ const cardState=lastBilling?.card?.state;
+ return enabled &&
+  !['pending','authorized','paused','creating','needs_review'].includes(cardState) &&
+  !['pending','creating','needs_review'].includes(lastBilling?.manual?.state);
+}
 function notice(msg,error=false){$('feedback').hidden=!msg;$('feedback').textContent=msg||'';$('feedback').classList.toggle('is-error',error);}
 function safeLink(value){
  if(typeof value!=='string')return null;
@@ -12,8 +22,9 @@ function statusDate(value){
 function busyState(value){
  busy=value;
  $('login-btn').disabled=value;$('refresh-btn').disabled=value;
- $('card-btn').disabled=value||!enabled;$('manual-btn').disabled=value||!enabled;
- $('cancel-btn').disabled=value;
+ $('card-btn').disabled=value||!canStartCard();
+ $('manual-btn').disabled=value||!canStartManual();
+ $('cancel-btn').disabled=value||!['authorized','pending','paused'].includes(lastBilling?.card?.state);
 }
 function showLink(id,url){
  const a=$(id),safe=safeLink(url);
@@ -22,8 +33,8 @@ function showLink(id,url){
 }
 function display(data){
  enabled=data.enabled===true;
+ lastBilling=data;
  $('availability').textContent=enabled?'Pagamentos disponíveis.':'Pagamentos em breve. Continue estudando grátis.';
- $('card-btn').disabled=busy||!enabled;$('manual-btn').disabled=busy||!enabled;
  const valid=!!data.premium,expiry=statusDate(data.current_period_end);
  $('membership-state').textContent=valid?'Premium ativo':'Plano gratuito';
  $('next-bill').textContent=valid&&expiry?'Válido até '+expiry:'';
@@ -32,7 +43,7 @@ function display(data){
   $('card-state').textContent=states[data.card.state]||'Verificar assinatura.';
   showLink('card-link',data.card.checkout_url);
   $('cancel-btn').hidden=!['authorized','pending','paused'].includes(data.card.state);
-  $('card-btn').disabled=true;
+
  }else{
   $('card-state').textContent='';
   showLink('card-link',null);$('cancel-btn').hidden=true;
@@ -41,18 +52,24 @@ function display(data){
   const states={pending:'Aguardando pagamento.',paid:'Pagamento aprovado.',needs_review:'Cobrança em análise.',creating:'Preparando pagamento.'};
   $('manual-state').textContent=states[data.manual.state]||'Consulte o pagamento.';
   showLink('manual-link',data.manual.checkout_url);
-  if(data.manual.state==='pending'||data.manual.state==='needs_review')$('manual-btn').disabled=true;
+
  }else{
   $('manual-state').textContent='';
   showLink('manual-link',null);
  }
+ busyState(busy);
 }
 async function action(value){
  if(busy)return;busyState(true);notice('');
  try{
   const data=await runMonthlyBilling(value);
-  if(value==='card_cancel')notice('Renovação automática cancelada.');
   display(data);
+  if(value==='card_cancel'){
+   const verified=await runMonthlyBilling('status');
+   display(verified);
+   notice('Renovação automática cancelada. Seu período já pago continua válido.');
+   return verified;
+  }
   return data;
  }catch(e){notice(e instanceof Error?e.message:'Não foi possível consultar.',true);}
  finally{busyState(false);}
@@ -99,7 +116,7 @@ $('login-form').addEventListener('submit',async e=>{
  busyState(false);await load();
 });
 $('refresh-btn').addEventListener('click',()=>action('status'));
-$('card-btn').addEventListener('click',()=>{if(!enabled||busy)return;if(window.confirm('Autorizar assinatura de R$ 19,99 POR MÊS no cartão? As cobranças serão automáticas até o cancelamento.'))action('card_start');});
-$('manual-btn').addEventListener('click',()=>{if(!enabled||busy)return;if(window.confirm('Gerar uma mensalidade de R$ 19,99 para pagar por Pix, boleto ou débito? Sem débito automático.'))action('manual_checkout');});
+$('card-btn').addEventListener('click',()=>{if(busy||!canStartCard())return;if(window.confirm('Autorizar assinatura de R$ 19,99 POR MÊS no cartão? As cobranças serão automáticas até o cancelamento.'))action('card_start');});
+$('manual-btn').addEventListener('click',()=>{if(busy||!canStartManual())return;if(window.confirm('Gerar uma mensalidade de R$ 19,99 para pagar por Pix, boleto ou débito? Sem débito automático.'))action('manual_checkout');});
 $('cancel-btn').addEventListener('click',()=>{if(!busy&&window.confirm('Cancelar as próximas cobranças automáticas do cartão?'))action('card_cancel');});
 load();
