@@ -31,7 +31,8 @@ function harness({status='approved',amount=AMOUNT,buyer=ACCOUNT}={}){
  };
  const billingDb={
   async enabled(){return false;},async privatePilot(){return false;},
-  async token(){return null;},async member(id){return id===buyer?s.membership:null;}
+  async token(){return null;},async member(id){return id===buyer?s.membership:null;},
+  async card(){return null;},async openOrder(){return null;}
  };
  const webhookDb={
   async orderById(ref){return ref===ORDER?{id:ORDER,user_id:buyer,provider_preference_id:'pref_mock_only'}:null;},
