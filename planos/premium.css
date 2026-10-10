@@ -89,3 +89,8 @@
  .elite-section-heading{flex-wrap:wrap}
  .elite-hero-footer{gap:9px;font-size:9px}
 }
+
+/* Login Google opcional */
+.google-login-alt{width:100%;max-width:340px;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px!important;background:#fff!important;border:1px solid #a9b3bf!important;color:#273142!important;font-weight:700!important}
+.google-login-alt:hover{background:#eff5fb!important}
+.google-mark{display:inline-grid;place-items:center;font-weight:900;font-size:20px;background:conic-gradient(#4285f4 0 25%,#34a853 25% 45%,#fbbc05 45% 65%,#ea4335 65% 85%,#4285f4 85% 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
