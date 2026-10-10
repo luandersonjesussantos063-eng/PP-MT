@@ -647,3 +647,23 @@ nav a.active{background:#29313a;color:var(--accent)}
  .command-shortcut b{font-size:13px}
  .command-quick-heading>span{display:none}
 }
+
+/* PP-MT UX mobile · 2026-10-10: foco na tarefa, textos legíveis e menos rolagem */
+.performance-swipe-hint{display:none;color:#e6c289;font-size:12px;line-height:1.5;margin:4px 0 10px}
+@media(max-width:640px){
+ .command-main{padding:22px 18px}
+ .command-footer{padding:10px 18px;gap:7px 10px;font-size:9px;letter-spacing:.35px}
+ .command-metrics{gap:9px;margin-bottom:13px}
+ .command-metric{min-height:113px;padding:12px 11px 13px;gap:4px}
+ .command-metric-ico{font-size:18px;margin-bottom:2px}
+ .command-metric small{font-size:10px;letter-spacing:.4px;line-height:1.4}
+ .command-metric strong{font-size:clamp(22px,6.1vw,28px)}
+ .command-metric>span:last-child{font-size:11px;line-height:1.4}
+ .command-quick{margin-top:16px}
+ .command-quick-heading{margin-bottom:10px}
+ .command-shortcut{min-height:107px;padding:13px;gap:6px}
+ .command-shortcut-icon{font-size:20px}
+ .command-shortcut small{font-size:11px;line-height:1.5}
+ .performance-swipe-hint{display:block}
+ .performance-table-wrap{scrollbar-width:thin;overscroll-behavior-x:contain}
+}
