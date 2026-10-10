@@ -15,8 +15,10 @@ export async function checkSignature({secret,signature,requestId,id}){
  const p=signatureParts(signature);if(!p)return false;
  const timestamp=Number(p.ts),ms=p.ts.length>12?timestamp:timestamp*1000;
  if(!Number.isFinite(ms)||Math.abs(Date.now()-ms)>24*60*60*1000)return false;
- const msg='id:'+id.toLowerCase()+';request-id:'+requestId+';ts:'+p.ts+';';
- const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+ // Manifesto idêntico ao WebhookSignatureValidator do SDK oficial Mercado Pago.
+ // A assinatura secreta nunca inclui quebras ou espaços externos copiados do painel.
+ const msg='id:'+id+';request-id:'+requestId+';ts:'+p.ts+';';
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret.trim()),{name:'HMAC',hash:'SHA-256'},false,['sign']);
  const digest=new Uint8Array(await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(msg)));
  const expected=Array.from(digest,x=>x.toString(16).padStart(2,'0')).join('');
  let diff=0;for(let i=0;i<64;i++)diff|=expected.charCodeAt(i)^p.v1.toLowerCase().charCodeAt(i);
@@ -41,7 +43,9 @@ export function webhookHandler({secret,token,db,mp}){
     signature_format_valid:Boolean(parts),
     request_id_present:Boolean(requestId),
     resource_id_present:Boolean(resourceId),
-    timestamp_recent:Boolean(parts&&Math.abs(Date.now()-(parts.ts.length>12?Number(parts.ts):Number(parts.ts)*1000))<=24*60*60*1000)
+    timestamp_recent:Boolean(parts&&Math.abs(Date.now()-(parts.ts.length>12?Number(parts.ts):Number(parts.ts)*1000))<=24*60*60*1000),
+    secret_has_outer_whitespace:Boolean(secretValue&&secretValue!==secretValue.trim()),
+    secret_has_outer_quotes:Boolean(secretValue&&((secretValue.startsWith('"')&&secretValue.endsWith('"'))||(secretValue.startsWith("'")&&secretValue.endsWith("'"))))
    });
    return respond(401);
   }
