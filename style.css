@@ -693,3 +693,71 @@ nav a.active{background:#29313a;color:var(--accent)}
 .ppmt-notice-card p{margin:0}
 .ppmt-notice-card a.button{width:fit-content}
 @media(max-width:640px){.ppmt-notice-settings-body .row{display:grid;grid-template-columns:1fr}.ppmt-notice-settings-body button{width:100%}.ppmt-notice-card .row{align-items:flex-start;flex-wrap:wrap}}
+
+
+/* PP-MT V 2.19.5 · sino discreto, sem emoji, alinhado com o cabeçalho */
+#notificationBell{
+ position:relative;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ flex:0 0 38px;
+ width:38px;
+ height:38px;
+ min-width:38px;
+ min-height:38px;
+ padding:0;
+ margin:0;
+ border:1px solid #344354;
+ border-radius:11px;
+ background:#172537;
+ color:#c9d3df;
+ text-decoration:none;
+ box-shadow:none;
+ opacity:1;
+ line-height:1;
+ transition:background .15s ease,border-color .15s ease,color .15s ease;
+}
+#notificationBell svg{
+ width:19px;
+ height:19px;
+ display:block;
+ fill:none;
+ stroke:currentColor;
+ stroke-width:1.8;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+ pointer-events:none;
+}
+#notificationBell:hover,#notificationBell:focus-visible{
+ background:#213249;
+ border-color:#ab9262;
+ color:#e6c58a;
+}
+#notificationBell:focus-visible{outline:2px solid #e6c58a;outline-offset:2px}
+#notificationBell .notification-dot{
+ position:absolute;
+ width:8px;
+ height:8px;
+ min-width:0;
+ top:5px;
+ right:5px;
+ background:#e64848;
+ border:1.5px solid #172537;
+ border-radius:50%;
+ box-sizing:content-box;
+ pointer-events:none;
+}
+#notificationBell .notification-dot[hidden]{display:none!important}
+@media(max-width:640px){
+ #account{gap:7px}
+ #notificationBell{
+  flex:0 0 36px;
+  width:36px;
+  height:36px;
+  min-width:36px;
+  min-height:36px;
+  border-radius:10px;
+ }
+ #notificationBell svg{width:19px;height:19px}
+}
