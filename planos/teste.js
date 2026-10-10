@@ -49,7 +49,7 @@ async function request(action,payerEmail){
     const result=await runBillingSandbox(action,payerEmail);
     if(action==='buyer_info'){
       const email=String(result.buyer_email||'').trim().toLowerCase();
-      if(result.buyer_verified!==true||!/^[a-z0-9._+-]+@testuser\\.com$/.test(email))throw new Error('O Mercado Pago não retornou um e-mail de teste confirmado.');
+      if(result.buyer_verified!==true||!/^[a-z0-9._+-]+@testuser\.com$/.test(email))throw new Error('O Mercado Pago não retornou um e-mail de teste confirmado.');
       el('buyer-email').value=email;
       notice('Comprador de teste identificado. O e-mail foi preenchido automaticamente. Nenhuma assinatura foi criada.');
       return;
