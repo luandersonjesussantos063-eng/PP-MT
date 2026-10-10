@@ -85,3 +85,12 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - A abertura pública `PPMT_MONTHLY_BILLING_ENABLED` continua `false` ou ausente. Alunos comuns recebem erro de venda indisponível. Não ativar sem validação completa.
 - Administrador consulta `planos/diagnostico.html`; a tela expõe apenas booleanos, nunca as credenciais.
 - Para testar, primeiro configurar notificações de produção e secret do Mercado Pago; conferir evento assinado de pagamento. Depois simular compra manual e assinatura recorrente em produção usando conta de comprador real e autorização explícita, observar `memberships` e cancelar o cartão para validar o fim da recorrência. Evitar fazer duas cobranças no mesmo teste. O teste de R$ 0,01 não substitui a validação da assinatura de R$ 19,99.
+
+## Configuração Supabase feita pelo administrador assistido (10/10/2026)
+
+- `public.ppmt_commercial_flags` (acesso **somente service_role**) controla `delivery_ready`, `private_pilot_enabled` e `public_sales_enabled`.
+- Instalação inicial: `delivery_ready=true`, `private_pilot_enabled=true` e `public_sales_enabled=false`; auditoria: nenhum aluno tem permissão de leitura/escrita.
+- A Edge Function `ppmt-monthly-billing` lê os controles de `ppmt_commercial_flags`. Piloto real só funciona para conta em `billing_sandbox_testers` se `MP_WEBHOOK_SECRET` existir. Vendas públicas continuam exigindo **ambos** o controle público da tabela (false inicialmente) e `PPMT_MONTHLY_BILLING_ENABLED=true`, além de validação da entrega/segredo.
+- Não é mais necessário cadastrar `PPMT_PREMIUM_DELIVERY_READY` e `PPMT_MONTHLY_PRIVATE_PILOT_ENABLED` como Edge Function Secrets. As antigas instruções dessas duas variáveis nesta documentação estão substituídas por esta configuração via banco.
+- `MP_WEBHOOK_SECRET` continua sendo **obrigatório** e deve ser cadastrado pelo proprietário, via Dashboard > Edge Functions > Secrets, usando a chave de assinatura do Mercado Pago obtida no painel de Webhooks. A API conectada não permite gravar Supabase Edge Function Secrets. Não digitar chave em arquivos públicos nem no chat.
+- A presença do segredo no Supabase não comprova que notificações reais já estão configuradas no Mercado Pago: testar a integração antes de abrir vendas gerais.

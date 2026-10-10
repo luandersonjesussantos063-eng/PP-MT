@@ -137,7 +137,7 @@ test('site não carrega chaves privadas e checkout padrão permanece fechado',()
  assert.doesNotMatch(h+j+a,/MP_ACCESS_TOKEN_PROD|SUPABASE_SERVICE_ROLE_KEY|APP_USR-/);
  const index=readFileSync(new URL('../supabase/functions/ppmt-monthly-billing/index.ts',import.meta.url),'utf8');
  assert.match(index,/PPMT_MONTHLY_BILLING_ENABLED/);
- assert.match(index,/PPMT_PREMIUM_DELIVERY_READY/);
+ assert.match(index,/ppmt_commercial_flags/);
 });
 
 test('checklist do administrador usa somente indicadores, não mostra segredos',async()=>{

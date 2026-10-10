@@ -5,19 +5,38 @@ function checked<T>(r:{data:T,error:unknown}):T{
  if(r.error)throw new Error('Erro de banco de dados');return r.data;
 }
 const db={
- async enabled(){return Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'&&Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true'&&Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));},
+ // Flags privadas consultadas em cada pedido; nunca concedemos acesso de escrita ao navegador.
+ async flags(){
+  return checked(await admin.from('ppmt_commercial_flags')
+   .select('delivery_ready,private_pilot_enabled,public_sales_enabled')
+   .eq('id',1).single());
+ },
+ async enabled(){
+  const flags=await this.flags();
+  return flags.public_sales_enabled===true && flags.delivery_ready===true &&
+   Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true' &&
+   Boolean(Deno.env.get('MP_WEBHOOK_SECRET'));
+ },
  async privatePilot(id:string){
-  if(Deno.env.get('PPMT_MONTHLY_PRIVATE_PILOT_ENABLED')!=='true' ||
-    Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')!=='true' ||
-    !Deno.env.get('MP_WEBHOOK_SECRET'))return false;
+  const flags=await this.flags();
+  if(flags.private_pilot_enabled!==true||flags.delivery_ready!==true||
+     !Deno.env.get('MP_WEBHOOK_SECRET'))return false;
   return this.isTester(id);
  },
- async isTester(id:string){return Boolean(checked(await admin.from('billing_sandbox_testers').select('user_id').eq('user_id',id).maybeSingle()));},
- async diagnostics(){return {
+ async isTester(id:string){
+  return Boolean(checked(await admin.from('billing_sandbox_testers').select('user_id')
+   .eq('user_id',id).maybeSingle()));
+ },
+ async diagnostics(){
+  const flags=await this.flags();
+  return {
    webhook_secret_present:Boolean(Deno.env.get('MP_WEBHOOK_SECRET')),
-   delivery_flag:Deno.env.get('PPMT_PREMIUM_DELIVERY_READY')==='true',
-   billing_flag:Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true'
- };},
+   delivery_flag:flags.delivery_ready===true,
+   billing_flag:flags.public_sales_enabled===true &&
+    Deno.env.get('PPMT_MONTHLY_BILLING_ENABLED')==='true',
+   private_pilot_flag:flags.private_pilot_enabled===true
+  };
+ },
  async token(){return Deno.env.get('MP_ACCESS_TOKEN_PROD')||null;},
  async member(id:string){return checked(await admin.from('memberships').select('status,current_period_end').eq('user_id',id).maybeSingle());},
  async card(id:string){return checked(await admin.from('ppmt_monthly_cards').select('*').eq('user_id',id).maybeSingle());},
