@@ -1,5 +1,5 @@
 import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=2.15.0';
-import {loginWithGoogle} from '../account-services.js?v=2.17.0';
+import {loginWithGoogle} from '../account-services.js?v=2.18.0';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false,lastBilling=null;
 function paidFarFromExpiry(){
