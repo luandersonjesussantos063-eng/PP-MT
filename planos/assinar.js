@@ -122,6 +122,16 @@ async function action(value){
  try{
   const data=await runMonthlyBilling(value);
   display(data);
+  // Depois de gerar a solicitação, segue diretamente para o provedor confiável.
+  // Se a navegação não acontecer, o link permanece no painel "pagamento iniciado".
+  if(value==='card_start'||value==='manual_checkout'){
+   const url=safeLink(value==='card_start'?data?.card?.checkout_url:data?.manual?.checkout_url);
+   if(url){
+    notice('Redirecionando para o pagamento seguro do Mercado Pago…');
+    window.location.assign(url);
+    return data;
+   }
+  }
   if(value==='card_cancel'){
    const verified=await runMonthlyBilling('status');
    display(verified);
