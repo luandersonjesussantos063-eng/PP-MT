@@ -93,7 +93,7 @@ export function makeHandler({authenticate,db,mp}){
       if(!/^[0-9]{1,25}$/.test(String(brief?.id||'')))continue;
       const p=await mercado('/v1/payments/'+brief.id);
       if(!verifiedPayment(p,order.id))continue;
-      if(paidStatus(p)){await db.credit(user.id,p,'manual');paid=true;}
+      if(paidStatus(p)){await db.credit(user.id,p,'manual',order.id);paid=true;}
       else if(['refunded','charged_back'].includes(p.status)||Number(p.transaction_amount_refunded||0)>0)await db.void(p.id);
     }
     if(paid){await db.updateOrder(order.id,{state:'paid'});return {...order,state:'paid',checkout_url:null};}
@@ -107,11 +107,13 @@ export function makeHandler({authenticate,db,mp}){
    if(body.action==='card_cancel'){
     if(!card?.provider_id)fail(409,'Não há assinatura de cartão para cancelar.');
     const sub=await mercado('/preapproval/'+encodeURIComponent(card.provider_id));
-    if(!['cancelled','paused'].includes(sub.status))await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
+    if(sub.status!=='cancelled')await mercado('/preapproval/'+encodeURIComponent(card.provider_id),'PUT',{status:'cancelled'});
     await db.updateCard(user.id,{state:'cancelled',checkout_url:null});
     return output({...result,message:'Renovação automática cancelada. Pagamentos já aprovados permanecem válidos até seu vencimento.'});
    }
    if(body.action==='card_start'){
+    const waiting=await db.openOrder(user.id);
+    if(waiting)fail(409,'Existe um pagamento Pix, boleto ou débito pendente. Resolva-o antes de autorizar o cartão automático.');
     if(!card&&member?.status==='active'&&member.current_period_end&&Date.parse(member.current_period_end)-Date.now()>7*86400000)
       fail(409,'Você já possui um mês pago. Autorize o cartão nos últimos 7 dias do período para evitar duas cobranças.');
     if(card) {
