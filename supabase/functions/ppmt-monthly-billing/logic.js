@@ -57,12 +57,12 @@ export function makeHandler({authenticate,db,mp}){
     const token=await db.token();
     let merchant_valid=false;
     if(token)try{merchant_valid=isSeller(await mp(token,'/users/me'));}catch{}
-    return output({price:AMOUNT,month:true,enabled:await db.enabled(),checks:{
+    return output({price:AMOUNT,month:true,enabled:await db.enabled(),pilot_enabled:await db.privatePilot(user.id),checks:{
       merchant_valid,webhook_secret_present:flags.webhook_secret_present,
       delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
     }});
    }
-   const enabled=await db.enabled();
+   const enabled=(await db.enabled()) || (await db.privatePilot(user.id));
    if(['manual_checkout','card_start'].includes(body.action)&&!enabled)fail(503,'As vendas ainda não estão abertas. O teste Pix permanece separado.');
    const member=await db.member(user.id);
    const result={price:AMOUNT,month:true,enabled,premium:Boolean(member?.status==='active'&&member?.current_period_end&&Date.parse(member.current_period_end)>Date.now()),current_period_end:member?.current_period_end??null};
