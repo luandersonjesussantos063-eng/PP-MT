@@ -59,7 +59,9 @@ async function run(action){
    if(!enabled){
     $('state').textContent=typeof data.reason==='string' ? 'Piloto bloqueado: '+data.reason : 'Piloto indisponível no momento. Nenhuma cobrança foi criada.';
     if(typeof data.reason==='string')info('Nenhuma cobrança foi criada. Corrija a autorização do Mercado Pago antes de gerar Pix.',true);
+    $('status-btn').textContent='Revalidar Mercado Pago ↻';
    }else{
+    $('status-btn').textContent='Verificar pagamento ↻';
     const status=await runCentavoPremium('status');
     display(status);
    }
@@ -103,7 +105,7 @@ $('pay-btn').addEventListener('click',()=>{
  if(busy||!enabled||created)return;
  if(window.confirm('Gerar um Pix REAL de R$ 0,01, sem renovação, para testar o Premium por 24 horas?'))run('create');
 });
-$('status-btn').addEventListener('click',()=>run('status'));
+$('status-btn').addEventListener('click',()=>run(enabled?'status':'check'));
 $('copy-btn').addEventListener('click',async()=>{
  const code=$('pix-code').value;
  if(!code)return;
