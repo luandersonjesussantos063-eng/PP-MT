@@ -25,6 +25,9 @@ async function check(){
     'API de Checkout Pro não respondeu à consulta sem cobrança';
   $('checkout-api').textContent=(flags.checkout_api_authorized&&flags.checkout_seller_matches!==false?'✓ ':'✕ ')+checkLabel+(flags.checkout_api_error_code?' · Código: '+flags.checkout_api_error_code:'');
   $('webhook').textContent=(flags.webhook_secret_present?'✓ ':'✕ ')+'Chave secreta do webhook';
+  $('webhook-real').textContent=(flags.webhook_real_verified?'✓ ':'✕ ')+(flags.webhook_real_verified?'Notificação de pagamento REAL autenticada e registrada':'Webhook real de pagamento ainda não foi validado');
+  $('monthly-manual').textContent=(flags.manual_monthly_verified?'✓ ':'✕ ')+(flags.manual_monthly_verified?'Mensalidade REAL de R$ 19,99 validada (pagamento avulso)':'Mensalidade REAL de R$ 19,99 por Pix/boleto ainda não testada');
+  $('monthly-card').textContent=(flags.card_monthly_verified?'✓ ':'✕ ')+(flags.card_monthly_verified?'Cobrança recorrente REAL de R$ 19,99 registrada':'Assinatura no cartão ainda sem cobrança REAL validada');
   $('delivery').textContent=(flags.delivery_flag?'✓ ':'✕ ')+'Entrega Premium liberada';
   $('billing').textContent=(flags.billing_flag?'✓ ':'✕ ')+'Abertura comercial autorizada';
   $('pilot').textContent=result.pilot_enabled?'✓ Piloto comercial privado autorizado.':'✕ Piloto comercial privado desligado.';
