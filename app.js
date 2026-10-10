@@ -1,14 +1,14 @@
-import {renderMembership} from './planos/account.js?v=2.13.2';
-import {performanceSummary} from './performance.js?v=2.13.2';
-import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.13.2';
-import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.13.2';
+import {renderMembership} from './planos/account.js?v=2.15.0';
+import {performanceSummary} from './performance.js?v=2.15.0';
+import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
+import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
 import {createProgressSync} from './offline.js?v=47';
-import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.13.2';
-import {AUTHORIAL_MT_QUESTIONS} from './authorial-mt.js?v=2.13.2';
+import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
+import {AUTHORIAL_MT_QUESTIONS} from './authorial-mt.js?v=2.15.0';
 import {createAnswerSounds} from './answer-sounds.js?v=45';
 import {packExam,restoreExam} from './exam-session.js?v=44';
 import {CONCEPT_PRACTICE} from './practice.js?v=44';
-import {enrichConcept,compatibleWithMT,chooseConceptBlock,dailyStudyPlan,conceptProgress} from './curriculum.js?v=2.13.2';
+import {enrichConcept,compatibleWithMT,chooseConceptBlock,dailyStudyPlan,conceptProgress} from './curriculum.js?v=2.15.0';
 import {createReviewExercise} from './review-generator.js?v=47';
 import {minutesFor,dueReviews,nextReview,scheduleCorrectReviews,learningMetrics,selectLearningQuestions} from './learning.js?v=47';
 import {IMPORTED_EXAMS} from './imported-exams.js?v=15';
@@ -18,10 +18,10 @@ import {EXAM_SOURCES,SOURCE_TOTAL,IMPORTED_SOURCE_TOTAL} from './exam-sources.js
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=2.13.2';
-import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=2.13.2';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState} from './auth.js?v=2.15.0';
+import {questionCommand,trapWords,microLesson,findSimilar} from './help.js?v=2.15.0';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.13.2';
+const APP_VERSION='2.15.0';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -467,7 +467,7 @@ function renderArchive(){
  if(examResult&&examResult.originTab==='provas'){const r=examResult;$('#content').innerHTML=title('Prova concluída.','Resultado da prova completa.')+`<div class="card"><span class="result-score">${Math.round(r.correct/r.questions.length*100)}%</span><p>${r.correct} de ${r.questions.length} acertos • ${r.unanswered} sem resposta</p><button id="redoFullExam" class="primary">Refazer prova completa</button></div>`;$('#redoFullExam').onclick=()=>{examResult=null;renderArchive()};return}
  const e=MT_EXAM;$('#content').innerHTML=title('Acervo de provas','Provas reais localizadas para ampliar o banco nacional de Polícia Penal.')+`<section class="card archive-card"><div class="archive-head"><img class="archive-seal" src="./icon.svg" alt="Escudo do preparatório PP MT"><div><div class="eyebrow">ACERVO DE PROVAS / MATO GROSSO</div><h2>Agente Penitenciário · SEJUDH/MT</h2><span class="muted">IBADE · Edital 001/2016 · Prova aplicada em ${e.date}</span></div></div><div class="exam-facts"><div><b>S05 T</b><small>Caderno cadastrado</small></div><div><b>60</b><small>Questões na prova</small></div><div><b>57</b><small>Válidas para treinar</small></div><div><b>3</b><small>Anuladas, fora do treino</small></div></div><p class="muted">O objetivo do banco é resolver tudo dentro do aplicativo: enunciado e alternativas completos. O PDF original fica apenas como fonte de conferência. As questões ainda pendentes de transcrição não entram no treino.</p><div class="source-links"><button class="primary" id="fullOfficial">Responder prova completa →</button><button class="secondary" id="trainOfficial">Estudar questões desta prova →</button><a class="button secondary" href="${e.examUrl}" target="_blank" rel="noopener noreferrer">Prova original ↗</a><a class="button secondary" href="${e.answerUrl}#page=13" target="_blank" rel="noopener noreferrer">Gabarito final ↗</a><a class="button secondary" href="${e.landingUrl}" target="_blank" rel="noopener noreferrer">Página da banca ↗</a></div><div class="notice warning-historical"><b>Acervo histórico de 2017.</b> As questões 16, 41 e 56 foram anuladas e não entram no treino nem nas estatísticas. Respostas jurídicas refletem o gabarito da época; não houve revisão de vigência legislativa. Este material não define o conteúdo de um próximo edital.</div><h3>Matérias do caderno</h3><div class="exam-reference-list">${e.sections.map(x=>`<div>${esc(x.subject)} · Q${x.from}–${x.to}</div>`).join('')}</div><details class="source-reader"><summary>Consultar o caderno completo nesta tela</summary><iframe class="pdf-view" src="${e.examUrl}#page=1" title="Caderno oficial S05 T completo" loading="lazy" referrerpolicy="no-referrer"></iframe></details><p class="source-note">Conferência documental: 07/10/2026 (UTC). Os PDFs são carregados diretamente da IBADE. Leitura integrada depende do navegador; os botões abrem o documento separadamente.</p></section>${importedArchiveHTML()}<section class="card spaced"><div class="row"><div><div class="eyebrow">EXPANSÃO NACIONAL</div><h2>Fila de importação</h2></div><span class="tag">${OFFICIAL_QUESTIONS.length} QUESTÕES DISPONÍVEIS</span></div><p class="muted">Já localizamos provas que somam ${SOURCE_TOTAL} questões. No treino ativo entram apenas questões de matérias compatíveis com o último edital de MT; conteúdos extras de outros estados ficam somente no acervo.</p><div class="exam-source-grid">${EXAM_SOURCES.filter(x=>x.id!==e.id&&x.status!=='imported').map(x=>`<a class="exam-source-card" href="${x.sourcePage}" target="_blank" rel="noopener noreferrer"><div><b>${esc(x.state)} • ${esc(x.year)} • ${esc(x.board)}</b><span>${esc(x.exam)}</span></div><strong>${x.questionCount}</strong><small>${x.verifiedOfficialSource?'FONTE OFICIAL VERIFICADA':'FONTE EM VERIFICAÇÃO'}</small></a>`).join('')}</div></section>`;bindImportedArchive();$('#trainOfficial').onclick=()=>{filter={search:'',subject:'',kind:'prova',exam:MT_EXAM.id};location.hash='questoes'};$('#fullOfficial').onclick=()=>{const qs=MT_QUESTIONS.slice().sort((a,b)=>Number(a.source.number)-Number(b.source.number));examResult=null;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+270*60000,originTab:'provas',label:'Prova completa'};showExamQuestion()}}
 
-if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=2.13.2').catch(()=>{});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js?v=2.15.0').catch(()=>{});
 syncInstallUI();
 bootstrap();
 
@@ -590,7 +590,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-2.13.2');const prepared=registration.active?.scriptURL.includes('sw.js?v=2.13.2')&&await cache.match('./app.js?v=2.13.2')&&await cache.match('./assets/vendor/supabase-2.117.2.js');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-2.15.0');const prepared=registration.active?.scriptURL.includes('sw.js?v=2.15.0')&&await cache.match('./app.js?v=2.15.0')&&await cache.match('./assets/vendor/supabase-2.117.2.js');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 
