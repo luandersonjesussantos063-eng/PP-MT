@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
+import {createHmac,webcrypto} from 'node:crypto';
+import {webhookHandler} from '../supabase/functions/ppmt-monthly-webhook/logic.js';
+if(!globalThis.crypto)globalThis.crypto=webcrypto;
 import {makeHandler,CENT,SELLER,exactPayment} from '../supabase/functions/ppmt-centavo-premium/logic.js';
 import {makePracticeHandler} from '../supabase/functions/ppmt-premium-practice/logic.js';
 const USER={id:'33333333-3333-4333-8333-333333333333',email:'tester@example.org',
@@ -147,4 +150,45 @@ test('chaves de produção permanecem somente no Supabase, acesso público não 
  assert.ok(exactPayment({id:'123456',live_mode:true,collector_id:SELLER,
   transaction_amount:0.01,currency_id:'BRL',payment_method_id:'pix',
   external_reference:ORDER},{provider_payment_id:'123456',id:ORDER}));
+});
+
+test('webhook REAL valida assinatura HMAC e pagamento de 1 centavo via API antes de ativar teste',async()=>{
+ const secret='LOCAL_TEST_ONLY_SECRET',id='123456789',reqId='cent-2026';
+ const ts=String(Math.floor(Date.now()/1000));
+ const sign=(key)=>'ts='+ts+',v1='+createHmac('sha256',key)
+  .update('id:'+id+';request-id:'+reqId+';ts:'+ts+';').digest('hex');
+ let grants=0,revokes=0,providerQueries=0;
+ let state='approved';
+ const mp=async(_token,path)=>{
+  providerQueries++;
+  assert.equal(path,'/v1/payments/'+id);
+  return {id,live_mode:true,collector_id:SELLER,transaction_amount:0.01,
+   currency_id:'BRL',payment_method_id:'pix',external_reference:ORDER,
+   date_approved:new Date().toISOString(),status:state,
+   transaction_amount_refunded:state==='refunded'?0.01:0};
+ };
+ const db={
+  centavoByPayment:async providerId=>{
+   assert.equal(providerId,id);return{id:ORDER,provider_payment_id:id};
+  },
+  approveCentavo:async()=>{grants++;},
+  revokeCentavo:async()=>{revokes++;}
+ };
+ const handler=webhookHandler({secret:async()=>secret,token:async()=>'LOCAL_FAKE_MP',
+  db,mp});
+ const url='https://example.invalid/functions/v1/ppmt-monthly-webhook?data.id='+id+'&type=payment';
+ const req=(key)=>new Request(url,{method:'POST',headers:{
+  'content-type':'application/json','x-request-id':reqId,'x-signature':sign(key)},
+  body:JSON.stringify({type:'payment',action:'payment.updated',data:{id},
+   id,user_id:SELLER,live_mode:true})
+ });
+ const originalWarn=console.warn;console.warn=()=>{};
+ try{assert.equal((await handler(req('WRONG_SECRET'))).status,401);}
+ finally{console.warn=originalWarn;}
+ assert.equal(providerQueries,0);assert.equal(grants,0);
+ assert.equal((await handler(req(secret))).status,200);
+ assert.equal(grants,1);
+ state='refunded';
+ assert.equal((await handler(req(secret))).status,200);
+ assert.equal(revokes,1);
 });
