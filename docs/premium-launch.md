@@ -94,3 +94,9 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Não é mais necessário cadastrar `PPMT_PREMIUM_DELIVERY_READY` e `PPMT_MONTHLY_PRIVATE_PILOT_ENABLED` como Edge Function Secrets. As antigas instruções dessas duas variáveis nesta documentação estão substituídas por esta configuração via banco.
 - `MP_WEBHOOK_SECRET` continua sendo **obrigatório** e deve ser cadastrado pelo proprietário, via Dashboard > Edge Functions > Secrets, usando a chave de assinatura do Mercado Pago obtida no painel de Webhooks. A API conectada não permite gravar Supabase Edge Function Secrets. Não digitar chave em arquivos públicos nem no chat.
 - A presença do segredo no Supabase não comprova que notificações reais já estão configuradas no Mercado Pago: testar a integração antes de abrir vendas gerais.
+
+## Diagnóstico HTTP separado da cobrança (outubro/2026)
+- A função `ppmt-webhook-connectivity-test` responde HTTP 200 a **POSTs fictícios do simulador** com `data.id=123456`, um evento conhecido e corpo JSON válido.
+- Não exige assinatura **apenas nessa URL de testes**, que não tem credencial, banco ou acesso à API Mercado Pago. GET retorna 405; eventos com IDs não fictícios são rejeitados.
+- O webhook real `ppmt-monthly-webhook` mantém autenticação HMAC e reconciliação da transação de produção. Nunca substituir a URL de produção permanente pela URL de testes; usá-la somente no modo teste/simulador.
+- HTTP 200 no endpoint de teste comprova transporte HTTP, **não** valida a chave HMAC nem a liberação automática de mensalidade. Antes das vendas, corrigir 401 de assinatura do webhook real e validar pagamentos autênticos, cancelamento, estorno.
