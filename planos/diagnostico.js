@@ -8,7 +8,12 @@ async function check(){
   if(!user){$('message').textContent='Entre na sua conta PP-MT.';return;}
   const result=await runMonthlyBilling('readiness');
   const flags=result.checks||{};
-  $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+'Conta de recebimento de produção';
+  const merchantStatus=flags.merchant_http_status;
+  const reason=flags.merchant_valid?'Conta de recebimento de produção validada':
+    !flags.production_token_present?'Token de produção ausente':
+    merchantStatus===401||merchantStatus===403?'Mercado Pago recusou o token de produção (HTTP '+merchantStatus+')':
+    merchantStatus?'Conta de recebimento não validada (HTTP '+merchantStatus+')':'Não foi possível verificar a conta recebedora';
+  $('merchant').textContent=(flags.merchant_valid?'✓ ':'✕ ')+reason;
   $('webhook').textContent=(flags.webhook_secret_present?'✓ ':'✕ ')+'Chave secreta do webhook';
   $('delivery').textContent=(flags.delivery_flag?'✓ ':'✕ ')+'Entrega Premium liberada';
   $('billing').textContent=(flags.billing_flag?'✓ ':'✕ ')+'Abertura comercial autorizada';

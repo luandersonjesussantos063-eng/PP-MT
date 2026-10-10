@@ -253,3 +253,15 @@ test('webhook nao desativa assinatura e nao ignora evento real por ter ID de tes
  assert.equal(result.status,503);
  assert.equal(mpCalls,1);
 });
+
+test('diagnóstico privado separa token de produção ausente, HTTP rejeitado e vendedor incorreto',async()=>{
+ const h=harness();
+ const data=await (await h.fn(request('readiness'))).json();
+ assert.equal(data.checks.merchant_valid,true);
+ assert.equal(data.checks.merchant_http_status,200);
+ assert.equal(data.checks.production_token_present,true);
+ const merchantUi=readFileSync(new URL('../planos/diagnostico.js',import.meta.url),'utf8');
+ assert.match(merchantUi,/merchant_http_status/);
+ assert.match(merchantUi,/production_token_present/);
+ assert.doesNotMatch(merchantUi,/MP_ACCESS_TOKEN_PROD|APP_USR-/);
+});

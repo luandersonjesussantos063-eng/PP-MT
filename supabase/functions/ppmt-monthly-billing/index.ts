@@ -80,7 +80,21 @@ Deno.serve(makeHandler({
   const headers:Record<string,string>={Authorization:'Bearer '+token,'Content-Type':'application/json'};
   if(key&&method==='POST')headers['X-Idempotency-Key']=key;
   const res=await fetch('https://api.mercadopago.com'+path,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000),redirect:'error'});
-  if(!res.ok)throw new BillingError(res.status>=500?503:422,'O Mercado Pago não concluiu a operação. Consulte o status antes de criar nova cobrança.');
+  if(!res.ok){
+   // Log apenas da etapa e do HTTP; sem token, e-mail, pedido ou resposta do provedor.
+   const operation=path==='/users/me'?'merchant_validation':
+    path==='/checkout/preferences'?'manual_checkout':
+    path==='/preapproval'?'card_subscription':
+    path.startsWith('/preapproval/')?'subscription_status':
+    path.startsWith('/authorized_payments')?'authorized_payment_status':
+    path.startsWith('/v1/payments/')?'payment_verification':'other';
+   console.warn('PPMT Mercado Pago recusou etapa', {operation,status:res.status});
+   throw new BillingError(res.status>=500?503:422,
+    res.status===401||res.status===403?
+    'A credencial de produção do Mercado Pago precisa ser verificada pelo administrador. Nenhuma nova cobrança foi confirmada.':
+    'O Mercado Pago não concluiu a operação. Consulte o status antes de criar nova cobrança.',
+    res.status);
+  }
   return await res.json();
  }
 }));

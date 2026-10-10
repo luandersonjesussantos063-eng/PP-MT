@@ -6,7 +6,7 @@ export const ORIGIN='https://luandersonjesussantos063-eng.github.io';
 export const BACK_URL=ORIGIN+'/PP-MT/planos/assinar.html';
 export const WEBHOOK_URL='https://fermfbmhwlafwopwndoj.supabase.co/functions/v1/ppmt-monthly-webhook';
 export class BillingError extends Error {
- constructor(status,message){super(message);this.status=status;}
+ constructor(status,message,providerStatus=null){super(message);this.status=status;this.providerStatus=providerStatus;}
 }
 const fail=(code,msg)=>{throw new BillingError(code,msg);};
 export const isSeller=u=>Number(u?.id)===SELLER && u?.site_id==='MLB' && !u?.tags?.includes('test_user');
@@ -55,10 +55,13 @@ export function makeHandler({authenticate,db,mp}){
     if(!await db.isTester(user.id))fail(403,'Diagnóstico restrito ao administrador.');
     const flags=await db.diagnostics();
     const token=await db.token();
-    let merchant_valid=false;
-    if(token)try{merchant_valid=isSeller(await mp(token,'/users/me'));}catch{}
+    let merchant_valid=false,merchant_http_status=null;
+    if(token){
+     try{merchant_valid=isSeller(await mp(token,'/users/me'));merchant_http_status=200;}
+     catch(err){if(err instanceof BillingError&&Number.isInteger(err.providerStatus))merchant_http_status=err.providerStatus;}
+    }
     return output({price:AMOUNT,month:true,enabled:await db.enabled(),pilot_enabled:await db.privatePilot(user.id),checks:{
-      merchant_valid,webhook_secret_present:flags.webhook_secret_present,
+      merchant_valid,merchant_http_status,production_token_present:Boolean(token),webhook_secret_present:flags.webhook_secret_present,
       delivery_flag:flags.delivery_flag,billing_flag:flags.billing_flag
     }});
    }
