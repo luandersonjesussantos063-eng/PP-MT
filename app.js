@@ -466,7 +466,8 @@ function render(){
  if(tab==='simulados')renderExam();
  if(tab==='provas'){if(run)showExamQuestion();else renderArchive()}
  if(tab==='desempenho')renderLearningProgress();
- if(tab==='plano')renderMembership(c);\n if(tab==='ofertas')renderMyOffers();
+ if(tab==='plano')renderMembership(c);
+ if(tab==='ofertas')renderMyOffers();
  if(tab==='dados')renderData();
  if(tab!=='plano'&&quotaSnapshot)showQuotaBadge();
 }
