@@ -19,6 +19,12 @@ function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=fals
   async member(){return member;},async card(){return card;},
   async claimCard(uid){card={user_id:uid,external_reference:'11111111-1111-4111-8111-111111111111'};return card;},
   async updateCard(uid,patch){card={...card,...patch};},
+  async recycleCancelledCard(uid){
+   if(card?.state!=='cancelled')return null;
+   card={...card,provider_id:null,state:'creating',
+    checkout_url:null,external_reference:'77777777-7777-4777-8777-777777777777'};
+   return card;
+  },
   async openOrder(){return order;},
   async claimOrder(uid){order={user_id:uid,id:'22222222-2222-4222-8222-222222222222',expires_at:new Date(Date.now()+600000).toISOString()};return order;},
   async updateOrder(id,patch){order={...order,...patch};},
@@ -392,4 +398,33 @@ test('cartão já cancelado permite abrir opções sem consultar o Mercado Pago'
  assert.equal(data.provider_sync_available,true);
  assert.equal(h.calls.length,0,'Consultar assinatura cancelada não deve depender do Mercado Pago');
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
+
+test('Pix pode iniciar após cancelamento de cartão já confirmado, sem consultar ID antigo',async()=>{
+ const h=harness({enabled:true,initialCard:{
+  state:'cancelled',provider_id:'oldCancelledSub',
+  external_reference:'11111111-1111-4111-8111-111111111111',
+  checkout_url:null
+ }});
+ const res=await h.fn(request('manual_checkout'));
+ assert.equal(res.status,200,'a antiga assinatura cancelada não deve bloquear o checkout manual');
+ const data=await res.json();
+ assert.equal(data.manual.state,'pending');
+ assert.equal(data.price,19.99);
+ assert.equal(h.calls.filter(x=>x.path==='/checkout/preferences'&&x.method==='POST').length,1);
+ assert.equal(h.calls.some(x=>x.path==='/preapproval/oldCancelledSub'),false);
+});
+test('Cartão permite nova autorização depois de cancelamento confirmado, sem consultar ID antigo',async()=>{
+ const h=harness({enabled:true,initialCard:{
+  state:'cancelled',provider_id:'oldCancelledSub',
+  external_reference:'11111111-1111-4111-8111-111111111111',
+  checkout_url:null
+ }});
+ const res=await h.fn(request('card_start'));
+ assert.equal(res.status,200);
+ const data=await res.json();
+ assert.equal(data.card.state,'pending');
+ assert.equal(data.price,19.99);
+ assert.equal(h.calls.filter(x=>x.path==='/preapproval'&&x.method==='POST').length,1);
+ assert.equal(h.calls.some(x=>x.path==='/preapproval/oldCancelledSub'),false);
 });
