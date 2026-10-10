@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b111b">
+<meta name="robots" content="noindex,nofollow"><title>PPMT — Pix real de um centavo</title>
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css?v=2.13.3">
+<link rel="stylesheet" href="./pix.css?v=2.13.3">
+<script type="module" src="./pix.js?v=2.13.3"></script>
+</head><body>
+<a class="skip" href="#conteudo">Ir ao conteúdo</a>
+<header class="top"><a class="brand" href="./"><img src="../icon.svg" alt="" width="42" height="46"><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a><nav><a href="../#plano">Meu plano ↗</a></nav></header>
+<main class="wrap pix-layout" id="conteudo">
+<p class="eyebrow">PPMT · VALIDAÇÃO DE PAGAMENTO REAL</p>
+<h1>Pix de <em>R$ 0,01</em></h1>
+<p class="lead">Uma cobrança real de apenas um centavo para conferir o recebimento e a confirmação automática pelo Mercado Pago.</p>
+<section class="pix-warning"><strong>Atenção: pagamento real e único.</strong>
+<p>Não é assinatura mensal, não renova, não cobra R$ 19,90 e não libera o Premium nesta fase. Estamos validando o pagamento antes de comercializar o curso. O Mercado Pago pode recusar o valor mínimo.</p></section>
+<p id="session" class="pix-info" role="status" aria-live="polite">Conferindo sua conta…</p>
+<section class="pix-card" id="login-section" hidden>
+<h2>Entrar no PPMT</h2><p>Somente a conta administradora autorizada consegue usar este Pix inicial.</p>
+<form id="login-form"><label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required maxlength="254">
+<label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
+<button type="submit" id="login-button" class="button primary">Entrar</button></form>
+</section>
+<section class="pix-card" id="checkout-section" hidden>
+<div class="price-head"><div><p class="eyebrow">COMPRA PILOTO · PAGAMENTO ÚNICO</p><h2>R$ 0,01</h2></div><span>PIX</span></div>
+<p id="readiness" class="pix-info" role="status">Verificando se a cobrança está pronta…</p>
+<div class="pix-actions">
+<button id="create-button" type="button" class="button primary" disabled>Gerar Pix de R$ 0,01</button>
+<button id="status-button" type="button" class="button secondary">Consultar pagamento ↻</button></div>
+<div id="pix-result" hidden>
+<h3>Pix copia e cola</h3><p>Use seu aplicativo bancário para pagar exatamente R$ 0,01. Confirme o destinatário no banco antes de pagar.</p>
+<label for="pix-code">Código Pix</label>
+<textarea id="pix-code" readonly rows="5"></textarea>
+<button id="copy-button" type="button" class="button secondary">Copiar Pix</button>
+<a id="ticket-link" class="button secondary" target="_blank" rel="noopener noreferrer" hidden>Abrir no Mercado Pago ↗</a>
+<p class="micro">Após pagar, volte aqui e toque em “Consultar pagamento”. Não gere outro Pix para a mesma compra.</p></div>
+</section>
+<p id="feedback" class="pix-info" role="alert" hidden></p>
+<p class="micro">Por segurança, o valor de R$ 0,01 é definido no servidor. Não solicitamos cartão, senha do banco nem chave Pix pessoal. O acesso ao Premium só será habilitado em uma fase posterior.</p>
+</main>
+<footer class="wrap"><a class="brand" href="./">PPMT</a><p>NovaByte Soluções · Verificação de integração</p></footer>
+</body></html>
