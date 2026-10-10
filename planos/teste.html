@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0b111b">
+<title>PPMT — Teste protegido de assinatura</title>
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="./style.css?v=2.13.1">
+<link rel="stylesheet" href="./teste.css?v=2.13.1">
+<script type="module" src="./teste.js?v=2.13.1"></script>
+</head>
+<body>
+<a class="skip" href="#conteudo">Ir para o conteúdo</a>
+<header class="top"><a class="brand" href="./"><img src="../icon.svg" alt="" width="42" height="46"><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a><nav aria-label="Navegação"><a href="./">Conhecer o plano</a><a class="login" href="../#plano">Meu plano ↗</a></nav></header>
+<main id="conteudo" class="wrap sandbox-content">
+<p class="eyebrow">ÁREA PRIVADA · INTEGRAÇÃO MERCADO PAGO</p>
+<h1>Teste de <em>assinatura.</em></h1>
+<p class="lead">Ambiente restrito para validar a cobrança recorrente do PPMT Premium. <strong>Vendas reais continuam desativadas.</strong></p>
+<section class="sandbox-banner" role="note"><strong>TESTE — não é uma venda ao público.</strong><p>Use apenas contas e meios de pagamento de teste do Mercado Pago. Nunca digite dados de cartão verdadeiro. O teste não ativa Premium nem bloqueia o acesso gratuito.</p></section>
+<div id="session-status" class="sandbox-status" role="status" aria-live="polite">Conferindo sua sessão…</div>
+<section class="sandbox-card" id="login-card" hidden>
+<h2>Entre na sua conta PPMT</h2><p>Utilize o mesmo login do aplicativo de estudos. O acesso ao teste exige autorização interna.</p>
+<form id="login-form">
+<label for="user-email">E-mail da conta PPMT</label><input id="user-email" type="email" autocomplete="username" inputmode="email" required maxlength="254">
+<label for="user-password">Senha</label><input id="user-password" type="password" autocomplete="current-password" required minlength="6">
+<button class="button primary" id="login-button" type="submit">Entrar com segurança ↗</button>
+</form>
+<p class="micro"><a href="../?cadastro=1#inicio">Ainda não tem conta? Cadastre-se no app.</a></p>
+</section>
+<section class="sandbox-card" id="billing-card" hidden>
+<h2>Assinatura experimental</h2>
+<p>Valor utilizado no teste: <strong>R$ 19,90 por mês</strong> · conta vendedora de teste. O sistema verifica o pagamento no Mercado Pago; não concede acesso Premium nesta fase.</p>
+<p id="billing-status" class="sandbox-status" role="status" aria-live="polite">Nenhuma consulta realizada.</p>
+<div class="sandbox-actions">
+<button class="button secondary" id="check-button" type="button">Consultar situação ↻</button>
+<button class="button secondary" id="cancel-button" type="button">Cancelar assinatura de teste</button>
+</div>
+<div class="sandbox-separator"></div>
+<form id="create-form">
+<h3>1. Gerar uma assinatura de teste</h3>
+<label for="buyer-email">E-mail do comprador de teste Mercado Pago (@testuser.com)</label>
+<input id="buyer-email" type="email" autocomplete="off" inputmode="email" maxlength="254" placeholder="comprador@testuser.com" required>
+<p class="micro">É preciso ter uma conta compradora de teste diferente da conta vendedora. O checkout só será gerado para contas autorizadas.</p>
+<button type="submit" class="button primary" id="create-button">Criar checkout de teste ↗</button>
+</form>
+<div id="checkout-area" hidden><h3>2. Abrir pagamento de teste</h3><p>Confira que está usando a conta compradora de teste, sem cartões reais.</p><a id="checkout-link" class="button primary" rel="noopener noreferrer" target="_blank">Abrir checkout de teste ↗</a><p class="micro">Depois volte a esta tela e clique em “Consultar situação”.</p></div>
+</section>
+<p id="feedback" class="sandbox-feedback" role="alert" hidden></p>
+<p class="micro sandbox-foot">Os testes são tratados exclusivamente no servidor Supabase. Esta página não armazena cartões nem chaves do Mercado Pago. O endereço de teste não deve ser divulgado como checkout comercial.</p>
+</main>
+<footer class="wrap"><a class="brand" href="./">PPMT</a><p>Ambiente restrito de homologação — NovaByte Soluções.</p><a href="./privacidade.html">Privacidade e uso</a></footer>
+</body></html>
