@@ -9,7 +9,7 @@ const ORIGIN='https://luandersonjesussantos063-eng.github.io';
 const request=(action,payload={})=>new Request('https://supabase.invalid/functions/v1/ppmt-monthly-billing',{
  method:'POST',headers:{origin:ORIGIN,authorization:'Bearer fakeJwt','content-type':'application/json'},body:JSON.stringify({action,...payload})
 });
-function harness({enabled=false,pilot=false,seller=SELLER}={}){
+function harness({enabled=false,pilot=false,seller=SELLER,identityForbidden=false,preferencesEmpty=false,checkoutSeller=SELLER}={}){
  const calls=[];let card=null,order=null,member=null;
  const db={
   async enabled(){return enabled;},async privatePilot(){return pilot;},async token(){return 'FAKE_ONLY';},
@@ -25,14 +25,19 @@ function harness({enabled=false,pilot=false,seller=SELLER}={}){
  };
  const mp=async(t,path,method,body,key)=>{
   calls.push({path,method,body,key});
-  if(path==='/users/me')return {id:seller,site_id:'MLB',tags:[]};
-  if(path==='/checkout/preferences/search?limit=1')return {elements:[{collector_id:seller}]};
+  if(path==='/users/me'){
+    if(identityForbidden)throw new BillingError(422,'API de identidade proibida',403);
+    return {id:seller,site_id:'MLB',tags:[]};
+  }
+  if(path==='/checkout/preferences/search?limit=1')
+    return {elements:preferencesEmpty?[]:[{collector_id:checkoutSeller}]};
   if(path==='/preapproval'&&method==='POST')return {
    id:'subscriber123',collector_id:SELLER,external_reference:card.external_reference,
    auto_recurring:{transaction_amount:AMOUNT,frequency:1,frequency_type:'months',currency_id:'BRL'},
    init_point:'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_id=subscriber123'};
   if(path==='/checkout/preferences'&&method==='POST')return {
-   id:'pref123',init_point:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref123'};
+   id:'pref123',collector_id:checkoutSeller,external_reference:body.external_reference,
+   init_point:'https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=pref123'};
   if(path.startsWith('/v1/payments/search'))return {results:[]};
   if(path==='/preapproval/subscriber123')return {
    id:'subscriber123',status:'pending',collector_id:SELLER,external_reference:card.external_reference,
@@ -285,5 +290,31 @@ test('preflight usa pesquisa read-only da API de Checkout Pro sem criar cobranca
  assert.equal(checks.checkout_api_authorized,true);
  assert.equal(checks.checkout_seller_matches,true);
  assert.ok(h.calls.some(c=>c.path==='/checkout/preferences/search?limit=1'&&(c.method===undefined||c.method==='GET')));
+ assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
+
+test('checkout mantém autorização quando identidade do Mercado Livre dá 403 e API nativa aceita',async()=>{
+ const h=harness({enabled:true,identityForbidden:true,preferencesEmpty:true});
+ const resp=await h.fn(request('manual_checkout'));
+ assert.equal(resp.status,200,'Consulta nativa read-only e collector correto permitem checkout');
+ const data=await resp.json();
+ assert.equal(data.manual.state,'pending');
+ const paths=h.calls.map(c=>c.path);
+ assert.ok(paths.includes('/users/me'));
+ assert.ok(paths.includes('/checkout/preferences/search?limit=1'));
+ assert.ok(paths.includes('/checkout/preferences'));
+ assert.equal(h.calls.filter(c=>c.path==='/checkout/preferences'&&c.method==='POST').length,1);
+});
+test('checkout nao mostra link de pagamento de vendedor diferente',async()=>{
+ const h=harness({enabled:true,identityForbidden:true,preferencesEmpty:true,checkoutSeller:9999999});
+ const resp=await h.fn(request('manual_checkout'));
+ assert.equal(resp.status,502);
+ assert.equal(h.calls.filter(c=>c.path==='/checkout/preferences'&&c.method==='POST').length,1);
+ assert.equal((await resp.json()).manual,undefined);
+});
+test('conta divergente ja descoberta no read-only impede criar pagamento',async()=>{
+ const h=harness({enabled:true,identityForbidden:true,checkoutSeller:9999999});
+ const resp=await h.fn(request('manual_checkout'));
+ assert.equal(resp.status,503);
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
 });

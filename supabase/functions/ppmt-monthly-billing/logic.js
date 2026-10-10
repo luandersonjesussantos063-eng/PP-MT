@@ -68,6 +68,7 @@ export function makeHandler({authenticate,db,mp}){
       checkout_api_http_status=200;
       const first=Array.isArray(preferences?.elements)?preferences.elements[0]:null;
       if(first&&first.collector_id!=null)checkout_seller_matches=Number(first.collector_id)===SELLER;
+      if(checkout_seller_matches===true)merchant_valid=true;
      }catch(err){if(err instanceof BillingError&&Number.isInteger(err.providerStatus))checkout_api_http_status=err.providerStatus;}
     }
     return output({price:AMOUNT,month:true,enabled:await db.enabled(),pilot_enabled:await db.privatePilot(user.id),checks:{
@@ -86,8 +87,23 @@ export function makeHandler({authenticate,db,mp}){
    const access=await db.token();
    if(!access)fail(503,'Mercado Pago de produção não configurado.');
    const mercado=(path,method='GET',payload=null,key=null)=>mp(access,path,method,payload,key);
-   const seller=await mercado('/users/me');
-   if(!isSeller(seller))fail(503,'Credencial Mercado Pago não corresponde ao vendedor de produção.');
+   // Nem todo token Mercado Pago possui escopo na API de identidade do Mercado Livre.
+   // Se ela devolver 403, a busca de preferencias do proprio Checkout Pro pode validar
+   // o token SEM criar cobranca. O ID real do recebedor sera exigido no POST de checkout.
+   const ensureSellerAccess=async()=>{
+    try{
+     const seller=await mercado('/users/me');
+     if(!isSeller(seller))fail(503,'Credencial Mercado Pago não corresponde ao vendedor de produção.');
+     return;
+    }catch(err){
+     if(!(err instanceof BillingError&&err.providerStatus===403))throw err;
+     const preferences=await mercado('/checkout/preferences/search?limit=1');
+     if(!preferences||!Array.isArray(preferences.elements))fail(503,'O Mercado Pago não confirmou a leitura do Checkout Pro.');
+     if(preferences.elements.some(item=>item.collector_id!=null&&Number(item.collector_id)!==SELLER))
+      fail(503,'A conta recebedora do Checkout Pro não corresponde à conta do PP-MT.');
+    }
+   };
+   await ensureSellerAccess();
    const syncCard=async(card)=>{
     if(!card?.provider_id)return card;
     const sub=await mercado('/preapproval/'+encodeURIComponent(card.provider_id));
@@ -189,7 +205,9 @@ export function makeHandler({authenticate,db,mp}){
         statement_descriptor:'PPMT'
        },order.id);
        const url=safeUrl(response?.init_point);
-       if(!response?.id||!url)fail(502,'Mercado Pago não retornou um checkout oficial válido.');
+       if(!response?.id||!url||Number(response.collector_id)!==SELLER||
+          String(response.external_reference||'')!==order.id)
+        fail(502,'O checkout retornado não corresponde à conta recebedora ou ao pedido de R$ 19,99.');
        await db.updateOrder(order.id,{provider_preference_id:String(response.id),checkout_url:url,state:'pending'});
        return output({...result,manual:{state:'pending',checkout_url:url}});
       }catch(e){await db.updateOrder(order.id,{state:'needs_review'});throw e;}
