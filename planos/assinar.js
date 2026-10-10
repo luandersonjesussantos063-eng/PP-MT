@@ -53,6 +53,7 @@ async function action(value){
   const data=await runMonthlyBilling(value);
   if(value==='card_cancel')notice('Renovação automática cancelada.');
   display(data);
+  return data;
  }catch(e){notice(e instanceof Error?e.message:'Não foi possível consultar.',true);}
  finally{busyState(false);}
 }
@@ -61,10 +62,35 @@ async function load(){
  try{
   const user=await verifiedUser();
   $('login-panel').hidden=!!user;$('payment-panel').hidden=!user;
-  if(user){busyState(false);await action('status');}
+  if(user){busyState(false);await action('status');await reconcileAfterCheckout();}
   else $('availability').textContent='Entre para ver seu plano.';
  }catch{$('login-panel').hidden=false;$('payment-panel').hidden=true;notice('Não foi possível verificar sua sessão.',true);}
  finally{busyState(false);}
+}
+// O retorno ao site NAO significa pagamento aprovado. Conferimos o servidor
+// mais algumas vezes, sem criar novas cobranças e sem confiar no redirect.
+let reconciling=false;
+async function reconcileAfterCheckout(){
+ const resultado=new URLSearchParams(window.location.search).get('resultado');
+ if(reconciling||!['aprovado','pendente','falhou'].includes(resultado))return;
+ if(resultado==='falhou'){
+  notice('O pagamento não foi confirmado. Consulte a situação antes de tentar novamente.',true);
+  return;
+ }
+ reconciling=true;
+ notice('Aguardando confirmação oficial do pagamento. Não gere outra cobrança.');
+ try{
+  for(let tentativa=0;tentativa<10;tentativa++){
+   if(tentativa>0)await new Promise(resolve=>setTimeout(resolve,6000));
+   const data=await action('status');
+   if(data?.premium===true){
+    notice('Pagamento confirmado pelo Mercado Pago. Seu acesso Premium está liberado!');
+    window.history.replaceState(null,'',window.location.pathname);
+    return;
+   }
+  }
+  notice('Ainda não recebemos a confirmação. Use "Atualizar" para consultar depois; não pague de novo antes de verificar.');
+ }finally{reconciling=false;}
 }
 $('login-form').addEventListener('submit',async e=>{
  e.preventDefault();if(busy)return;busyState(true);notice('');
