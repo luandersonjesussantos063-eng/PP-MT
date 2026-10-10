@@ -9,10 +9,10 @@ const ORIGIN='https://luandersonjesussantos063-eng.github.io';
 const request=(action,payload={})=>new Request('https://supabase.invalid/functions/v1/ppmt-monthly-billing',{
  method:'POST',headers:{origin:ORIGIN,authorization:'Bearer fakeJwt','content-type':'application/json'},body:JSON.stringify({action,...payload})
 });
-function harness({enabled=false,seller=SELLER}={}){
+function harness({enabled=false,pilot=false,seller=SELLER}={}){
  const calls=[];let card=null,order=null,member=null;
  const db={
-  async enabled(){return enabled;},async token(){return 'FAKE_ONLY';},
+  async enabled(){return enabled;},async privatePilot(){return pilot;},async token(){return 'FAKE_ONLY';},
   async isTester(){return true;},
   async diagnostics(){return {webhook_secret_present:false,delivery_flag:false,billing_flag:false};},
   async member(){return member;},async card(){return card;},
@@ -150,4 +150,15 @@ test('checklist do administrador usa somente indicadores, não mostra segredos',
  assert.equal(data.enabled,false);
  assert.doesNotMatch(JSON.stringify(data),/FAKE_ONLY/);
  assert.equal(h.calls.filter(c=>c.method==='POST').length,0);
+});
+
+test('piloto de mensalidade libera checkout somente para testador autorizado pelo servidor',async()=>{
+ const privateAdmin=harness({pilot:true});
+ const response=await privateAdmin.fn(request('manual_checkout'));
+ assert.equal(response.status,200);
+ assert.equal((await response.json()).enabled,true);
+ assert.equal(privateAdmin.calls.some(x=>x.path==='/checkout/preferences'&&x.method==='POST'),true);
+ const publicUser=harness({pilot:false});
+ assert.equal((await publicUser.fn(request('manual_checkout'))).status,503);
+ assert.equal(publicUser.calls.filter(x=>x.method==='POST').length,0);
 });
