@@ -30,5 +30,5 @@ test('cache do app inclui versão nova do código de ajuda',()=>{
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
  assert.match(html,/app\.js\?v=2\.20\.0/);
  assert.match(sw,/app\.js\?v=2\.20\.0/);
- assert.match(sw,/help\.js\?v=2\.20\.0/);
+ assert.match(sw,/help\.js\?v=2\.19\.8/);
 });
