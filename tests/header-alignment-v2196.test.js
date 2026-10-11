@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
-test('V 2.19.7 não mostra cronômetro no cabeçalho mobile e preserva opções de conta',()=>{
+test('V 2.19.8 não mostra cronômetro no cabeçalho mobile e preserva opções de conta',()=>{
  const page=read('index.html'),app=read('app.js'),css=read('style.css');
  assert.doesNotMatch(page,/id="studyClockMini"/);
  assert.doesNotMatch(app,/studyClockMini/);
