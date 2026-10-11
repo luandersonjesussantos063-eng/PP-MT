@@ -5,6 +5,8 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildNativeBundle} from '../mobile/prepare.mjs';
+import {makePracticeHandler} from '../supabase/functions/ppmt-premium-practice/logic.js';
+import {makeExplainHandler} from '../supabase/functions/ppmt-ai-explain/logic.js';
 
 const root=fileURLToPath(new URL('../',import.meta.url));
 test('preparação Android/iOS gera aplicativo local e não altera os arquivos do site',()=>{
@@ -44,4 +46,22 @@ test('script da loja bloqueia checkout externo e remove login Google até config
  assert.match(code,/mercadopago\.com\.br/);
  assert.match(code,/googleSignIn/);
  assert.match(code,/stopImmediatePropagation/);
+});
+
+test('APIs do Premium e da IA aceitam origens nativas, mas exigem conta autenticada',async()=>{
+ const p=makePracticeHandler({authenticate:async()=>null,db:{member:async()=>null}});
+ const ai=makeExplainHandler({authenticate:async()=>null,db:{},generate:async()=>null});
+ for(const origin of ['capacitor://localhost','https://localhost']){
+  const headers={Origin:origin,'Content-Type':'application/json'};
+  const preflight=await p(new Request('https://supabase.invalid/functions/v1/ppmt-premium-practice',{method:'OPTIONS',headers}));
+  assert.equal(preflight.status,204);
+  assert.equal(preflight.headers.get('Access-Control-Allow-Origin'),origin);
+  assert.equal((await p(new Request('https://supabase.invalid/functions/v1/ppmt-premium-practice',{method:'POST',headers,body:'{"action":"status"}'}))).status,401);
+  const aiPreflight=await ai(new Request('https://supabase.invalid/functions/v1/ppmt-ai-explain',{method:'OPTIONS',headers}));
+  assert.equal(aiPreflight.status,204);
+  assert.equal(aiPreflight.headers.get('Access-Control-Allow-Origin'),origin);
+  assert.equal((await ai(new Request('https://supabase.invalid/functions/v1/ppmt-ai-explain',{method:'POST',headers,body:'{"action":"explain"}'}))).status,401);
+ }
+ assert.equal((await p(new Request('https://supabase.invalid/functions/v1/ppmt-premium-practice',{method:'OPTIONS',headers:{Origin:'https://site-invalido.example'}}))).status,403);
+ assert.equal((await ai(new Request('https://supabase.invalid/functions/v1/ppmt-ai-explain',{method:'OPTIONS',headers:{Origin:'https://site-invalido.example'}}))).status,403);
 });
