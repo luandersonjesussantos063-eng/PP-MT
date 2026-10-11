@@ -100,6 +100,28 @@ def make_item(title, excerpt, url, source, published=None):
             'events': confirmed_events(excerpt, url) if kind(title + ' ' + excerpt) not in ('convocacao','seletivo') else []}
 
 
+
+# Documento oficial específico que ficou fora da primeira página do índice de notícias.
+# Só publicar se a página oficial ainda contiver a autorização informada pelo governo.
+def parse_official_authorization(body, source):
+    content = normalize(plain(body))
+    expected = (
+        'governador otaviano pivetta convoca mais 283 policiais penais e anuncia novo concurso',
+        'autorizou a realizacao de um novo concurso publico',
+        'secretaria de estado de justica',
+    )
+    if not all(phrase in content for phrase in expected):
+        raise ValueError('Autorização não verificada no documento oficial')
+    title = 'Governador Otaviano Pivetta convoca mais 283 policiais penais e anuncia novo concurso'
+    excerpt = ('Em 09/06/2026, o governador anunciou a convocação de 283 policiais penais '
+               'oriundos do concurso de 2016 e autorizou um novo concurso público '
+               'para a Secretaria de Estado de Justiça (Sejus-MT). '
+               'Não se trata da publicação do edital.')
+    item = make_item(title, excerpt, source['url'], source, '2026-06-09')
+    if not item:
+        raise ValueError('Documento oficial não reconhecido como relevante')
+    return [item]
+
 def parse_iomat(body, source):
     if not re.search(r'class=["\'][^"\']*resultados', body): raise ValueError('Índice oficial não reconhecido')
     items = []
@@ -145,6 +167,9 @@ def sources_for(now):
     year, month = current.year, current.month
     previous = (year, month - 1) if month > 1 else (year - 1, 12)
     sources = [
+        {'id': 'sejus-autorizacao-2026', 'name': 'SEJUS · autorização do concurso',
+         'url': 'https://www.sejus.mt.gov.br/w/governador-otaviano-pivetta-convoca-mais-283-policiais-penais-e-anuncia-novo-concurso',
+         'parser': 'authorization'},
         {'id': 'sejus-editais', 'name': 'SEJUS · editais', 'url': 'https://www.sejus.mt.gov.br/editais', 'parser': 'liferay'},
         {'id': 'sejus-noticias', 'name': 'SEJUS · notícias', 'url': 'https://www.sejus.mt.gov.br/noticias', 'parser': 'liferay'},
         {'id': 'seplag-noticias', 'name': 'SEPLAG · notícias', 'url': 'https://www.seplag.mt.gov.br/noticias', 'parser': 'liferay'},
@@ -167,7 +192,8 @@ def fetch_source(source):
                 data = r.read(MAX_BYTES + 1)
                 if len(data) > MAX_BYTES: raise ValueError('Página excede limite de coleta')
                 body = data.decode(r.headers.get_content_charset() or 'utf-8', errors='replace')
-            parser = parse_iomat if source['parser'] == 'iomat' else parse_liferay
+            parser = {'iomat': parse_iomat, 'liferay': parse_liferay,
+                      'authorization': parse_official_authorization}[source['parser']]
             return source, parser(body, source), None
         except Exception as e:
             error = type(e).__name__
