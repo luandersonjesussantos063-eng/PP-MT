@@ -1,3 +1,4 @@
+import {easySimilarLesson} from './easy-practice.js?v=2.20.2';
 // Exercícios infantis / passo a passo, autorais, sem IA externa nem nova cota.
 // Não alteram o gabarito ou a pontuação da questão original.
 const easy=(topic,example,choices,answer,why,bridge)=>({
@@ -109,6 +110,15 @@ export function createEasySimilar(q,related=null,attempt=0){
  const topic=[q?.topic,q?.syllabusTopic].filter(Boolean).join(' ');
  const target={...q,topic};
  const lesson=LESSONS.find(item=>item.match(target));
+ // Antes de reduzir a questão original a duas alternativas, apresentar
+ // exercícios concretos do mesmo conceito, com linguagem acessível e feedback.
+ const easyLesson=easySimilarLesson(q);
+ if(easyLesson.id!=='leitura-guiada'){
+  const index=Math.abs(Math.trunc(Number(attempt)||0))%easyLesson.questions.length;
+  const example=easyLesson.questions[index];
+  return {...example,id:'easy:'+String(q?.id||'unknown')+':concept:'+easyLesson.id+':'+index,
+   topic:easyLesson.title,bridge:easyLesson.intro,kind:'easy',mode:'curated',source:'authorial'};
+ }
  if(lesson){
   const index=Math.abs(Number(attempt)||0)%lesson.items.length;
   return {...lesson.items[index],id:'easy:'+String(q?.id||'unknown')+':'+index,kind:'easy',mode:'curated'};
