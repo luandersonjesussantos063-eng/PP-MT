@@ -1,13 +1,8 @@
-import {signIn,verifiedUser,runPremiumPractice} from '../auth.js?v=2.15.0';
-import {loginWithGoogle} from '../account-services.js?v=2.18.0';
-import {createClient} from '../assets/vendor/supabase-2.117.2.js';
+import {signIn,verifiedUser,runPremiumPractice,getSupabaseClient} from '../auth.js?v=2.20.4';
+import {loginWithGoogle} from '../account-services.js?v=2.20.4';
 
 const $=id=>document.getElementById(id);
-const filterClient=createClient(
- 'https://fermfbmhwlafwopwndoj.supabase.co',
- 'sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN',
- {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
-);
+const filterClient=getSupabaseClient();
 let busy=false,current=null,answered=false,mode='mixed',subject='',stats=null;
 const modeText={
  mixed:'Treino misto: questões exclusivas variadas, priorizando as inéditas.',
