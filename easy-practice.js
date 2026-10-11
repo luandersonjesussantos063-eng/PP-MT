@@ -85,8 +85,8 @@ const TOPICS=[
    item('Escolher alguém apenas por amizade, sem observar os critérios legais, contraria especialmente:',['Impessoalidade','Pontualidade','Ortografia'],0,'A impessoalidade impede o favorecimento pessoal indevido na atuação administrativa.')]},
  {id:'teoria-sistemas',when:/retroaliment|feedback|teoria de sistemas|entrada.*saida/,title:'Entrada, processo e resultado',intro:'Pense numa máquina de suco: entra fruta, ela é processada e sai suco.',
   questions:[
-   item('Na máquina de suco, a fruta colocada primeiro é:',['Entrada','Saída','Feedback'],0,'Entrada é o recurso recebido pelo sistema.'),
-   item('Verificar se o suco saiu bom e ajustar a máquina é um exemplo de:',['Retroalimentação (feedback)','Entrada apenas','Fingir que nada aconteceu'],0,'Feedback informa o resultado e permite corrigir o processo.')]},
+   item('Na máquina de suco, a fruta colocada primeiro é:',['Entrada','Saída','Feedback'],0,'Entrada é aquilo que colocamos primeiro no sistema. Na máquina de suco, as frutas são a entrada.'),
+   item('Verificar se o suco saiu bom e ajustar a máquina é um exemplo de:',['Retroalimentação (feedback)','Entrada apenas','Fingir que nada aconteceu'],0,'Feedback mostra como ficou o resultado e ajuda a corrigir o processo, como provar o suco e ajustar a receita.')]},
 ];
 const FALLBACK={
  id:'leitura-guiada',title:'Treino de leitura da questão',
