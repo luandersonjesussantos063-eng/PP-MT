@@ -28,8 +28,8 @@ test('interface liga ajuda na resposta da missão, registra eventos e mostra na 
 test('cache do app inclui versão nova do código de ajuda',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
- assert.match(html,/app\\.js\\?v=2\\.20\\.1/);
- assert.match(sw,/app\\.js\\?v=2\\.20\\.1/);
- assert.match(sw,/help\\.js\\?v=2\\.19\\.8/);
- assert.match(sw,/easy-similar\\.js\\?v=2\\.20\\.1/);
+ assert.match(html,/app\.js\?v=2\.20\.1/);
+ assert.match(sw,/app\.js\?v=2\.20\.1/);
+ assert.match(sw,/help\.js\?v=2\.19\.8/);
+ assert.match(sw,/easy-similar\.js\?v=2\.20\.1/);
 });
