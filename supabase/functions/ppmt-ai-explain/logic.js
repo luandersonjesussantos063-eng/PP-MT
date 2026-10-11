@@ -1,7 +1,9 @@
 // Serviço de explicação de questões após erro, independente do frontend e testável sem rede.
 const ORIGINS=new Set([
  'https://luandersonjesussantos063-eng.github.io',
- 'https://ppmt.novabytesolucoes.com.br'
+ 'https://ppmt.novabytesolucoes.com.br',
+ 'https://localhost',
+ 'capacitor://localhost'
 ]);
 export function validateQuestion(input){
  const q=input?.question;
