@@ -152,6 +152,25 @@ export async function runMonthlyBilling(action) {
 }
 
 
+// IA Premium: nenhum segredo no navegador. Assinatura validada na Edge Function.
+export async function explainQuestionWithAI(question) {
+ if(!online())throw new Error('A explicação com IA exige conexão à internet.');
+ const user=await verifiedUser();
+ if(!user)throw new Error('Entre na sua conta PP-MT.');
+ const {data,error}=await client().functions.invoke('ppmt-ai-explain',{
+  body:{action:'explain',question}
+ });
+ if(error){
+  let detail='';
+  if(typeof error.context?.json==='function'){
+   try{const body=await error.context.json();detail=String(body?.error||'');}catch{}
+  }
+  throw new Error(detail.slice(0,230)||'Não foi possível consultar a IA Premium agora.');
+ }
+ if(typeof data?.explanation!=='string')throw new Error('A IA não retornou uma explicação válida.');
+ return {explanation:data.explanation,sources:Array.isArray(data.sources)?data.sources:[],cached:data.cached===true};
+}
+
 // Treino pago: JWT do aluno, gabarito nunca incluído no script público.
 export async function runPremiumPractice(action,fields={}) {
   if(!navigator.onLine)throw new Error('O treino Premium exige conexão para verificar o acesso.');

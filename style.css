@@ -821,3 +821,16 @@ nav a.active{background:#29313a;color:var(--accent)}
   header .account-logout{padding:5px 3px;font-size:10px}
   header a.account-logout[aria-label="Abrir painel administrativo PP-MT"]{width:34px;min-width:34px}
 }
+
+/* Explicação com IA — exclusiva de assinantes Premium */
+.ai-premium-panel{margin-top:18px;padding:17px;border:1px solid #65552f;border-radius:14px;background:linear-gradient(145deg,rgba(213,179,106,.09),rgba(17,18,19,.72));display:grid;gap:12px}
+.ai-premium-intro{display:flex;flex-direction:column;gap:4px}
+.ai-premium-intro b{color:#e5c88c;font-size:1.02rem}
+.ai-premium-intro small{color:var(--muted);line-height:1.45}
+.ai-premium-trigger{width:fit-content;max-width:100%;white-space:normal;text-align:center}
+.ai-premium-result{min-width:0;overflow-wrap:anywhere;line-height:1.6;color:#eeeae0}
+.ai-premium-result:empty{display:none}
+.ai-premium-answer{white-space:pre-line;margin:0}
+.ai-premium-sources{display:flex;gap:8px;flex-direction:column;margin-top:12px}
+.ai-premium-sources a{color:#e5c88c;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:620px){.ai-premium-panel{padding:13px}.ai-premium-trigger{width:100%}}
