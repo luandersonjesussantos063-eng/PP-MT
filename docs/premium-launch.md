@@ -100,3 +100,11 @@ A cobrança NÃO está ativa. A página declara pré-lançamento; não coleta ca
 - Não exige assinatura **apenas nessa URL de testes**, que não tem credencial, banco ou acesso à API Mercado Pago. GET retorna 405; eventos com IDs não fictícios são rejeitados.
 - O webhook real `ppmt-monthly-webhook` mantém autenticação HMAC e reconciliação da transação de produção. Nunca substituir a URL de produção permanente pela URL de testes; usá-la somente no modo teste/simulador.
 - HTTP 200 no endpoint de teste comprova transporte HTTP, **não** valida a chave HMAC nem a liberação automática de mensalidade. Antes das vendas, corrigir 401 de assinatura do webhook real e validar pagamentos autênticos, cancelamento, estorno.
+
+## IA explicativa exclusiva do Premium (implementação 2026-10)
+- Função `ppmt-ai-explain`: **assinatura Premium ativa obrigatória no backend**, validada antes de cache ou geração.
+- O botão aparece apenas após uma resposta errada, com marca Premium, e a pesquisa só começa após o toque para evitar chamadas involuntárias.
+- Cinco explicações novas por assinante ao dia, cache de conteúdos idênticos (sem novas chamadas); limite global de 100 solicitações novas ao dia.
+- Prompt estruturado para corrigir a alternativa errada, comparar com gabarito preservado e pesquisar fontes; não substitui legislação oficial ou gabaritos.
+- A chave `OPENAI_API_KEY` é configurada somente em Supabase > Edge Functions > Secrets. Não colocar em GitHub ou no navegador. Sem chave, o backend retorna 503 e não altera o estudo gratuito.
+- O uso do serviço externo **tem custo por chamada** e usa conta de API com cobrança separada de assinaturas ChatGPT. Avaliar orçamento antes de ativar.
