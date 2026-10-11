@@ -834,3 +834,27 @@ nav a.active{background:#29313a;color:var(--accent)}
 .ai-premium-sources{display:flex;gap:8px;flex-direction:column;margin-top:12px}
 .ai-premium-sources a{color:#e5c88c;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:620px){.ai-premium-panel{padding:13px}.ai-premium-trigger{width:100%}}
+
+/* Questão parecida: microtreinos guiados no modal de ajuda tática. */
+.easy-practice{display:grid;gap:12px;min-width:0}
+.easy-kicker{margin:0;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:1.1px}
+.easy-practice h3{margin:0;color:#f2dfad;font-size:19px;line-height:1.3}
+.easy-intro{margin:0;padding:13px;background:#242720;border-left:3px solid var(--accent);border-radius:8px;color:#e5e3d9;line-height:1.65;font-size:14px}
+.easy-prompt{font-weight:700;color:#f2f1ed;line-height:1.55;font-size:16px;margin:3px 0}
+.easy-options{display:grid;gap:9px}
+.easy-option{display:flex;align-items:center;gap:11px;min-height:52px;width:100%;text-align:left;padding:13px;border:1px solid #505354;border-radius:10px;color:#f4f1e8;background:#1e2428;line-height:1.45;font-size:14px;white-space:normal}
+.easy-option span{border:1px solid #6b6351;background:#282922;color:#ebc76f;display:inline-flex;flex:0 0 28px;align-items:center;justify-content:center;border-radius:6px;min-height:28px;font-weight:800}
+.easy-option:focus-visible,.easy-actions button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.easy-option.is-correct{background:#1b3226;border-color:#73a982;color:#e6ffe9}
+.easy-option.is-wrong{background:#3c2527;border-color:#d5838a;color:#ffe7e7}
+.easy-option:disabled{opacity:1;cursor:default}
+.easy-feedback{border:1px solid #77715c;border-radius:10px;padding:13px;line-height:1.6;background:#28291f;color:#f4eddc}
+.easy-feedback.is-correct{border-color:#67a47a;background:#1d3426}
+.easy-feedback.is-wrong{border-color:#ba8080;background:#382628}
+.easy-feedback b{font-size:15px}
+.easy-feedback p{margin:5px 0 0;font-size:14px}
+.easy-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.easy-actions button{min-height:43px;flex:1 1 190px;white-space:normal}
+.easy-actions small{line-height:1.5;color:#bdb7a9}
+.easy-disclaimer{margin:0;color:#bab5a9;font-size:11px;line-height:1.5}
+@media(max-width:640px){.easy-option{font-size:14px;min-height:54px}.easy-practice h3{font-size:18px}.easy-actions button{flex:1 1 100%}}
