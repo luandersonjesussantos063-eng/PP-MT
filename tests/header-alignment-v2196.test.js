@@ -15,7 +15,7 @@ test('V 2.19.8 não mostra cronômetro no cabeçalho mobile e preserva opções 
  assert.match(css,/\.main>header \.header-right\{display:flex;align-items:center/);
  assert.match(css,/\.main>header \.admin-label\{display:none\}/);
  assert.match(page,/app\.js\?v=2\.19\.8/);
- assert.match(page,/style\.css\?v=2\.19\.7/);
+ assert.match(page,/style\.css\?v=2\.19\.8/);
  assert.match(app,/const APP_VERSION='2\.19\.8'/);
  assert.match(read('sw.js'),/const CACHE='ppmt-2\.19\.8-concurso-notices'/);
 });
