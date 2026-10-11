@@ -83,3 +83,12 @@ export function findSimilar(q,all,history=[]){
   }
   return best;
 }
+
+/**
+ * Dicas gratuitas ficam disponíveis nos treinos comuns. Em missões de
+ * correção imediata, somente depois que a questão foi respondida.
+ * Simulados temporizados revelam a ajuda após a finalização.
+ */
+export function canOpenTacticalHelp({exam=false,missionAnswered=false,finished=false}={}){
+ return !exam||Boolean(missionAnswered)||Boolean(finished);
+}
