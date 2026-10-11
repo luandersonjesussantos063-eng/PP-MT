@@ -55,8 +55,12 @@ jobs:
         working-directory: mobile
         run: npm install --no-audit --no-fund
 
-      - name: Empacotar recursos locais
-        run: node mobile/prepare.mjs
+      - name: Empacotar recursos locais e habilitar compra externa SOMENTE no APK debug
+        env:
+          PPMT_ANDROID_DEBUG_PAYMENTS: 'true'
+        run: |
+          node mobile/prepare.mjs
+          ./node_modules/.bin/esbuild ./mobile/android-payments.mjs --bundle --format=esm --platform=browser --outfile=mobile/www/android-payments.js
 
       - name: Gerar projeto nativo
         working-directory: mobile
