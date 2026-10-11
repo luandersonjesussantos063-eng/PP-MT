@@ -3,3 +3,9 @@ dist/
 
 __pycache__/
 *.pyc
+
+# Capacitor: artefatos e plataformas geradas no ambiente de desenvolvimento
+mobile/www/
+mobile/node_modules/
+mobile/android/
+mobile/ios/

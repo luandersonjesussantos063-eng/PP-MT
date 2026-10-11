@@ -5,14 +5,15 @@ export class PracticeError extends Error{
 }
 const deny=(status,message)=>{throw new PracticeError(status,message);};
 const ORIGIN='https://luandersonjesussantos063-eng.github.io';
+const ALLOWED_ORIGINS=new Set([ORIGIN,'https://ppmt.novabytesolucoes.com.br','https://localhost','capacitor://localhost']);
 const validId=id=>typeof id==='string'&&/^mt-premium-[a-z0-9-]{4,90}$/.test(id);
 export const paidMembership=member=>Boolean(member?.status==='active'&&typeof member.current_period_end==='string'&&Date.parse(member.current_period_end)>Date.now());
 
 export function makePracticeHandler({authenticate,db}){
  return async(req)=>{
-  const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Access-Control-Allow-Origin':ORIGIN,'Vary':'Origin','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'};
+  const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','Access-Control-Allow-Origin':ALLOWED_ORIGINS.has(req.headers.get('Origin'))?req.headers.get('Origin'):ORIGIN,'Vary':'Origin','Access-Control-Allow-Headers':'authorization,apikey,content-type,x-client-info','Access-Control-Allow-Methods':'POST, OPTIONS'};
   const send=(payload,status=200)=>new Response(JSON.stringify(payload),{status,headers});
-  if(req.headers.get('Origin')&&req.headers.get('Origin')!==ORIGIN)return send({error:'Origem não autorizada.'},403);
+  if(req.headers.get('Origin')&&!ALLOWED_ORIGINS.has(req.headers.get('Origin')))return send({error:'Origem não autorizada.'},403);
   if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
   if(req.method!=='POST')return send({error:'Método inválido.'},405);
   try{
