@@ -21,13 +21,12 @@ possam ser incorporadas ao mesmo app.
 
 ## Como obter APK de teste
 
-No GitHub do PP-MT, abrir **Actions → Android PP-MT — APK de teste
-(sem publicação)** e selecionar **Run workflow** (ramo `main`).
+No GitHub do PP-MT, abrir **Actions → Gerar APK de teste do PP-MT (Android)** e selecionar **Run workflow** (ramo `main`).
 O workflow também roda ao alterar arquivos Android na branch principal.
 Quando a execução estiver concluída com sucesso:
 
 1. Abra a execução.
-2. Em **Artifacts**, baixe `PPMT-Android-Preview-APK`.
+2. Em **Artifacts**, baixe `ppmt-android-debug-apk`.
 3. Extraia o ZIP para encontrar `app-debug.apk`.
 4. Instale o APK no celular Android de testes (exige autorização temporária
    para instalar de fontes externas).
