@@ -16,6 +16,10 @@ function client(){return supabase??=createClient(SUPABASE_URL, SUPABASE_PUBLISHA
   }}
 })}
 
+// Uma única instância processa o retorno OAuth e atualiza a sessão persistida.
+// Criar dois clientes independentes com detectSessionInUrl causa disputa no callback.
+export function getSupabaseClient(){return client();}
+
 export async function getCurrentUser() {
   if(!online())return cachedAccount(localStorage);
   const {data,error}=await client().auth.getUser();
