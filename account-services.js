@@ -35,7 +35,7 @@ export function takeGoogleAuthError(){
  history.replaceState(history.state,'',url.pathname+(search.toString()?'?'+search.toString():'')+newHash);
  if(error==='access_denied')return 'O acesso à conta Google foi cancelado ou negado. Tente novamente.';
  if(error==='server_error')return 'O servidor de autenticação não concluiu o login. Confira as URLs de retorno no Supabase.';
- return String(details||'O Google não concluiu a autenticação.').replace(/[\\r\\n]+/g,' ').slice(0,220);
+ return String(details||'O Google não concluiu a autenticação.').replace(/[\r\n]+/g,' ').slice(0,220);
 }
 export function takeGoogleReturn(){
  const target=sessionStorage.getItem('ppmt-google-oauth-return');
