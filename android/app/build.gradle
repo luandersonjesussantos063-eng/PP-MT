@@ -1,0 +1,36 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'br.com.novabytesolucoes.ppmt'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'br.com.novabytesolucoes.ppmt'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0-preview'
+    }
+
+    buildTypes {
+        debug {
+            // Somente testes locais; nunca configurar chave de produção aqui.
+            debuggable true
+        }
+        release {
+            // Sem chave privada, não publicar nem distribuir como versão final.
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+}
