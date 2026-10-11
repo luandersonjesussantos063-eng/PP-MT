@@ -26,6 +26,6 @@ test('versão e cache offline incluem o novo desenho e sua lógica',()=>{
  assert.match(app,/notifications\.js\?v=2\.19\.7/);
  assert.match(html,/app\.js\?v=2\.20\.4/);
  assert.match(html,/style\.css\?v=2\.20\.4/);
- assert.match(sw,/ppmt-2\.20\.4-ios-dock/);
+ assert.match(sw,/ppmt-2\.20\.4-google-sso/);
  assert.match(sw,/notifications\.js\?v=2\.19\.7/);
 });
