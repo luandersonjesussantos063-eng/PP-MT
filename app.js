@@ -493,7 +493,7 @@ document.addEventListener('click',async event=>{
  const button=event.target.closest?.('button[data-ai-explain]');
  if(!button||button.disabled)return;
  const panel=button.closest('.ai-premium-panel'),result=panel?.querySelector('.ai-premium-result');
- const q=realBank().find(item=>item.id===button.dataset.aiExplain);
+ const q=bank().find(item=>item.id===button.dataset.aiExplain);
  const selected=Number(button.dataset.aiSelected);
  if(!result||!q||!Number.isInteger(selected)||selected===q.answer)return;
  button.disabled=true;button.textContent='Pesquisando e explicando…';
