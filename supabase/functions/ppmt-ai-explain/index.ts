@@ -64,7 +64,7 @@ async function generate(q:any){
     textParts.push(content.text);
     for(const ann of content.annotations||[]){
      if(ann.type==='url_citation'&&ann.url){
-      sources.push({url:ann.url,title:ann.title||new URL(ann.url).hostname});
+      try{sources.push({url:ann.url,title:ann.title||new URL(ann.url).hostname})}catch{}
      }
     }
    }
