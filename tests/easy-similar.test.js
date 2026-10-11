@@ -59,7 +59,7 @@ test('interface não desabilita ajuda sem similar, não cobra XP e preserva ques
  const app=readFileSync(new URL('../app.js',import.meta.url),'utf8');
  assert.match(app,/function showEasySimilar\(/);
  assert.match(app,/createEasySimilar\(q,related,attempt\)/);
- assert.match(app,/id="similarHelp"/);
+ assert.match(app,/action\('similarHelp'/);
  assert.doesNotMatch(app,/'similar',!similar/);
  assert.match(app,/data-easy-choice/);
  assert.match(app,/mini\.answer/);
