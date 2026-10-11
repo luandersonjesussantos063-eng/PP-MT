@@ -21,10 +21,10 @@ import {EXAM_SOURCES,SOURCE_TOTAL,IMPORTED_SOURCE_TOTAL} from './exam-sources.js
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction} from './auth.js?v=2.19.2';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=2.20.0';
 import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=2.19.8';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.19.8';
+const APP_VERSION='2.20.0';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -483,7 +483,69 @@ function showQuestion(){
  for(const [id,delta] of [['prev',-1],['next',1]])$('#'+id).onclick=()=>{index+=delta;selection=null;answered=false;showQuestion()};
 }
 function questionHTML(q,exam){const inline=q.displayMode!=='source-pdf',assist=assistFor(q.id),strikes=manualStrikes(q.id),examAnswered=exam&&run?.originTab==='missao'&&runAnswered(q.id),helpEnabled=canOpenTacticalHelp({exam,missionAnswered:examAnswered}),helpLabel=helpEnabled?'💡 Entender o conteúdo · grátis':run?.originTab==='missao'?'💡 Responda para entender · grátis':'💡 Entender o conteúdo após finalizar',diff=questionDifficulty(q),reward=questionXP(q),weight=questionWeight(q),xp=store.program.xp||0;return `<article class="card question">${historicalNotice(q)}<div class="row"><div class="meta">${esc(q.subject)} / ${esc(q.topic)}<br>${q.origin==='autoral'?'AUTORAL • TREINO':esc(q.source.board)+' • '+esc(q.source.year)+' • '+esc(q.source.exam)+' • Q'+esc(q.source.number)+(q.source.version?' • Caderno '+esc(q.source.version):'')}<div class="question-xp-meta"><span>${diff.label}</span><span>Peso ${weight}</span><span>+${reward} XP se acertar</span></div></div>${!exam?`<button id="favorite" class="secondary" aria-label="${store.favorites.includes(q.id)?'Remover dos':'Adicionar aos'} favoritos">${store.favorites.includes(q.id)?'★ Salva':'☆ Salvar'}</button>`:''}</div>${supportHTML(q)}<p class="statement">${esc(q.statement)}</p>${originalHTML(q)}${inline?'':referenceReader(q)}<div class="options" role="group" aria-label="Alternativas">${q.options.map((o,i)=>{const eliminated=assist.eliminated.includes(i),struck=strikes.includes(i),instant=examAnswered?(i===q.answer?'correct':i===selection&&selection!==q.answer?'wrong':''):'';return `<div class="option ${selection===i?'selected':''} ${eliminated?'eliminated':''} ${struck?'struck':''} ${examAnswered?'locked-answer':''} ${instant||answered&&!exam?(instant||(i===q.answer?'correct':i===selection?'wrong':'')):''}" data-option="${i}" data-strike-key="${esc(q.id)}" role="button" tabindex="${eliminated||answered&&!exam||examAnswered?'-1':'0'}" aria-label="Alternativa ${String.fromCharCode(65+i)}${struck?', riscada':''}" aria-pressed="${selection===i}" aria-disabled="${eliminated||answered&&!exam||examAnswered}"><span class="letter">${String.fromCharCode(65+i)}</span><span>${inline?esc(o):'Alternativa '+String.fromCharCode(65+i)}</span>${struck?'<small class="strike-label">RISCADA</small>':''}${eliminated?'<small class="elim-label">ELIMINADA</small>':''}</div>`}).join('')}</div>${!examAnswered?'<p class="strike-hint">Deslize a alternativa para o lado. Ao soltar, ela será riscada; deslize novamente para desfazer.</p>':''}<div class="question-tools"><button id="tacticalHelp" class="tactical-help" ${helpEnabled?'':'disabled title="A ajuda fica disponível depois da resposta ou após finalizar o simulado."'}>${helpLabel}</button>${assist.spent?`<span class="assist-used">-${assist.spent} XP em ajuda nesta questão</span>`:''}</div>${q.origin==='prova'&&inline?`<div class="question-source"><a href="${esc(q.source.examUrl)}#page=${Number(q.source.page)||1}" target="_blank" rel="noopener noreferrer">Ver questão na prova original ↗</a></div>`:''}${answered&&!exam?feedback(q,selection):''}${answered&&!exam?'<button id=guessed class=secondary>Acertei, mas chutei / fiquei em dúvida</button>':''}</article>`}
-function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a.id===q.id),gain=last?.xpAwarded||0,xpNote=last?`<div class="xp-earned">${gain>0?`+${gain} XP nesta questão`:'XP desta questão já coletado hoje'}</div>`:'';const diagnosis=selected!==undefined&&selected!==q.answer?`<div class="error-diagnosis"><b>Onde você caiu?</b><p class="muted">Marque o motivo. O app pode usar isso para ajustar missões futuras.</p><div class="reason-buttons"><button data-error-reason="conteudo">Não sabia o conteúdo</button><button data-error-reason="interpretacao">Interpretei errado</button><button data-error-reason="duvida">Fiquei entre duas</button><button data-error-reason="chute">Chutei</button></div></div>`:'';return `<div class="feedback ${selected!==q.answer?'bad':''}" role="status"><b>${selected===q.answer?'Resposta correta!':selected===undefined?'Não respondida.':'Ainda não foi dessa vez.'} Gabarito: ${q.options.length===2?esc(q.options[q.answer]):String.fromCharCode(65+q.answer)}.</b>${xpNote}${explanationHTML(q)}${diagnosis}${q.origin==='prova'?`<a href="${esc(q.source.examUrl)}" target="_blank" rel="noopener noreferrer">Consultar prova</a> · <a href="${esc(q.source.answerUrl)}${q.source.answerPage?'#page='+Number(q.source.answerPage):''}" target="_blank" rel="noopener noreferrer">Consultar gabarito</a><p>${q.displayMode==='source-pdf'?'Conferência documental do gabarito histórico':'Revisão declarada na importação'}: ${esc(q.source.reviewedAt)}.</p>`:`<small>${q.practiceKind==='application'?'Exercício autoral de aplicação, com assistência de IA e fontes no comentário.':'Questão autoral para demonstração da plataforma.'}</small>`}</div>`}
+function premiumAIHelp(q,selected){
+ if(!Number.isInteger(selected)||selected===q.answer||!q.options?.length)return '';
+ return `<section class="ai-premium-panel"><div class="ai-premium-intro"><b>✨ Análise personalizada · Premium</b><small>IA com pesquisa de fontes. Confira sempre as referências oficiais.</small></div><button type="button" class="secondary ai-premium-trigger" data-ai-explain="${esc(q.id)}" data-ai-selected="${selected}">Explicar meu erro com IA</button><div class="ai-premium-result" role="status" aria-live="polite"></div></section>`;
+}
+function feedback(q,selected){const last=[...store.attempts].reverse().find(a=>a.id===q.id),gain=last?.xpAwarded||0,xpNote=last?`<div class="xp-earned">${gain>0?`+${gain} XP nesta questão`:'XP desta questão já coletado hoje'}</div>`:'';const diagnosis=selected!==undefined&&selected!==q.answer?`<div class="error-diagnosis"><b>Onde você caiu?</b><p class="muted">Marque o motivo. O app pode usar isso para ajustar missões futuras.</p><div class="reason-buttons"><button data-error-reason="conteudo">Não sabia o conteúdo</button><button data-error-reason="interpretacao">Interpretei errado</button><button data-error-reason="duvida">Fiquei entre duas</button><button data-error-reason="chute">Chutei</button></div></div>`:'';return `<div class="feedback ${selected!==q.answer?'bad':''}" role="status"><b>${selected===q.answer?'Resposta correta!':selected===undefined?'Não respondida.':'Ainda não foi dessa vez.'} Gabarito: ${q.options.length===2?esc(q.options[q.answer]):String.fromCharCode(65+q.answer)}.</b>${xpNote}${explanationHTML(q)}${premiumAIHelp(q,selected)}${diagnosis}${q.origin==='prova'?`<a href="${esc(q.source.examUrl)}" target="_blank" rel="noopener noreferrer">Consultar prova</a> · <a href="${esc(q.source.answerUrl)}${q.source.answerPage?'#page='+Number(q.source.answerPage):''}" target="_blank" rel="noopener noreferrer">Consultar gabarito</a><p>${q.displayMode==='source-pdf'?'Conferência documental do gabarito histórico':'Revisão declarada na importação'}: ${esc(q.source.reviewedAt)}.</p>`:`<small>${q.practiceKind==='application'?'Exercício autoral de aplicação, com assistência de IA e fontes no comentário.':'Questão autoral para demonstração da plataforma.'}</small>`}</div>`}
+// Cada consulta é acionada pelo aluno, evitando custos automáticos a cada erro.
+document.addEventListener('click',async event=>{
+ const button=event.target.closest?.('button[data-ai-explain]');
+ if(!button||button.disabled)return;
+ const panel=button.closest('.ai-premium-panel'),result=panel?.querySelector('.ai-premium-result');
+ const q=realBank().find(item=>item.id===button.dataset.aiExplain);
+ const selected=Number(button.dataset.aiSelected);
+ if(!result||!q||!Number.isInteger(selected)||selected===q.answer)return;
+ button.disabled=true;button.textContent='Pesquisando e explicando…';
+ result.replaceChildren();
+ result.textContent='A IA está comparando sua resposta com o gabarito e procurando fontes.';
+ try{
+  const data=await explainQuestionWithAI({
+   id:q.id,subject:q.subject,topic:q.topic,statement:q.statement,
+   options:q.options,answer_index:q.answer,selected_index:selected,
+   existing_explanation:q.lesson?.reasoning||q.explanation||''
+  });
+  result.replaceChildren();
+  const explanation=document.createElement('p');
+  explanation.className='ai-premium-answer';
+  explanation.textContent=data.explanation;
+  result.append(explanation);
+  const sources=Array.isArray(data.sources)?data.sources:[];
+  if(sources.length){
+   const list=document.createElement('div');
+   list.className='ai-premium-sources';
+   const label=document.createElement('b');label.textContent='Fontes consultadas: ';
+   list.append(label);
+   for(const source of sources.slice(0,5)){
+    try{
+     const url=new URL(source.url);
+     if(url.protocol!=='https:')continue;
+     const link=document.createElement('a');
+     link.href=url.href;link.target='_blank';link.rel='noopener noreferrer';
+     link.textContent=source.title||url.hostname;
+     list.append(link);
+    }catch{}
+   }
+   result.append(list);
+  }else{
+   const note=document.createElement('small');
+   note.textContent='Não foi possível comprovar referências externas; consulte a explicação da questão e as fontes oficiais.';
+   result.append(note);
+  }
+  button.textContent=data.cached?'Explicação do banco IA':'Explicação concluída';
+ }catch(error){
+  result.replaceChildren();
+  const message=document.createElement('p');
+  const detail=error instanceof Error?error.message:'IA temporariamente indisponível.';
+  message.textContent=detail;
+  result.append(message);
+  if(/assinantes Premium|exclusiva.*Premium/i.test(detail)){
+   const a=document.createElement('a');a.href='./planos/assinar.html';
+   a.textContent='Conhecer Premium →';result.append(a);
+  }
+  button.disabled=false;button.textContent='Tentar explicação com IA';
+ }
+});
 function bindOptions(q,fn){
  const buttons=[...document.querySelectorAll('[data-option]')];
  buttons.forEach(b=>{
