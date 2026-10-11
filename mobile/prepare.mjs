@@ -14,7 +14,7 @@ const PAGES=[
 const copy=(from,to)=>{if(!existsSync(from))throw Error('Arquivo necessário não encontrado: '+from);cpSync(from,to,{recursive:true});};
 const makeLanding=()=>`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PP-MT · Preparação Policial</title><link rel="stylesheet" href="./style.css"></head><body><main class="wrap legal"><h1>PP-MT — Preparação Policial</h1><p>App independente para Polícia Penal de Mato Grosso: questões, simulados, revisão e desempenho.</p><a class="button primary" href="../#inicio">Começar a estudar gratuitamente →</a><p><a href="./privacidade.html">Política de privacidade</a></p><p>Sem vínculo com órgãos do Governo de Mato Grosso.</p></main></body></html>`;
 
-export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true}={}){
+export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,androidDebugPayments=false}={}){
  const mobile=join(root,'mobile');
  const outPath=resolve(out);
  if(outPath===resolve(root)||outPath===resolve(mobile))throw Error('Diretório de destino inválido.');
@@ -27,7 +27,25 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true}
  mkdirSync(join(outPath,'planos'),{recursive:true});
  for(const name of PAGES)copy(join(root,'planos',name),join(outPath,'planos',name));
  copy(join(mobile,'native-account.js'),join(outPath,'planos','account.js'));
- copy(join(mobile,'native-assinar.html'),join(outPath,'planos','assinar.html'));
+ if(androidDebugPayments){
+  // O checkout real abre em Custom Tab, fora do WebView Android.
+  // Só o APK debug recebe o botão; a versão padrão/loja não o contém.
+  copy(join(mobile,'native-assinar-debug.html'),join(outPath,'planos','assinar.html'));
+  const accountPath=join(outPath,'planos','account.js');
+  let account=readFileSync(accountPath,'utf8');
+  const label='A contratação de conteúdo digital não está disponível nesta versão do aplicativo.';
+  const button='<a class="button secondary" href="./planos/assinar.html">Abrir pagamento (somente testes Android)</a>';
+  if(!account.includes(label))throw Error('Marcador da área de pagamento nativo não encontrado.');
+  account=account.replace(label,'No APK de testes, o Mercado Pago está disponível no navegador externo. Para publicação nas lojas, esta opção será retirada.');
+  account=account.replace(
+   '<a class="button secondary" href="./planos/premium.html">Consultar recursos exclusivos</a>',
+   '<a class="button secondary" href="./planos/premium.html">Consultar recursos exclusivos</a> '+button
+  );
+  if(!account.includes(button))throw Error('Botão de compra do APK de teste não inserido.');
+  writeFileSync(accountPath,account);
+ }else{
+  copy(join(mobile,'native-assinar.html'),join(outPath,'planos','assinar.html'));
+ }
  copy(join(mobile,'native-runtime.js'),join(outPath,'mobile-runtime.js'));
  writeFileSync(join(outPath,'planos','index.html'),makeLanding());
 
@@ -58,6 +76,6 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true}
  return {out:outPath,files:readdirSync(outPath).length,hasAssets:includeAssets};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- const result=buildNativeBundle();
+ const result=buildNativeBundle({androidDebugPayments:process.env.PPMT_ANDROID_DEBUG_PAYMENTS==='true'});
  console.log('PP-MT: pacote web nativo gerado:',result.out,'arquivos na raiz:',result.files);
 }
