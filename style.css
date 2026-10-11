@@ -834,3 +834,27 @@ nav a.active{background:#29313a;color:var(--accent)}
 .ai-premium-sources{display:flex;gap:8px;flex-direction:column;margin-top:12px}
 .ai-premium-sources a{color:#e5c88c;text-decoration:underline;text-underline-offset:3px}
 @media(max-width:620px){.ai-premium-panel{padding:13px}.ai-premium-trigger{width:100%}}
+
+/* Ajuda Tática: miniaula de resposta interativa e acessível no celular. */
+.easy-similar{display:grid;gap:12px}
+.easy-similar h3{font-size:18px;line-height:1.4;margin:0;color:#f3e3bf}
+.easy-topic{font-size:12px;color:#dec080;font-weight:800;margin:0}
+.easy-bridge{border-left:3px solid #d5b36a;background:#26231b;border-radius:0 9px 9px 0;padding:12px 14px;font-size:13px;line-height:1.6;color:#e5dfd3}
+.easy-original{border:1px solid #424038;border-radius:10px;padding:10px 12px;font-size:12px;color:#d0c9bb}
+.easy-original summary{cursor:pointer;color:#e1c885;font-weight:700}
+.easy-original p{white-space:pre-wrap;overflow-wrap:anywhere}
+.easy-answers{display:grid;gap:10px}
+.easy-answer{display:flex;align-items:flex-start;text-align:left;gap:12px;width:100%;min-height:52px;padding:14px;background:#1b2226;border:1px solid #52504a;font-size:14px;line-height:1.5}
+.easy-answer b{flex:0 0 28px;text-align:center;border:1px solid #77705d;border-radius:6px;padding:2px 0;color:#dec080}
+.easy-answer span{overflow-wrap:anywhere}
+.easy-answer.is-correct,.easy-answer.is-correct:disabled{border-color:#97c988;background:#243b2c;opacity:1;color:#e7f6de}
+.easy-answer.is-wrong,.easy-answer.is-wrong:disabled{border-color:#dd8181;background:#442a30;opacity:1}
+.easy-answer:disabled:not(.is-correct):not(.is-wrong){opacity:.6}
+.easy-feedback{display:none;border:1px solid #5c5642;border-radius:12px;padding:16px;background:#1f261f;font-size:13px;line-height:1.65}
+.easy-feedback.visible{display:block}
+.easy-feedback h4{color:#e9d098;font-size:16px;margin:0 0 10px}
+.easy-feedback p{margin:8px 0}
+.easy-final{color:#dceec9}
+.easy-another{justify-self:start;min-height:44px;font-size:13px}
+.easy-disclaimer{font-size:11px!important;margin:0;color:#aaa69b}
+@media(max-width:640px){.easy-answer{font-size:13px;padding:12px}.easy-bridge{font-size:12px}.easy-similar h3{font-size:16px}}

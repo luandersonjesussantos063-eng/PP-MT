@@ -22,10 +22,10 @@ test('notificações alteram só o pontinho, sem substituir ou apagar o sino',()
  assert.match(notices,/function markRead\(\)/);
 });
 test('versão e cache offline incluem o novo desenho e sua lógica',()=>{
- assert.match(app,/const APP_VERSION='2\.20\.0'/);
+ assert.match(app,/const APP_VERSION='2\.20\.1'/);
  assert.match(app,/notifications\.js\?v=2\.19\.7/);
- assert.match(html,/app\.js\?v=2\.20\.0/);
- assert.match(html,/style\.css\?v=2\.20\.0/);
- assert.match(sw,/ppmt-2\.20\.0-concurso-notices/);
+ assert.match(html,/app\.js\?v=2\.20\.1/);
+ assert.match(html,/style\.css\?v=2\.20\.1/);
+ assert.match(sw,/ppmt-2\.20\.1-easy-similar/);
  assert.match(sw,/notifications\.js\?v=2\.19\.7/);
 });

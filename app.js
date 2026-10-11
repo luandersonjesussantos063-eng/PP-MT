@@ -23,8 +23,9 @@ const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf'
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=2.20.0';
 import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=2.19.8';
+import {createEasySimilar} from './easy-similar.js?v=2.20.1';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.20.0';
+const APP_VERSION='2.20.1';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
@@ -308,16 +309,52 @@ document.addEventListener('click',e=>{
 function runAnswered(id){return !!(run&&Object.prototype.hasOwnProperty.call(run.answers,id))}
 function noteAssist(q,type){const a=assistFor(q.id);if(!a.used.includes(type))a.used.push(type);if(run){run.assists=run.assists||{};run.assists[q.id]=[...a.used]}}
 function closeTacticalHelp(){document.querySelector('.tactical-overlay')?.remove()}
+function showEasySimilar(q,related,attempt=0){
+ const mini=createEasySimilar(q,related,attempt),container=$('#tacticalContent');
+ if(!container)return;
+ const title=mini.mode==='curated'?'Exemplo bem fácil do mesmo conceito':
+  mini.mode==='two-choice'?'A mesma ideia com só duas alternativas':'Vamos aprender a começar';
+ container.innerHTML=`<section class="easy-similar" aria-label="Questão parecida simplificada">
+  <span class="eyebrow">APRENDA PASSO A PASSO · 0 XP</span>
+  <h3>${esc(title)}</h3>
+  <p class="easy-topic">${esc(mini.topic)}</p>
+  <div class="easy-bridge"><strong>1. Pense assim:</strong> ${esc(mini.bridge)}</div>
+  ${mini.originalStatement?`<details class="easy-original"><summary>Relembrar o enunciado da questão</summary><p>${esc(mini.originalStatement)}</p></details>`:''}
+  <p class="mini-statement"><strong>2. Agora tente:</strong> ${esc(mini.statement)}</p>
+  <div class="easy-answers" role="group" aria-label="Alternativas da miniquestão">
+  ${mini.options.map((option,i)=>`<button type="button" class="easy-answer" data-easy-choice="${i}"><b>${String.fromCharCode(65+i)}</b><span>${esc(option)}</span></button>`).join('')}
+  </div>
+  <div class="easy-feedback" role="status" aria-live="polite"></div>
+  <button type="button" class="secondary easy-another">↻ Tentar outra versão</button>
+  <p class="muted easy-disclaimer">Treino autoral simplificado, sem XP e sem alterar sua resposta, o gabarito da prova ou seu desempenho.</p>
+ </section>`;
+ const answerButtons=[...container.querySelectorAll('[data-easy-choice]')];
+ const feedback=container.querySelector('.easy-feedback');
+ answerButtons.forEach((btn,i)=>btn.onclick=()=>{
+  const right=i===mini.answer;
+  answerButtons.forEach((option,n)=>{
+   option.disabled=true;
+   option.classList.toggle('is-correct',n===mini.answer);
+   option.classList.toggle('is-wrong',n===i&&!right);
+  });
+  feedback.innerHTML=`<h4>${right?'✓ Isso mesmo!':'↻ Quase! Vamos entender.'}</h4>
+   <p><b>3. Por quê?</b> ${esc(mini.explanation)}</p>
+   <p class="easy-final"><b>Resposta:</b> ${String.fromCharCode(65+mini.answer)}. ${esc(mini.options[mini.answer])}</p>
+   <p><b>Volte à prova:</b> use essa mesma ideia para responder uma alternativa de cada vez.</p>`;
+  feedback.classList.add('visible');
+ });
+ container.querySelector('.easy-another').onclick=()=>showEasySimilar(q,related,attempt+1);
+}
 function openTacticalHelp(q){
  closeTacticalHelp();
  const a=assistFor(q.id),cmd=questionCommand(q),traps=trapWords(q),similar=findSimilar(q,realBank()),balance=store.program.xp||0;
  const action=(id,icon,title,desc,type,disabled=false)=>`<button class="tactical-action" id="${id}" ${disabled?'disabled':''}><b>${icon} ${title}</b><span>${desc}</span><small>${a.used.includes(type)&&type!=='eliminacao'?'COMPRADO':HELP_COSTS[type]+' XP'}</small></button>`;
- document.body.insertAdjacentHTML('beforeend',`<div class="tactical-overlay" role="dialog" aria-modal="true" aria-label="Ajuda tática"><div class="tactical-sheet"><div class="tactical-head"><div><span class="eyebrow">AJUDA TÁTICA</span><h2>Ajuda para aprender.</h2><p class="xp-wallet">Saldo: <b>${balance} XP</b></p></div><button id="closeTactical" class="secondary">✕</button></div><div class="tactical-grid">${action('termsHelp','⚠️','Palavras-armadilha','Mostra termos que mudam completamente a resposta.','armadilhas')}${action('simplifyHelp','🧭','Entender o comando','Traduz o que a banca quer de você.','comando')}${action('similarHelp','🧩','Questão parecida','Abre outra questão do mesmo assunto para aquecer.','similar',!similar)}${action('lessonHelp','⚡','Aula de 60s','Revisa o conceito central sem sair da questão.','aula60')}${action('eliminateHelp','✂️','Eliminar 1','Remove uma alternativa errada sem revelar a correta.','eliminacao')}</div><div id="tacticalContent" class="tactical-content"><p class="muted">Explicações e orientação são gratuitas. Apenas eliminar alternativas custa XP. Depois de comprar uma ajuda nesta questão, você pode reabrir a mesma ajuda sem pagar novamente. “Eliminar 1” cobra a cada alternativa removida.</p></div></div></div>`);
+ document.body.insertAdjacentHTML('beforeend',`<div class="tactical-overlay" role="dialog" aria-modal="true" aria-label="Ajuda tática"><div class="tactical-sheet"><div class="tactical-head"><div><span class="eyebrow">AJUDA TÁTICA</span><h2>Ajuda para aprender.</h2><p class="xp-wallet">Saldo: <b>${balance} XP</b></p></div><button id="closeTactical" class="secondary">✕</button></div><div class="tactical-grid">${action('termsHelp','⚠️','Palavras-armadilha','Mostra termos que mudam completamente a resposta.','armadilhas')}${action('simplifyHelp','🧭','Entender o comando','Traduz o que a banca quer de você.','comando')}${action('similarHelp','🧩','Questão parecida','Treine com um exemplo bem fácil e explicação passo a passo.','similar')}${action('lessonHelp','⚡','Aula de 60s','Revisa o conceito central sem sair da questão.','aula60')}${action('eliminateHelp','✂️','Eliminar 1','Remove uma alternativa errada sem revelar a correta.','eliminacao')}</div><div id="tacticalContent" class="tactical-content"><p class="muted">Explicações e orientação são gratuitas. Apenas eliminar alternativas custa XP. Depois de comprar uma ajuda nesta questão, você pode reabrir a mesma ajuda sem pagar novamente. “Eliminar 1” cobra a cada alternativa removida.</p></div></div></div>`);
  $('#closeTactical').onclick=closeTacticalHelp;document.querySelector('.tactical-overlay').onclick=e=>{if(e.target.classList.contains('tactical-overlay'))closeTacticalHelp()};
  $('#simplifyHelp').onclick=()=>{if(!spendAssistXP(q,'comando'))return;$('#tacticalContent').innerHTML=`<h3>O que a banca quer</h3><p>${esc(cmd.command)}</p><div class="tactical-tip">${esc(cmd.tip)}</div>`;openTacticalHelpRefresh()};
  $('#termsHelp').onclick=()=>{if(!spendAssistXP(q,'armadilhas'))return;$('#tacticalContent').innerHTML=`<h3>Palavras que merecem atenção</h3>${traps.length?`<div class="trap-chips">${traps.map(w=>`<span>${esc(w)}</span>`).join('')}</div><p class="muted">Leia de novo a frase que contém essas palavras. “Apenas”, “exceto”, “incorreta”, “sempre” e “nunca” costumam decidir a questão.</p>`:'<p class="muted">Não encontrei palavra-armadilha clássica. Foque no conceito e no comando final.</p>'}`;openTacticalHelpRefresh()};
  $('#lessonHelp').onclick=()=>{if(!spendAssistXP(q,'aula60'))return;$('#tacticalContent').innerHTML=`<h3>Aula de 60 segundos</h3><p>${microLesson(q)}</p>`;openTacticalHelpRefresh()};
- if(similar)$('#similarHelp').onclick=()=>{if(!spendAssistXP(q,'similar'))return;$('#tacticalContent').innerHTML=`<h3>Questão parecida</h3><p class="mini-statement">${esc(similar.statement)}</p><details><summary>Ver alternativas e gabarito</summary><ol class="mini-options">${similar.options.map((o,i)=>`<li class="${i===similar.answer?'mini-correct':''}"><b>${String.fromCharCode(65+i)}.</b> ${esc(o)}</li>`).join('')}</ol><p><b>Gabarito: ${String.fromCharCode(65+similar.answer)}</b></p></details>`;openTacticalHelpRefresh()};
+ $('#similarHelp').onclick=()=>{if(!spendAssistXP(q,'similar'))return;showEasySimilar(q,similar);openTacticalHelpRefresh()};
  $('#eliminateHelp').onclick=()=>{const candidates=q.options.map((_,i)=>i).filter(i=>i!==q.answer&&i!==selection&&!a.eliminated.includes(i));if(!candidates.length){$('#tacticalContent').innerHTML='<p class="muted">Não há outra alternativa errada disponível para eliminar.</p>';return}if(!spendAssistXP(q,'eliminacao',{repeatable:true}))return;const picked=candidates[0];a.eliminated.push(picked);closeTacticalHelp();if(run)showExamQuestion();else if(tab==='livre')renderFreeTraining();else showQuestion();toast(`Alternativa ${String.fromCharCode(65+picked)} eliminada. -${HELP_COSTS.eliminacao} XP`)};
  function openTacticalHelpRefresh(){const wallet=document.querySelector('.xp-wallet b');if(wallet)wallet.textContent=`${store.program.xp||0} XP`;document.querySelectorAll('.tactical-action').forEach(btn=>{const b=btn.querySelector('small');if(!b)return;const map={termsHelp:'armadilhas',simplifyHelp:'comando',similarHelp:'similar',lessonHelp:'aula60'};const type=map[btn.id];if(type&&assistFor(q.id).used.includes(type))b.textContent='COMPRADO'})}
 }
