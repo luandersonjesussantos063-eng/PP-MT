@@ -62,3 +62,18 @@ A compilação remota GitHub Actions não precisa de Android Studio no computado
 - **Não abriremos uma ficha na Play Store nem enviaremos AAB até autorização explícita.**
 
 Veja também `mobile/README.md`.
+
+
+## Mercado Pago somente no APK Android de testes
+
+O workflow Android de desenvolvimento agora executa `PPMT_ANDROID_DEBUG_PAYMENTS=true node mobile/prepare.mjs`. Essa flag insere um botão em **Meu plano** que abre a página pública de pagamento do PP-MT em um Chrome Custom Tab através do plugin oficial Capacitor Browser.
+
+- **Não há checkout do Mercado Pago embutido no WebView do app.** A compra ocorre no domínio oficial `https://ppmt.novabytesolucoes.com.br/planos/assinar.html`, em uma sessão do navegador.
+- Os pagamentos são reais e custam o valor **atualmente exibido no site**. A abertura do navegador não cria cobrança automaticamente.
+- O usuário deve entrar na **mesma conta PP-MT** no navegador e no aplicativo. Após concluir, voltar ao aplicativo e reabrir **Meu plano / Central Premium** para atualizar a assinatura.
+- A versão para lojas (`node mobile/prepare.mjs` sem a flag) continua com o checkout indisponível. **Não enviar um APK debug ou um pacote preparado com essa flag à Play Store.**
+- Para futuras distribuições pela Play Store, revisar e implementar Google Play Billing e regras de compras digitais antes de publicar.
+
+### Teste de segurança
+
+`npm test` gera ambos os modos em diretórios temporários, confere a presença do botão somente no modo debug e verifica que a página da loja não o contém.

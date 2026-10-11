@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101b2b">
+<title>Pagamento no navegador — PP-MT Android Debug</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="wrap legal">
+<p><a href="../#plano">← Voltar ao PP-MT</a></p>
+<h1>Testar o Premium</h1>
+<p><strong>Somente APK Android de desenvolvimento.</strong> Nesta versão, você pode abrir a página oficial do PP-MT no navegador e concluir um pagamento usando Mercado Pago, se desejar.</p>
+<p>A cobrança, quando confirmada, é <strong>real</strong> e utiliza o valor que estiver exibido na página oficial de assinatura. Esta tela não realiza cobranças automaticamente.</p>
+<p>Entre no site de pagamentos com a <strong>mesma conta PP-MT</strong> utilizada no aplicativo. Depois do pagamento, volte ao app e consulte <a href="../#plano">Meu plano</a> ou <a href="./premium.html">Central Premium</a>.</p>
+<p><button id="open-mercado-pago" type="button" class="button primary">Abrir pagamento no navegador</button></p>
+<p id="browser-message" role="status" aria-live="polite"></p>
+<p id="browser-fallback" hidden><a href="https://ppmt.novabytesolucoes.com.br/planos/assinar.html" rel="noopener noreferrer" target="_blank">Abrir página oficial no navegador</a></p>
+<p>Antes da publicação na Play Store esta opção será retirada; a versão de distribuição não terá compras externas de conteúdo digital.</p>
+<p><a href="./privacidade.html">Política de privacidade</a></p>
+</main>
+<script type="module" src="../android-payments.js"></script>
+</body>
+</html>

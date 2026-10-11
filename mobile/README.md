@@ -63,3 +63,12 @@ O Google Play permite aplicativos de consumo de conteúdos já adquiridos, com r
 - https://developer.apple.com/app-store/review/guidelines/br/
 
 **Situação:** código preparatório e pacote web prontos para testes; não há APK/AAB/IPA assinado nem cadastro de app nas lojas criado automaticamente.
+
+
+## Android debug: experimentar pagamento no Mercado Pago (fora das lojas)
+
+Somente no fluxo de APK de testes, o workflow usa `PPMT_ANDROID_DEBUG_PAYMENTS=true`, inclui uma página com botão em **Meu plano** e utiliza `@capacitor/browser` para abrir o checkout oficial do site em navegador externo. Isso permite testar pagamentos enquanto o APK ainda **não está na Play Store**.
+
+Não é pagamento fictício: ao concluir o checkout, a cobrança real será do valor exibido no site. O teste requer usar a mesma conta PP-MT no navegador e no aplicativo, e consultar novamente a assinatura ao retornar. As compras não são liberadas na distribuição padrão/iOS: `node mobile/prepare.mjs` sem a variável mantém a tela informativa de compras bloqueadas.
+
+Nunca gerar uma versão release com `PPMT_ANDROID_DEBUG_PAYMENTS=true` nem publicar o APK debug na loja.
