@@ -23,9 +23,9 @@ const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf'
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
 import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=2.20.0';
 import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=2.19.8';
-import {createEasySimilar} from './easy-similar.js?v=2.20.1';
+import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.20.1';
+const APP_VERSION='2.20.2';
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
