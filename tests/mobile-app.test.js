@@ -65,3 +65,28 @@ test('APIs do Premium e da IA aceitam origens nativas, mas exigem conta autentic
  assert.equal((await p(new Request('https://supabase.invalid/functions/v1/ppmt-premium-practice',{method:'OPTIONS',headers:{Origin:'https://site-invalido.example'}}))).status,403);
  assert.equal((await ai(new Request('https://supabase.invalid/functions/v1/ppmt-ai-explain',{method:'OPTIONS',headers:{Origin:'https://site-invalido.example'}}))).status,403);
 });
+
+test('APK Android debug exibe Mercado Pago em navegador externo sem alterar o pacote de loja',()=>{
+ const tmp=mkdtempSync(join(tmpdir(),'ppmt-android-debug-'));
+ try{
+  const result=buildNativeBundle({root,out:join(tmp,'debug'),includeAssets:false,androidDebugPayments:true});
+  assert.ok(result.files>0);
+  const pay=readFileSync(join(tmp,'debug','planos','assinar.html'),'utf8');
+  const account=readFileSync(join(tmp,'debug','planos','account.js'),'utf8');
+  const browser=readFileSync(join(root,'mobile','android-payments.mjs'),'utf8');
+  assert.match(pay,/Somente APK Android de desenvolvimento/);
+  assert.match(pay,/open-mercado-pago/);
+  assert.match(pay,/\.\.\/android-payments\.js/);
+  assert.match(account,/Abrir pagamento \(somente testes Android\)/);
+  assert.match(browser,/@capacitor\/browser/);
+  assert.match(browser,/Browser\.open/);
+  assert.match(browser,/https:\/\/ppmt\.novabytesolucoes\.com\.br\/planos\/assinar\.html/);
+  assert.doesNotMatch(pay,/checkout\/preferences|MP_ACCESS_TOKEN_PROD|SUPABASE_SERVICE_ROLE_KEY/);
+  const production=buildNativeBundle({root,out:join(tmp,'store'),includeAssets:false});
+  assert.ok(production.files>0);
+  const storePay=readFileSync(join(tmp,'store','planos','assinar.html'),'utf8');
+  const storeAccount=readFileSync(join(tmp,'store','planos','account.js'),'utf8');
+  assert.doesNotMatch(storePay+storeAccount,/open-mercado-pago|Abrir pagamento \(somente testes Android\)/);
+  assert.match(storePay,/Novas compras digitais não estão disponíveis/);
+ }finally{rmSync(tmp,{recursive:true,force:true});}
+});
