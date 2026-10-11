@@ -25,7 +25,31 @@ import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUser
 import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=2.19.8';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.20.2';
+const APP_VERSION='2.20.3';
+
+// No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
+// pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
+const mobileDock=document.getElementById('nav');
+const sidebarDockHome=mobileDock?.parentElement;
+const mobileDockQuery=window.matchMedia('(max-width:640px)');
+function placeMobileDock(){
+ if(!mobileDock||!sidebarDockHome)return;
+ if(mobileDockQuery.matches){
+  if(mobileDock.parentElement!==document.body)document.body.appendChild(mobileDock);
+  mobileDock.classList.add('ppmt-mobile-dock');
+  mobileDock.setAttribute('aria-label','Navegação inferior do aplicativo');
+ }else{
+  if(mobileDock.parentElement!==sidebarDockHome)sidebarDockHome.appendChild(mobileDock);
+  mobileDock.classList.remove('ppmt-mobile-dock');
+  mobileDock.setAttribute('aria-label','Principal');
+ }
+}
+placeMobileDock();
+if(typeof mobileDockQuery.addEventListener==='function')
+ mobileDockQuery.addEventListener('change',placeMobileDock);
+else if(typeof mobileDockQuery.addListener==='function')
+ mobileDockQuery.addListener(placeMobileDock);
+
 queueMicrotask(()=>{document.querySelectorAll('.app-version-badge').forEach(el=>{el.textContent='V '+APP_VERSION;el.title='JavaScript '+APP_VERSION+' carregado'})});
 const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null});
