@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
-test('V 2.19.8 não mostra cronômetro no cabeçalho mobile e preserva opções de conta',()=>{
+test('V 2.20.0 não mostra cronômetro no cabeçalho mobile e preserva opções de conta',()=>{
  const page=read('index.html'),app=read('app.js'),css=read('style.css');
  assert.doesNotMatch(page,/id="studyClockMini"/);
  assert.doesNotMatch(app,/studyClockMini/);
@@ -14,8 +14,8 @@ test('V 2.19.8 não mostra cronômetro no cabeçalho mobile e preserva opções 
  assert.match(css,/\.main>header\{display:flex;flex-wrap:nowrap/);
  assert.match(css,/\.main>header \.header-right\{display:flex;align-items:center/);
  assert.match(css,/\.main>header \.admin-label\{display:none\}/);
- assert.match(page,/app\.js\?v=2\.19\.8/);
- assert.match(page,/style\.css\?v=2\.19\.8/);
- assert.match(app,/const APP_VERSION='2\.19\.8'/);
- assert.match(read('sw.js'),/const CACHE='ppmt-2\.19\.8-concurso-notices'/);
+ assert.match(page,/app\.js\?v=2\.20\.0/);
+ assert.match(page,/style\.css\?v=2\.20\.0/);
+ assert.match(app,/const APP_VERSION='2\.20\.0'/);
+ assert.match(read('sw.js'),/const CACHE='ppmt-2\.20\.0-concurso-notices'/);
 });
