@@ -8,7 +8,7 @@ test('Android Preview não publica APK e só compila variante debug',()=>{
  const workflow=read('.github/workflows/mobile-android-debug.yml');
  assert.match(workflow,/workflow_dispatch:/);
  assert.match(workflow,/assembleDebug/);
- assert.doesNotMatch(workflow,/android-actions\\/setup-android@v3/);
+ assert.ok(!workflow.includes('uses: android-actions/setup-android@v3'));
  assert.match(workflow,/actions\/upload-artifact@v4/);
  assert.doesNotMatch(workflow,/assembleRelease|bundleRelease|playstore|upload-release|google-play|fastlane|firebase appdistribution/i);
  assert.doesNotMatch(workflow,/uses:\s*.+upload-play-store/i);
