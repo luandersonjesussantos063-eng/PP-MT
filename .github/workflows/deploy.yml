@@ -4,8 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "17 12 * * *" # 08:17 em Mato Grosso
-    - cron: "47 18 * * *" # segunda checagem às 14:47
+    - cron: "17 */3 * * *" # monitorar em intervalos de 3 horas (UTC); envio push separado a cada 5 min
 permissions:
   contents: read
   pages: write

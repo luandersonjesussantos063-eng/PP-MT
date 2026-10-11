@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "id": "b1f1c609600ca8aa5654",
+      "title": "Governador Otaviano Pivetta convoca mais 283 policiais penais e anuncia novo concurso",
+      "excerpt": "Em 09/06/2026, o governador anunciou a convocação de 283 policiais penais oriundos do concurso de 2016 e autorizou um novo concurso público para a Secretaria de Estado de Justiça (Sejus-MT). Não se trata da publicação do edital.",
+      "url": "https://www.sejus.mt.gov.br/w/governador-otaviano-pivetta-convoca-mais-283-policiais-penais-e-anuncia-novo-concurso",
+      "sourceId": "sejus-autorizacao-2026",
+      "source": "SEJUS · autorização do concurso",
+      "publishedAt": "2026-06-09",
+      "kind": "novo-concurso",
+      "events": [],
+      "firstSeenAt": "2026-10-11T12:34:04+00:00",
+      "lastSeenAt": "2026-10-11T12:34:04+00:00"
+    },
+    {
       "id": "f95906771996c25e48a1",
       "title": "Edital de Convocação No 03/2026/GAB-SEJUS/MT:",
       "excerpt": "Edital de Convocação No 03/2026/GAB-SEJUS/MT: Dispõe sobre concurso público para preenchimento de Cadastro de Reserva para os cargos de Agente Penitenciário do Sistema Penitenciário e Profissionais de Nível Superior do Sistema Penitenciário, ambos da Carreira dos Profissionais do Sistema Penitenciário.",
@@ -28,6 +41,16 @@
     }
   ],
   "sources": [
+    {
+      "id": "sejus-autorizacao-2026",
+      "name": "SEJUS · autorização do concurso",
+      "url": "https://www.sejus.mt.gov.br/w/governador-otaviano-pivetta-convoca-mais-283-policiais-penais-e-anuncia-novo-concurso",
+      "status": "ok",
+      "lastAttemptAt": "2026-10-11T12:34:04+00:00",
+      "lastSuccessAt": "2026-10-11T12:34:04+00:00",
+      "error": null,
+      "found": 1
+    },
     {
       "id": "sejus-editais",
       "name": "SEJUS · editais",
@@ -122,9 +145,9 @@
   "milestones": [],
   "events": [],
   "schemaVersion": 1,
-  "checkedAt": "2026-10-11T12:34:52+00:00",
+  "checkedAt": "2026-10-11T12:40:51.153Z",
   "lastSuccessAt": "2026-10-11T12:34:52+00:00",
-  "lastPartialSuccessAt": "2026-10-11T12:34:52+00:00",
-  "checkStatus": "ok",
-  "newCount": 0
+  "lastPartialSuccessAt": "2026-10-11T12:40:51.153Z",
+  "checkStatus": "partial",
+  "newCount": 1
 }

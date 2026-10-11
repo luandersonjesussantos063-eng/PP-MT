@@ -38,8 +38,11 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
   }
   for(const n of feed?.items||[]){
    if(!n?.id||!n?.title)continue;
-   const kind= n.kind==='novo-concurso'?'Novo concurso':n.kind==='convocacao'?'Convocação / nomeação':n.kind==='seletivo'?'Processo seletivo':'Publicação oficial';
-   out.push({id:'news:'+n.id,kind:'news',title:'📢 '+kind,body:String(n.title).slice(0,250),href:'#noticias',date:n.firstSeenAt||n.publishedAt||new Date().toISOString(),source:n.source});
+   const kind=n.kind==='novo-concurso'?'Notícia sobre o novo concurso':n.kind==='convocacao'?'Convocação / nomeação':n.kind==='seletivo'?'Processo seletivo':'Publicação oficial';
+   const date=n.publishedAt&&/^\d{4}-\d{2}-\d{2}$/.test(n.publishedAt)
+    ? n.publishedAt.slice(8,10)+'/'+n.publishedAt.slice(5,7)+'/'+n.publishedAt.slice(0,4) : null;
+   const summary=(date?'Publicação oficial de '+date+': ':'')+String(n.title);
+   out.push({id:'news:'+n.id,kind:'news',title:'📢 '+kind,body:summary.slice(0,250),href:'#noticias',date:n.firstSeenAt||n.publishedAt||new Date().toISOString(),source:n.source});
   }
   return first(out);
  }

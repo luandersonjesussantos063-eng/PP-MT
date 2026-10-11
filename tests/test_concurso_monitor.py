@@ -64,6 +64,27 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual([d['date'] for d in dates],['2026-11-01','2026-11-30'])
         self.assertEqual(m.confirmed_events('Publicado em 08/10/2026. Inscrições homologadas.',self.source['url']),[])
 
+    def test_official_authorization_detected_without_pretending_editais_were_published(self):
+        source={'id':'sejus-autorizacao-2026','name':'SEJUS · autorização do concurso',
+                'url':'https://www.sejus.mt.gov.br/w/governador-otaviano-pivetta-convoca-mais-283-policiais-penais-e-anuncia-novo-concurso','parser':'authorization'}
+        body='<html><h1>Governador Otaviano Pivetta convoca mais 283 policiais penais e anuncia novo concurso</h1><p>O governador autorizou a realização de um novo concurso público para a Secretaria de Estado de Justiça (Sejus-MT).</p></html>'
+        items=m.parse_official_authorization(body,source)
+        self.assertEqual(len(items),1)
+        self.assertEqual(items[0]['publishedAt'],'2026-06-09')
+        self.assertEqual(items[0]['kind'],'novo-concurso')
+        self.assertIn('Não se trata da publicação do edital',items[0]['excerpt'])
+        self.assertTrue(m.official_url(items[0]['url']))
+        self.assertEqual(m.parse_official_authorization(body,source)[0]['id'],items[0]['id'])
+        sources=m.sources_for(datetime(2026,10,11,tzinfo=timezone.utc))
+        self.assertEqual(next(x for x in sources if x['id']=='sejus-autorizacao-2026')['parser'],'authorization')
+
+    def test_official_authorization_refuses_unrelated_or_modified_pages(self):
+        source={'id':'sejus-autorizacao-2026','name':'SEJUS','url':'https://www.sejus.mt.gov.br/w/noticia','parser':'authorization'}
+        with self.assertRaises(ValueError):
+            m.parse_official_authorization('<html>Concurso para bombeiros</html>',source)
+        with self.assertRaises(ValueError):
+            m.parse_official_authorization('<html><h1>Polícia Penal concurso</h1><p>A notícia foi retirada</p></html>',source)
+
     def test_january_tracks_previous_year(self):
         sources=m.sources_for(datetime(2027,1,10,tzinfo=timezone.utc))
         self.assertTrue(any('/2026/12' in s['url'] for s in sources))
