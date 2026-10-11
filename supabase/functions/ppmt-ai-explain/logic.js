@@ -51,12 +51,15 @@ export function makeExplainHandler({authenticate,db,generate}){
    if(input.action!=='explain')return send({error:'Ação inválida.'},400);
    const question=validateQuestion(input);
    if(!question)return send({error:'A IA só analisa questões respondidas incorretamente.'},422);
+   // O backend verifica o Premium ANTES de acessar cache ou provedor de IA.
+   // Usuários gratuitos jamais consultam a IA, mesmo com a questão já armazenada.
+   const tier=await db.tier(user.id);
+   if(tier!=='premium')return send({error:'A explicação com IA é exclusiva para assinantes Premium.',upgrade_url:'./planos/assinar.html'},402);
    const key=await cacheKey(question);
    const saved=await db.cached(key);
    if(saved?.explanation)return send({explanation:saved.explanation,sources:cleanSources(saved.sources),cached:true,grounded:saved.sources?.length>0});
-   if(!await db.ready())return send({error:'A IA ainda não foi conectada pelo administrador. As explicações existentes continuam gratuitas.'},503);
-   const tier=await db.tier(user.id);
-   const dailyLimit=tier==='premium'?10:2;
+   if(!await db.ready())return send({error:'A IA Premium ainda não foi conectada pelo administrador. As explicações existentes continuam disponíveis.'},503);
+   const dailyLimit=5;
    const allowed=await db.reserve(user.id,new Date().toISOString().slice(0,10),dailyLimit);
    if(!allowed)return send({error:'Seu limite diário de explicações por IA foi alcançado. Continue com as explicações do app e tente amanhã.'},429);
    let result;
