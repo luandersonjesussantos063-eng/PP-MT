@@ -1,0 +1,15 @@
+{
+  "appId": "br.com.novabytesolucoes.ppmt",
+  "appName": "PP-MT Preparação Policial",
+  "webDir": "www",
+  "backgroundColor": "#101b2b",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https",
+    "iosScheme": "capacitor",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
