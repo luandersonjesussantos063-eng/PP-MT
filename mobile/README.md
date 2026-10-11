@@ -43,7 +43,7 @@ O Google Play permite aplicativos de consumo de conteúdos já adquiridos, com r
 
 ## Bloqueios a resolver antes de enviar às lojas
 
-1. **Origens/CORS:** alguns serviços Supabase do PP-MT restringem a origem ao GitHub Pages e ao domínio web. No app, Android usa `https://localhost`, iOS usa `capacitor://localhost`. Adicionar essas origens aos serviços necessários, com autenticação JWT/RLS obrigatória; permitir origem não equivale a autenticar usuário. Sem essa correção, certas funções (como Premium e explicações com IA) podem falhar no app nativo.
+1. **Origens/CORS:** Android usa `https://localhost`, iOS usa `capacitor://localhost`. As funções **Premium Practice** e **IA de explicações** já têm essas duas origens autorizadas com JWT/RLS obrigatório; revisar outras Edge Functions utilizadas no app (ofertas, notificações etc.) e testar o fluxo real antes da loja. Permitir a origem não equivale a autenticar usuário.
 2. **Login Google:** o pacote nativo oculta o botão Google por enquanto. É necessário configurar OAuth nativo e deep links; login com e-mail e senha continua disponível. URLs de confirmação de e-mail e recuperação de senha também devem ser testadas no aparelho.
 3. **Notificações push reais:** o Web Push do site não substitui FCM/APNs. Implementar e testar tokens nativos com permissão explícita, envio backend e política de privacidade.
 4. **Pagamentos:** Google Play Billing / StoreKit 2, validação de recibo no servidor, reconciliação, cancelamentos e restauração de compras antes de habilitar Premium pago dentro do app.
