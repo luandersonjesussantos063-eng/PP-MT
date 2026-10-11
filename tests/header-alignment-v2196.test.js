@@ -17,5 +17,5 @@ test('V 2.20.4 não mostra cronômetro no cabeçalho mobile e preserva opções 
  assert.match(page,/app\.js\?v=2\.20\.4/);
  assert.match(page,/style\.css\?v=2\.20\.4/);
  assert.match(app,/const APP_VERSION='2\.20\.4'/);
- assert.match(read('sw.js'),/const CACHE='ppmt-2\.20\.4-ios-dock'/);
+ assert.match(read('sw.js'),/const CACHE='ppmt-2\.20\.4-google-sso'/);
 });
