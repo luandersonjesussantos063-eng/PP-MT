@@ -49,7 +49,10 @@ Deno.serve(async request=>{
     const timestamp=Date.parse(newsItem.firstSeenAt);
     if(!Number.isFinite(timestamp) || timestamp<=Date.parse(sub.created_at) || Date.now()-timestamp>7*86400000)continue;
     const label=newsItem.kind==="novo-concurso"?"Novo concurso":newsItem.kind==="convocacao"?"Convocação / nomeação":"Publicação oficial";
-    events.push({key:"news:"+newsItem.id,title:"📢 PP-MT: "+label,body:String(newsItem.title).slice(0,180),url:"https://ppmt.novabytesolucoes.com.br/#noticias"});
+    const pubDate=typeof newsItem.publishedAt==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(newsItem.publishedAt)
+     ?newsItem.publishedAt.slice(8,10)+"/"+newsItem.publishedAt.slice(5,7)+"/"+newsItem.publishedAt.slice(0,4):null;
+    const text=(pubDate?"Publicação de "+pubDate+": ":"")+String(newsItem.title);
+    events.push({key:"news:"+newsItem.id,title:"📢 PP-MT: "+label,body:text.slice(0,180),url:"https://ppmt.novabytesolucoes.com.br/#noticias"});
    }
    for(const ev of events){
     const {data:old}=await db.from("ppmt_push_deliveries").select("id").eq("subscription_id",sub.id).eq("event_key",ev.key).maybeSingle();
