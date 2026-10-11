@@ -25,10 +25,10 @@ test('iOS mantém PWA instalável, versão e cache sincronizados',()=>{
  const html=read('index.html'),sw=read('sw.js'),app=read('app.js');
  assert.match(html,/apple-mobile-web-app-capable" content="yes"/);
  assert.match(html,/viewport-fit=cover/);
- assert.match(html,/style\.css\?v=2\.20\.3/);
- assert.match(html,/app\.js\?v=2\.20\.3/);
- assert.match(app,/APP_VERSION='2\.20\.3'/);
- assert.match(sw,/ppmt-2\.20\.3-ios-dock/);
- assert.match(sw,/style\.css\?v=2\.20\.3/);
- assert.match(sw,/app\.js\?v=2\.20\.3/);
+ assert.match(html,/style\.css\?v=2\.20\.4/);
+ assert.match(html,/app\.js\?v=2\.20\.4/);
+ assert.match(app,/APP_VERSION='2\.20\.4'/);
+ assert.match(sw,/ppmt-2\.20\.4-google-sso/);
+ assert.match(sw,/style\.css\?v=2\.20\.4/);
+ assert.match(sw,/app\.js\?v=2\.20\.4/);
 });

@@ -1,10 +1,6 @@
-import {createClient} from './assets/vendor/supabase-2.117.2.js';
-// A chave sb_publishable é pública; segredos de cobrança permanecem no servidor.
-const supabase=createClient(
- 'https://fermfbmhwlafwopwndoj.supabase.co',
- 'sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN',
- {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
-);
+import {getSupabaseClient} from './auth.js?v=2.20.4';
+// Compartilha a mesma instância para que o callback Google seja processado apenas uma vez.
+const supabase=getSupabaseClient();
 // Rota relativa ao aplicativo permite manter o GitHub Pages como endereço antigo
 // e usar um subdomínio próprio sem misturar cookies ou sessões entre origens.
 const APP_ROOT=new URL('./',import.meta.url);
@@ -24,6 +20,22 @@ export async function loginWithGoogle(destination='app'){
  });
  if(error)throw error;
  return data;
+}
+// OAuth pode retornar um erro do provedor por query string ou fragmento.
+// Mostra uma mensagem clara sem armazenar tokens e sem revelar detalhes de sessão.
+export function takeGoogleAuthError(){
+ const url=new URL(location.href);
+ const search=url.searchParams;
+ const fragment=url.hash.startsWith('#')?new URLSearchParams(url.hash.slice(1)):new URLSearchParams();
+ const error=search.get('error')||fragment.get('error');
+ if(!error)return null;
+ const details=search.get('error_description')||fragment.get('error_description')||'';
+ for(const key of ['error','error_description','error_code']){search.delete(key);fragment.delete(key);}
+ const newHash=url.hash.includes('error=')?(fragment.toString()?'#'+fragment.toString():''):url.hash;
+ history.replaceState(history.state,'',url.pathname+(search.toString()?'?'+search.toString():'')+newHash);
+ if(error==='access_denied')return 'O acesso à conta Google foi cancelado ou negado. Tente novamente.';
+ if(error==='server_error')return 'O servidor de autenticação não concluiu o login. Confira as URLs de retorno no Supabase.';
+ return String(details||'O Google não concluiu a autenticação.').replace(/[\r\n]+/g,' ').slice(0,220);
 }
 export function takeGoogleReturn(){
  const target=sessionStorage.getItem('ppmt-google-oauth-return');

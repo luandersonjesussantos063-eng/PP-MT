@@ -1,6 +1,6 @@
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
-import {loginWithGoogle,studyQuota,takeGoogleReturn,myPremiumOffers} from './account-services.js?v=2.18.6';
+import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
@@ -21,11 +21,11 @@ import {EXAM_SOURCES,SOURCE_TOTAL,IMPORTED_SOURCE_TOTAL} from './exam-sources.js
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=2.20.0';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=2.20.4';
 import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=2.19.8';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='2.20.3';
+const APP_VERSION='2.20.4';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -165,6 +165,13 @@ function renderAuth(){notificationCenter.stop();currentUser=null;syncConnectionU
  };
 }
 async function bootstrap(){
+ const oauthError=takeGoogleAuthError();
+ if(oauthError){
+  renderAuth();
+  const hint=$('#authHint');
+  if(hint)hint.textContent=oauthError;
+  return;
+ }
  let user=null;
  try{user=await Promise.race([getCurrentUser(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout')),10000))])}catch{toast('A conexão demorou. Entre novamente para continuar.')}
  if(user){
