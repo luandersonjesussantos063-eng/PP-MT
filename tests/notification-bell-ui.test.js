@@ -25,7 +25,7 @@ test('versão e cache offline incluem o novo desenho e sua lógica',()=>{
  assert.match(app,/const APP_VERSION='2\.19\.8'/);
  assert.match(app,/notifications\.js\?v=2\.19\.7/);
  assert.match(html,/app\.js\?v=2\.19\.8/);
- assert.match(html,/style\.css\?v=2\.19\.7/);
+ assert.match(html,/style\.css\?v=2\.19\.8/);
  assert.match(sw,/ppmt-2\.19\.8-concurso-notices/);
  assert.match(sw,/notifications\.js\?v=2\.19\.7/);
 });
