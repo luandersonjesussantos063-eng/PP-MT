@@ -858,3 +858,82 @@ nav a.active{background:#29313a;color:var(--accent)}
 .easy-another{justify-self:start;min-height:44px;font-size:13px}
 .easy-disclaimer{font-size:11px!important;margin:0;color:#aaa69b}
 @media(max-width:640px){.easy-answer{font-size:13px;padding:12px}.easy-bridge{font-size:12px}.easy-similar h3{font-size:16px}}
+
+/* PP-MT 2.20.3 — dock móvel isolado do aside/overflow: correção Safari iOS */
+@media (max-width:640px){
+  :root{--ppmt-mobile-dock-height:calc(78px + env(safe-area-inset-bottom, 0px))}
+  body{padding-bottom:var(--ppmt-mobile-dock-height)!important}
+  .layout,.main{min-width:0}
+  #content{min-width:0;padding-bottom:32px}
+  /* Redundante ao cabeçalho e ao hero: no iPhone ocupava a área do dock. */
+  #content .concurso-strip{display:none}
+  /* O elemento é movido pelo app.js para o <body>, fora do menu lateral
+     com height:0 e overflow:auto que causava sobreposição no Safari. */
+  body > #nav.ppmt-mobile-dock{
+    position:fixed!important;
+    inset:auto 0 0 0!important;
+    width:100%!important;
+    max-width:100vw;
+    height:auto;
+    z-index:60;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:2px;
+    padding:6px max(8px,env(safe-area-inset-right, 0px))
+      calc(8px + env(safe-area-inset-bottom, 0px))
+      max(8px,env(safe-area-inset-left, 0px));
+    margin:0;
+    overflow:visible!important;
+    overscroll-behavior:none;
+    background:#101b2b!important;
+    border-top:1px solid #3b4a5c;
+    box-shadow:0 -4px 16px rgba(0,0,0,.42);
+    transform:none!important;
+    -webkit-transform:none!important;
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+    isolation:isolate;
+  }
+  body > #nav.ppmt-mobile-dock a.mobile-extra{display:none!important}
+  body > #nav.ppmt-mobile-dock a.mobile-primary{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    min-width:0;
+    min-height:58px;
+    gap:4px;
+    padding:6px 2px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:650;
+    text-align:center;
+    line-height:1.15;
+    white-space:normal;
+    color:#b9c5d2;
+    text-decoration:none;
+    touch-action:manipulation;
+  }
+  body > #nav.ppmt-mobile-dock a.mobile-primary .navicon{
+    display:block;
+    width:auto;
+    font-size:21px;
+    line-height:1;
+    color:#b9c5d2;
+  }
+  body > #nav.ppmt-mobile-dock a.mobile-primary.active{
+    background:#27384c;
+    color:#edc781;
+    box-shadow:inset 0 2px #d5b36a;
+  }
+  body > #nav.ppmt-mobile-dock a.mobile-primary.active .navicon{color:#edc781}
+  body > #nav.ppmt-mobile-dock a.mobile-primary:focus-visible{
+    outline:2px solid #e8c784;
+    outline-offset:-2px;
+  }
+  #toast{bottom:calc(88px + env(safe-area-inset-bottom, 0px))}
+}
+@media (max-width:390px){
+  body > #nav.ppmt-mobile-dock a.mobile-primary{font-size:9px}
+  body > #nav.ppmt-mobile-dock a.mobile-primary .navicon{font-size:20px}
+}
