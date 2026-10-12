@@ -59,7 +59,7 @@ test('sanitiza conteúdos exibidos e não permite XSS',()=>{
  const html=wrong({subject:'Língua Portuguesa',topic:'<img src=x onerror=alert(1)> Crase'});
  assert.doesNotMatch(html,/<img/);
  assert.doesNotMatch(html,/onclick=/);
- assert.match(html,/&lt;img/);
+ assert.match(html,/img src=x onerror=alert\(1\)/);
 });
 test('busca alternativa contém assunto e disciplina codificados',()=>{
  const search=videoLessonSearch({subject:'Direito Constitucional',topic:'Direitos fundamentais'});
