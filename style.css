@@ -937,3 +937,13 @@ nav a.active{background:#29313a;color:var(--accent)}
   body > #nav.ppmt-mobile-dock a.mobile-primary{font-size:9px}
   body > #nav.ppmt-mobile-dock a.mobile-primary .navicon{font-size:20px}
 }
+
+/* Aula contextual depois de um erro: discreta e responsiva. */
+.video-lesson-card{display:flex;flex-direction:column;align-items:flex-start;gap:9px;margin:18px 0 14px;padding:18px;border:1px solid #78603d;border-left:4px solid #d5b36a;border-radius:9px;background:linear-gradient(120deg,#26231b,#1b2022)}
+.video-lesson-card .video-lesson-label{color:#e5c783;font-size:10px;letter-spacing:1.4px;font-weight:800}
+.video-lesson-card b{font-size:15px;line-height:1.4;color:#f3ede2}
+.video-lesson-card p{margin:0;color:#c5c0b4;font-size:13px;line-height:1.65}
+.video-lesson-card strong{color:#f3e0af}
+.video-lesson-card .video-lesson-action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;background:#c5a161;border-color:#c5a161;color:#18160f;text-align:center}
+.video-lesson-card small{font-size:11px;line-height:1.5;color:#9d9a91}
+@media(max-width:640px){.video-lesson-card{padding:15px}.video-lesson-card .video-lesson-action{width:100%}}
