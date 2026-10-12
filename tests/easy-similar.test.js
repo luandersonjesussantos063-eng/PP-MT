@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createEasySimilar} from '../easy-similar.js';
 
+const CURRENT_VERSION=JSON.parse(readFileSync(new URL('../version.json',import.meta.url),'utf8')).version;
+
 test('sequência verdadeiro-falso recebe miniquestões com gabarito consistente',()=>{
  const q={id:'prova-vf-01',topic:'Sequências lógicas',
   statement:'Determine V ou F para cada afirmativa',
@@ -69,5 +71,5 @@ test('interface não desabilita ajuda sem similar, não cobra XP e preserva ques
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
  const action=readFileSync(new URL('../.github/workflows/deploy.yml',import.meta.url),'utf8');
  for(const code of [sw,action])assert.match(code,/easy-similar\.js/);
- assert.match(page,/app\.js\?v=2\.20\.4/);
+ assert.ok(page.includes('app.js?v='+CURRENT_VERSION));
 });
