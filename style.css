@@ -947,3 +947,10 @@ nav a.active{background:#29313a;color:var(--accent)}
 .video-lesson-card .video-lesson-action{display:inline-flex;align-items:center;justify-content:center;min-height:44px;background:#c5a161;border-color:#c5a161;color:#18160f;text-align:center}
 .video-lesson-card small{font-size:11px;line-height:1.5;color:#9d9a91}
 @media(max-width:640px){.video-lesson-card{padding:15px}.video-lesson-card .video-lesson-action{width:100%}}
+
+/* Catálogo de videoaulas selecionadas por assunto (V 2.20.6) */
+.video-lesson-curated{font-size:10px;letter-spacing:1px;font-weight:800;color:#e6c177}
+.video-lesson-title{font-size:15px;color:#f4ecd8;line-height:1.5}
+.video-lesson-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;width:100%}
+.video-lesson-actions .video-lesson-other{font-size:12px;min-height:44px}
+@media(max-width:640px){.video-lesson-actions{flex-direction:column}.video-lesson-actions>a{width:100%;text-align:center}}
