@@ -954,3 +954,14 @@ nav a.active{background:#29313a;color:var(--accent)}
 .video-lesson-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;width:100%}
 .video-lesson-actions .video-lesson-other{font-size:12px;min-height:44px}
 @media(max-width:640px){.video-lesson-actions{flex-direction:column}.video-lesson-actions>a{width:100%;text-align:center}}
+
+/* Biblioteca gratuita por disciplina */
+.video-library-filters{display:grid;grid-template-columns:1.5fr 1fr;gap:12px;margin-top:18px}
+.video-library-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));gap:13px;margin-top:16px}
+.video-library-results>p{grid-column:1/-1}
+.video-library-item{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.video-library-item h2{font-size:18px;line-height:1.4;margin:2px 0}
+.video-library-item p{margin:0 0 10px}
+.video-library-item .video-library-subject{font-size:11px;font-weight:700;color:#d5b36a}
+.video-library-item a{margin-top:auto;min-height:44px}
+@media(max-width:650px){.video-library-filters{grid-template-columns:1fr}.video-library-item a{width:100%;text-align:center}}
