@@ -9,6 +9,9 @@ test('Android Preview não publica APK e só compila variante debug',()=>{
  assert.match(workflow,/workflow_dispatch:/);
  assert.match(workflow,/assembleDebug/);
  assert.match(workflow,/PPMT_ANDROID_DEBUG_PAYMENTS: 'true'/);
+ assert.match(workflow,/assets\/questions/);
+ assert.match(workflow,/versionName/);
+ assert.match(workflow,/versionCode/);
  assert.match(workflow,/android-payments\.mjs/);
  assert.match(workflow,/android-payments\.js/);
 
