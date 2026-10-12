@@ -9,7 +9,18 @@ on:
   push:
     branches: [main]
     paths:
+      # Recursos web alterados precisam gerar um novo APK (não são carregados do site).
       - "mobile/**"
+      - "*.js"
+      - "*.css"
+      - "*.html"
+      - "*.json"
+      - "*.webmanifest"
+      - "planos/**"
+      - "assets/questions/**"
+      - "assets/audio/**"
+      - "assets/identity/**"
+      - "assets/vendor/**"
       - "tests/android-preview.test.js"
       - ".github/workflows/mobile-android-debug.yml"
 
@@ -67,6 +78,25 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
+
+      - name: Vincular versionName do APK à versão web
+        env:
+          PPMT_RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          version=json.loads(Path('version.json').read_text())['version']
+          if not re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',version):raise SystemExit('Versão inválida')
+          version_code=10000+int(os.environ['PPMT_RUN_NUMBER'])
+          gradle=Path('mobile/android/app/build.gradle')
+          data=gradle.read_text()
+          data,c1=re.subn(r'\bversionCode\s+\d+','versionCode '+str(version_code),data,count=1)
+          data,c2=re.subn(r'\bversionName\s+"[^"]+"','versionName "'+version+'"',data,count=1)
+          if c1!=1 or c2!=1:raise SystemExit('Não foi possível definir versão do APK')
+          gradle.write_text(data)
+          print('APK Android',version,'code',version_code)
+          PY
 
       - name: Aplicar identidade visual PP-MT ao icone nativo
         run: |
