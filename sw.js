@@ -25,7 +25,7 @@ self.addEventListener('fetch',event=>{
  const url=new URL(request.url);
  if(url.origin!==self.location.origin)return;
  const navigation=request.mode==='navigate'||url.pathname.endsWith('/index.html');
- const fresh=navigation||/\\.(?:js|css|webmanifest)$/.test(url.pathname)||url.pathname.endsWith('/assets/news/concurso.json');
+ const fresh=navigation||/\.(?:js|css|webmanifest)$/.test(url.pathname)||url.pathname.endsWith('/assets/news/concurso.json');
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE);
   const offline=await cache.match(request)||await caches.match(request);
