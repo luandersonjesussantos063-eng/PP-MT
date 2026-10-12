@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "mobile/**"
-      - "tests/android-preview.test.js"
+      - "tests/**"
       - ".github/workflows/mobile-android-debug.yml"
   push:
     branches: [main]
