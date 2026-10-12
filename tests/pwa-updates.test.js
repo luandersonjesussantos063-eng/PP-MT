@@ -10,7 +10,7 @@ const workflow=read('.github/workflows/deploy.yml');
 const version=app.match(/const APP_VERSION='([^']+)'/)?.[1];
 
 test('versão, scripts, estilos e service worker usam a mesma versão',()=>{
- assert.equal(version,'2.20.8');
+ assert.equal(version,'2.20.9');
  assert.ok(html.includes('./app.js?v='+version));
  assert.ok(html.includes('./style.css?v='+version));
  assert.ok(html.includes('V '+version));
