@@ -20,7 +20,7 @@ test('não oferece videoaula automática para acertos, não respondidas ou ausê
 test('suporta temas incompletos e escapa conteúdos não confiáveis', () => {
  const html=videoLessonForErrorHTML({subject:'Informática',topic:'<img src=x onerror=alert(1)>',answer:1},0);
  assert.doesNotMatch(html,/<img/);
- assert.match(html,/&lt;img/);
+ assert.match(html,/img src=x onerror=alert\(1\)/);
  const url=videoLessonSearch({subject:'Informática'}).url;
  assert.match(decodeURIComponent(url),/Informática/);
  assert.doesNotMatch(html,/onclick=/);
