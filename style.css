@@ -965,3 +965,8 @@ nav a.active{background:#29313a;color:var(--accent)}
 .video-library-item .video-library-subject{font-size:11px;font-weight:700;color:#d5b36a}
 .video-library-item a{margin-top:auto;min-height:44px}
 @media(max-width:650px){.video-library-filters{grid-template-columns:1fr}.video-library-item a{width:100%;text-align:center}}
+
+/* Atualização PWA disponível durante sessão de questões ou simulado */
+.app-update-banner{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:12px;max-width:calc(100vw - 24px);z-index:100;border:1px solid #d5b36a;background:#1b1f20;color:#f6eee0;padding:13px 16px;border-radius:9px;box-shadow:0 10px 36px #000b;font-size:13px}
+.app-update-banner button{flex-shrink:0}
+@media(max-width:640px){.app-update-banner{width:calc(100vw - 24px);flex-direction:column;text-align:center;bottom:84px}.app-update-banner button{width:100%}}
