@@ -19,5 +19,5 @@ test('V 2.20.4 não mostra cronômetro no cabeçalho mobile e preserva opções 
  assert.ok(page.includes('app.js?v='+CURRENT_VERSION));
  assert.ok(page.includes('style.css?v='+CURRENT_VERSION));
  assert.ok(app.includes("APP_VERSION='"+CURRENT_VERSION+"'"));
- assert.match(read('sw.js'),/const CACHE='ppmt-2\.20\.4-google-sso'/);
+ assert.ok(read('sw.js').includes("const CACHE='ppmt-"+CURRENT_VERSION+'-'));
 });
