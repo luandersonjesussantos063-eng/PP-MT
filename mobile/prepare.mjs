@@ -25,7 +25,7 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
  }
  if(includeAssets)copy(join(root,'assets'),join(outPath,'assets'));
  // Inclui o número da versão na cópia nativa.
- copy(join(root,'version.json'),join(outPath,'version.json');
+ copy(join(root,'version.json'),join(outPath,'version.json'));
  mkdirSync(join(outPath,'planos'),{recursive:true});
  for(const name of PAGES)copy(join(root,'planos',name),join(outPath,'planos',name));
  copy(join(mobile,'native-account.js'),join(outPath,'planos','account.js'));
