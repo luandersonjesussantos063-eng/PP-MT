@@ -30,7 +30,9 @@ test('preparação Android/iOS gera aplicativo local e não altera os arquivos d
   assert.ok(existsSync(join(tmp,'www','mobile-runtime.js')));
   assert.ok(!existsSync(join(tmp,'www','admin')),'Painéis administrativos não fazem parte do pacote');
   const app=readFileSync(join(tmp,'www','app.js'),'utf8');
-  assert.match(app,/!window\.__PPMT_NATIVE__&&'serviceWorker'in navigator/);
+  assert.match(app,/if\(!window\.__PPMT_NATIVE__\)void enableAppAutoUpdates\(\)/);
+  assert.ok(existsSync(join(tmp,'www','version.json')));
+  assert.equal(JSON.parse(readFileSync(join(tmp,'www','version.json'),'utf8')).version,JSON.parse(readFileSync(join(root,'version.json'),'utf8')).version);
   assert.equal(readFileSync(join(root,'index.html'),'utf8'),original);
  }finally{rmSync(tmp,{recursive:true,force:true});}
 });
