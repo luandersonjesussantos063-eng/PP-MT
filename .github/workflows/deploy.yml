@@ -75,6 +75,34 @@ jobs:
     runs-on: ubuntu-latest
     needs: test-and-package
     steps:
+      - uses: actions/checkout@v4
       - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Confirmar versão visível no domínio do aplicativo
+        shell: bash
+        run: |
+          expected="$(node -p "require('./version.json').version")"
+          site="https://ppmt.novabytesolucoes.com.br"
+          success=0
+          for attempt in 1 2 3 4 5 6 7 8; do
+            stamp="${GITHUB_SHA}-${attempt}"
+            echo "Conferência ${attempt}/8: domínio público deve entregar V ${expected}"
+            if curl -fsSL --max-time 18 -H 'Cache-Control: no-cache' "${site}/version.json?deploy=${stamp}" -o /tmp/ppmt-version.json &&
+               curl -fsSL --max-time 18 -H 'Cache-Control: no-cache' "${site}/?deploy=${stamp}" -o /tmp/ppmt-index.html &&
+               curl -fsSL --max-time 18 -H 'Cache-Control: no-cache' "${site}/sw.js?deploy=${stamp}" -o /tmp/ppmt-sw.js &&
+               curl -fsSL --max-time 18 -H 'Cache-Control: no-cache' "${site}/video-catalog.js?deploy=${stamp}" -o /tmp/ppmt-catalog.js &&
+               grep -q "\"version\": \"${expected}\"" /tmp/ppmt-version.json &&
+               grep -q "V ${expected}" /tmp/ppmt-index.html &&
+               grep -q "ppmt-${expected}-" /tmp/ppmt-sw.js &&
+               grep -q 'CURATED_VIDEO_LESSONS' /tmp/ppmt-catalog.js; then
+              echo "SUCESSO: domínio e PWA estão entregando a versão ${expected}."
+              success=1
+              break
+            fi
+            sleep 8
+          done
+          if [ "$success" -ne 1 ]; then
+            echo "::error::Deploy inconsistente: o endereço público não entregou a versão ${expected} e os módulos esperados."
+            exit 1
+          fi
