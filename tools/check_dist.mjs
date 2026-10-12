@@ -10,7 +10,7 @@ const exists=relative=>{
  if(!fs.existsSync(file(relative))){missing.add(relative);return false}
  return true;
 };
-for(const required of ['index.html','app.js','style.css','sw.js','manifest.webmanifest']){
+for(const required of ['index.html','app.js','style.css','sw.js','manifest.webmanifest','atualizar.html','version.json']){
  exists(required);
 }
 if(!fs.existsSync(file('sw.js')))throw new Error('dist/sw.js está ausente');
