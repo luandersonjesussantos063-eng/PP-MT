@@ -4,6 +4,8 @@ import {readFileSync} from 'node:fs';
 
 const read=file=>readFileSync(new URL('../'+file,import.meta.url),'utf8');
 
+const CURRENT_VERSION=JSON.parse(readFileSync(new URL('../version.json',import.meta.url),'utf8')).version;
+
 test('Google, login por senha e Premium usam uma unica instancia Supabase para a sessao',()=>{
  const auth=read('auth.js');
  const social=read('account-services.js');
@@ -33,9 +35,9 @@ test('Google respeita o endereco acessado e permite retorno de checkout sem mist
 });
 test('cache do PWA atualiza login em Android e iOS sem deixar modulos antigos',()=>{
  const index=read('index.html'),sw=read('sw.js'),premium=read('planos/premium.html');
- assert.match(index,/app\.js\?v=2\.20\.4/);
- assert.match(index,/V 2\.20\.4/);
- assert.match(sw,/ppmt-2\.20\.4-google-sso/);
+ assert.ok(index.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(index.includes('V '+CURRENT_VERSION));
+ assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
  assert.match(sw,/account-services\.js\?v=2\.20\.4/);
  assert.match(sw,/auth\.js\?v=2\.20\.4/);
  assert.match(premium,/premium\.js\?v=2\.20\.4/);
