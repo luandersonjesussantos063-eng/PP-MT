@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {canOpenTacticalHelp} from '../help.js';
 
+const CURRENT_VERSION=JSON.parse(readFileSync(new URL('../version.json',import.meta.url),'utf8')).version;
+
 test('ajuda tática grátis é utilizável no estudo e treino livre mesmo com 0 XP',()=>{
  assert.equal(canOpenTacticalHelp({exam:false}),true);
  assert.equal(canOpenTacticalHelp({exam:false,missionAnswered:false}),true);
@@ -28,8 +30,8 @@ test('interface liga ajuda na resposta da missão, registra eventos e mostra na 
 test('cache do app inclui versão nova do código de ajuda',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
- assert.match(html,/app\.js\?v=2\.20\.4/);
- assert.match(sw,/app\.js\?v=2\.20\.4/);
+ assert.ok(html.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(sw.includes('app.js?v='+CURRENT_VERSION));
  assert.match(sw,/help\.js\?v=2\.19\.8/);
  assert.match(sw,/easy-similar\.js\?v=2\.20\.2/);
 });
