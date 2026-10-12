@@ -2,14 +2,20 @@ import test from 'node:test';import assert from 'node:assert/strict';import vm f
 const source=fs.readFileSync(new URL('../sw.js',import.meta.url),'utf8');
 function worker(){
  const handlers={},objects=new Map();let requested=[];
- const store={addAll:async paths=>{requested=paths;for(const p of paths){assert.ok(fs.existsSync(new URL('../'+(p==='./'?'index.html':p.split('?')[0]),import.meta.url)),p);objects.set(new URL(p,'https://app.test/PP-MT/').href,new Response('cached '+p))}},put:async(req,r)=>objects.set(req.url,r)};
+ const cacheKey=req=>typeof req==='string'?new URL(req,'https://app.test/PP-MT/').href:req.url;
+ const add=async p=>{
+  requested.push(p);
+  assert.ok(fs.existsSync(new URL('../'+(p==='./'?'index.html':p.split('?')[0]),import.meta.url)),p);
+  objects.set(cacheKey(p),new Response('cached '+p));
+ };
+ const store={add,addAll:async paths=>{await Promise.all(paths.map(add))},match:async req=>objects.get(cacheKey(req))?.clone(),put:async(req,r)=>objects.set(cacheKey(req),r)};
  const caches={open:async()=>store,keys:async()=>['old','ppmt-v46'],delete:async()=>true,match:async req=>objects.get(typeof req==='string'?new URL(req,'https://app.test/PP-MT/').href:req.url)?.clone()};
  const context=vm.createContext({URL,Response,AbortController,caches,setTimeout:(fn)=>setTimeout(fn,2),clearTimeout,fetch:async()=>{throw Error('offline')},self:{location:{origin:'https://app.test'},skipWaiting(){},clients:{claim(){}},addEventListener:(type,fn)=>handlers[type]=fn}});
  vm.runInContext(source,context);
  return {handlers,context,requested:()=>requested,install:async()=>{let promise;handlers.install({waitUntil:p=>promise=p});await promise},request:async(url,mode='cors')=>{let result;handlers.fetch({request:{url,method:'GET',mode},respondWith:r=>result=r});return result?await result:null}};
 }
 test('preparo offline inclui todos os módulos locais, áudio, imagens e biblioteca de autenticação',async()=>{
- const w=worker();await w.install();const files=w.requested();assert.ok(files.length>380);assert.ok(files.some(p=>p.includes('assets/questions/')));assert.ok(files.some(p=>p.includes('assets/vendor/supabase')));
+ const w=worker();await w.install();const files=w.requested();assert.ok(files.length>40);assert.ok(files.some(p=>p.includes('app.js')));assert.ok(files.some(p=>p.includes('assets/vendor/supabase')));assert.ok(!files.some(p=>p.includes('assets/questions/')),'imagens de questões devem ser baixadas sob demanda');
  const modules=fs.readdirSync(new URL('../',import.meta.url)).filter(p=>p.endsWith('.js')&&!p.startsWith('sw'));
  for(const file of modules)assert.ok(files.some(p=>p.startsWith('./'+file+'?')||p==='./'+file),file);
 });
