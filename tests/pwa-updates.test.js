@@ -10,7 +10,7 @@ const workflow=read('.github/workflows/deploy.yml');
 const version=app.match(/const APP_VERSION='([^']+)'/)?.[1];
 
 test('versão, scripts, estilos e service worker usam a mesma versão',()=>{
- assert.equal(version,'2.20.9');
+ assert.equal(version,JSON.parse(read('version.json')).version);
  assert.ok(html.includes('./app.js?v='+version));
  assert.ok(html.includes('./style.css?v='+version));
  assert.ok(html.includes('V '+version));
@@ -34,6 +34,8 @@ test('scripts e HTML usam rede antes do cache offline',()=>{
 test('pacote publica videoaulas e valida dependências antes do deploy',()=>{
  assert.match(workflow,/video-lessons\.js video-catalog\.js sw\.js/);
  assert.match(workflow,/node tools\/check_dist\.mjs/);
+ assert.match(workflow,/Confirmar versão visível no domínio do aplicativo/);
+ assert.match(workflow,/atualizar\.html version\.json dist/);
  assert.match(workflow,/node --check video-lessons\.js/);
  assert.ok(fs.existsSync(new URL('../tools/check_dist.mjs',import.meta.url)));
 });
