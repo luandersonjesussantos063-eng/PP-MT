@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read = name => readFileSync(new URL('../'+name,import.meta.url),'utf8');
 
+const CURRENT_VERSION=JSON.parse(readFileSync(new URL('../version.json',import.meta.url),'utf8')).version;
+
 test('dock móvel do iOS sai de dentro do aside que possui altura zero',()=>{
  const app=read('app.js');
  assert.match(app,/const mobileDock=document\.getElementById\('nav'\)/);
@@ -25,10 +27,10 @@ test('iOS mantém PWA instalável, versão e cache sincronizados',()=>{
  const html=read('index.html'),sw=read('sw.js'),app=read('app.js');
  assert.match(html,/apple-mobile-web-app-capable" content="yes"/);
  assert.match(html,/viewport-fit=cover/);
- assert.match(html,/style\.css\?v=2\.20\.4/);
- assert.match(html,/app\.js\?v=2\.20\.4/);
- assert.match(app,/APP_VERSION='2\.20\.4'/);
- assert.match(sw,/ppmt-2\.20\.4-google-sso/);
- assert.match(sw,/style\.css\?v=2\.20\.4/);
- assert.match(sw,/app\.js\?v=2\.20\.4/);
+ assert.ok(html.includes('style.css?v='+CURRENT_VERSION));
+ assert.ok(html.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(app.includes("APP_VERSION='"+CURRENT_VERSION+"'"));
+ assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
+ assert.ok(sw.includes('style.css?v='+CURRENT_VERSION));
+ assert.ok(sw.includes('app.js?v='+CURRENT_VERSION));
 });
