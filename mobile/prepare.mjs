@@ -24,6 +24,8 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
   copy(join(root,item.name),join(outPath,item.name));
  }
  if(includeAssets)copy(join(root,'assets'),join(outPath,'assets'));
+ // Inclui o número da versão na cópia nativa.
+ copy(join(root,'version.json'),join(outPath,'version.json');
  mkdirSync(join(outPath,'planos'),{recursive:true});
  for(const name of PAGES)copy(join(root,'planos',name),join(outPath,'planos',name));
  copy(join(mobile,'native-account.js'),join(outPath,'planos','account.js'));
@@ -61,9 +63,19 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
  // Capacitor já empacota o conteúdo local; o cache PWA e o push web exigem origem http/https.
  const appPath=join(outPath,'app.js');
  let app=readFileSync(appPath,'utf8');
- const register="if('serviceWorker'in navigator)navigator.serviceWorker.register";
- if(!app.includes(register))throw Error('Não foi possível desabilitar o service worker no app nativo.');
- app=app.replace(register,"if(!window.__PPMT_NATIVE__&&'serviceWorker'in navigator)navigator.serviceWorker.register");
+ const pwaInit='void enableAppAutoUpdates();';
+ const legacy="if('serviceWorker'in navigator)navigator.serviceWorker.register";
+ if(app.includes(pwaInit)){
+  app=app.replace(pwaInit,'if(!window.__PPMT_NATIVE__)void enableAppAutoUpdates();');
+ }else if(app.includes(legacy)){
+  app=app.replace(legacy,"if(!window.__PPMT_NATIVE__&&'serviceWorker'in navigator)navigator.serviceWorker.register");
+ }else throw Error('Inicialização do Service Worker não encontrada.');
+ const action="$('#checkAppUpdates').onclick=()=>void checkAppUpdates(true);";
+ if(app.includes(action)){
+  app=app.replace(action,"$('#checkAppUpdates').onclick=()=>toast('Este APK exige nova instalação. Baixe a versão atual pelo GitHub Actions > Gerar APK de teste.');");
+ }
+ app=app.replace('O aplicativo busca atualizações ao abrir, voltar à tela e recuperar a internet. Seus estudos continuam salvos.',
+  'Esta versão Android foi empacotada localmente. Para receber novas alterações, instale uma nova versão do APK de testes.');
  writeFileSync(appPath,app);
 
  // Promessas de cupons geradas pelo site não devem apontar para compras fora das lojas.
