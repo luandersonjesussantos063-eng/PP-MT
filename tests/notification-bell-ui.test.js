@@ -6,6 +6,8 @@ const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const app=read('app.js'),css=read('style.css'),notices=read('notifications.js');
 const sw=read('sw.js'),html=read('index.html');
 
+const CURRENT_VERSION=JSON.parse(readFileSync(new URL('../version.json',import.meta.url),'utf8')).version;
+
 test('sino do cabeçalho permanece como ícone discreto, com destino às notificações',()=>{
  assert.match(app,/href="#ofertas" class="notification-trigger" id="notificationBell"/);
  assert.match(app,/id="notificationBell"[\s\S]*?<svg viewBox="0 0 24 24"[\s\S]*?<span class="notification-dot" hidden/);
@@ -22,10 +24,10 @@ test('notificações alteram só o pontinho, sem substituir ou apagar o sino',()
  assert.match(notices,/function markRead\(\)/);
 });
 test('versão e cache offline incluem o novo desenho e sua lógica',()=>{
- assert.match(app,/const APP_VERSION='2\.20\.4'/);
+ assert.ok(app.includes("APP_VERSION='"+CURRENT_VERSION+"'"));
  assert.match(app,/notifications\.js\?v=2\.19\.7/);
- assert.match(html,/app\.js\?v=2\.20\.4/);
- assert.match(html,/style\.css\?v=2\.20\.4/);
- assert.match(sw,/ppmt-2\.20\.4-google-sso/);
+ assert.ok(html.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(html.includes('style.css?v='+CURRENT_VERSION));
+ assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
  assert.match(sw,/notifications\.js\?v=2\.19\.7/);
 });
