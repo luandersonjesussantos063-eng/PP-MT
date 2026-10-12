@@ -72,3 +72,26 @@ Somente no fluxo de APK de testes, o workflow usa `PPMT_ANDROID_DEBUG_PAYMENTS=t
 Não é pagamento fictício: ao concluir o checkout, a cobrança real será do valor exibido no site. O teste requer usar a mesma conta PP-MT no navegador e no aplicativo, e consultar novamente a assinatura ao retornar. As compras não são liberadas na distribuição padrão/iOS: `node mobile/prepare.mjs` sem a variável mantém a tela informativa de compras bloqueadas.
 
 Nunca gerar uma versão release com `PPMT_ANDROID_DEBUG_PAYMENTS=true` nem publicar o APK debug na loja.
+
+## Por que o APK de testes não atualizava após mudar o site
+
+O APK Capacitor contém uma cópia dos arquivos em `mobile/www`. Publicar
+`app.js` no GitHub Pages não altera um APK já instalado.
+
+O workflow de Android foi ampliado para acompanhar mudanças nos recursos web,
+gerar outro APK de testes e atribuir o `versionName` de `version.json`,
+com `versionCode` crescente.
+
+Para atualizar, acesse **GitHub → Actions → Gerar APK de teste do PP-MT
+(Android) → Artifacts → ppmt-android-debug-apk** na execução concluída.
+Esse APK não é uma publicação na Play Store nem é instalado automaticamente.
+
+**Preservação de dados:** executores diferentes do GitHub Actions podem gerar
+APKs debug com assinaturas distintas. Nesse caso, o Android pode recusar a
+instalação sobre o APK anterior. Salve e sincronize o progresso antes de
+qualquer desinstalação. Configurar chave de assinatura estável é um requisito
+para atualização por cima do APK anterior, e a loja exige lançamento de app
+assinado próprio e adequação de pagamentos digitais ao Google Play Billing.
+
+Para atualizações de interface sem novo APK, seria necessária outra arquitetura
+(web/PWA ou atualização remota segura e compatível com as políticas da loja).
