@@ -11,7 +11,7 @@
       "kind": "convocacao",
       "events": [],
       "firstSeenAt": "2026-10-08T17:49:39+00:00",
-      "lastSeenAt": "2026-10-27T22:12:22+00:00"
+      "lastSeenAt": "2026-10-28T05:39:47+00:00"
     },
     {
       "id": "c681df729526a517ec8e",
@@ -37,7 +37,7 @@
       "kind": "novo-concurso",
       "events": [],
       "firstSeenAt": "2026-10-11T12:34:04+00:00",
-      "lastSeenAt": "2026-10-27T22:12:22+00:00"
+      "lastSeenAt": "2026-10-28T05:39:47+00:00"
     }
   ],
   "sources": [
@@ -46,8 +46,8 @@
       "name": "SEJUS · autorização do concurso",
       "url": "https://www.sejus.mt.gov.br/w/governador-otaviano-pivetta-convoca-mais-283-policiais-penais-e-anuncia-novo-concurso",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 1
     },
@@ -56,8 +56,8 @@
       "name": "SEJUS · editais",
       "url": "https://www.sejus.mt.gov.br/editais",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 1
     },
@@ -66,8 +66,8 @@
       "name": "SEJUS · notícias",
       "url": "https://www.sejus.mt.gov.br/noticias",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -76,8 +76,8 @@
       "name": "SEPLAG · notícias",
       "url": "https://www.seplag.mt.gov.br/noticias",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -86,8 +86,8 @@
       "name": "Diário Oficial · SEPLAG · concursos · 10/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/2499/2026/10",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -96,8 +96,8 @@
       "name": "Diário Oficial · SEPLAG · concursos · 09/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/2499/2026/9",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -106,8 +106,8 @@
       "name": "Diário Oficial · SEJUS · editais · 10/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4255/2026/10",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -116,8 +116,8 @@
       "name": "Diário Oficial · SEJUS · editais · 09/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4255/2026/9",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -126,8 +126,8 @@
       "name": "Diário Oficial · SEJUS · portarias · 10/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4239/2026/10",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     },
@@ -136,8 +136,8 @@
       "name": "Diário Oficial · SEJUS · portarias · 09/2026",
       "url": "https://iomat.mt.gov.br/legislacao/diario_oficial/4239/2026/9",
       "status": "ok",
-      "lastAttemptAt": "2026-10-27T22:12:22+00:00",
-      "lastSuccessAt": "2026-10-27T22:12:22+00:00",
+      "lastAttemptAt": "2026-10-28T05:39:47+00:00",
+      "lastSuccessAt": "2026-10-28T05:39:47+00:00",
       "error": null,
       "found": 0
     }
@@ -145,9 +145,9 @@
   "milestones": [],
   "events": [],
   "schemaVersion": 1,
-  "checkedAt": "2026-10-27T22:12:22+00:00",
-  "lastSuccessAt": "2026-10-27T22:12:22+00:00",
-  "lastPartialSuccessAt": "2026-10-27T22:12:22+00:00",
+  "checkedAt": "2026-10-28T05:39:47+00:00",
+  "lastSuccessAt": "2026-10-28T05:39:47+00:00",
+  "lastPartialSuccessAt": "2026-10-28T05:39:47+00:00",
   "checkStatus": "ok",
   "newCount": 0
 }
