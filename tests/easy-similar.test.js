@@ -71,5 +71,5 @@ test('interface não desabilita ajuda sem similar, não cobra XP e preserva ques
  const sw=readFileSync(new URL('../sw.js',import.meta.url),'utf8');
  const action=readFileSync(new URL('../.github/workflows/deploy.yml',import.meta.url),'utf8');
  for(const code of [sw,action])assert.match(code,/easy-similar\.js/);
- assert.ok(page.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(page.includes('app-loader.js?v='+CURRENT_VERSION));
 });

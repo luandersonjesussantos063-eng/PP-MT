@@ -1,5 +1,6 @@
 // Gera recursos locais para Android/iOS sem alterar a versão web publicada.
 // Executar na raiz: node mobile/prepare.mjs
+import {buildSync} from 'esbuild';
 import {cpSync,existsSync,mkdirSync,readFileSync,readdirSync,rmSync,writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
 import {dirname,join,resolve,extname} from 'node:path';
@@ -53,7 +54,7 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
 
  const indexPath=join(outPath,'index.html');
  let index=readFileSync(indexPath,'utf8');
- const appTag='<script type="module" src="./app.js';
+ const appTag='<script defer src="./app-loader.js';
  if(!index.includes(appTag))throw Error('Não foi possível localizar o bootstrap do aplicativo.');
  index=index.replace(appTag,'<script src="./mobile-runtime.js"></script>'+appTag);
  // Métricas do site não são enviadas pelo app empacotado.
@@ -65,7 +66,9 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
  let app=readFileSync(appPath,'utf8');
  const pwaInit='void enableAppAutoUpdates();';
  const legacy="if('serviceWorker'in navigator)navigator.serviceWorker.register";
- if(app.includes(pwaInit)){
+ if(app.includes("if(!window.__PPMT_NATIVE__)"+pwaInit)){
+  // The source already guards native startup.
+ }else if(app.includes(pwaInit)){
   app=app.replace(pwaInit,'if(!window.__PPMT_NATIVE__)void enableAppAutoUpdates();');
  }else if(app.includes(legacy)){
   app=app.replace(legacy,"if(!window.__PPMT_NATIVE__&&'serviceWorker'in navigator)navigator.serviceWorker.register");
@@ -85,6 +88,12 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
   if(s.includes('for(const o of offers||[])'))s=s.replace('for(const o of offers||[])','for(const o of (window.__PPMT_NATIVE__?[]:offers)||[])');
   writeFileSync(notifications,s);
  }
+ // Build from the sanitised native source, including the native account screen.
+ const vendorPath=join(outPath,'assets','vendor','supabase-2.117.2.js');
+ const temporaryVendor=!existsSync(vendorPath);
+ if(temporaryVendor){mkdirSync(dirname(vendorPath),{recursive:true});copy(join(root,'assets','vendor','supabase-2.117.2.js'),vendorPath)}
+ buildSync({entryPoints:[appPath],outfile:join(outPath,'app.bundle.js'),bundle:true,format:'esm',platform:'browser',target:['chrome100','safari15'],minify:true,legalComments:'inline'});
+ if(temporaryVendor&&!includeAssets)rmSync(join(outPath,'assets'),{recursive:true,force:true});
  return {out:outPath,files:readdirSync(outPath).length,hasAssets:includeAssets};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){

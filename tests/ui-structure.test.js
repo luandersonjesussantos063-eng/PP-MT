@@ -21,7 +21,7 @@ test('camada de interação não deixa filhos roubarem o gesto',()=>{
 
 test('versão exibida e revisão dos arquivos publicados permanecem alinhadas',()=>{
   const runtime=app.match(/const APP_VERSION='([^']+)'/)?.[1];
-  const js=html.match(/app\.js\?v=([^"&]+)/)?.[1];
+  const js=html.match(/app-loader\.js\?v=([^"&]+)/)?.[1];
   const style=html.match(/style\.css\?v=([^"&]+)/)?.[1];
   assert.match(runtime,/^\d+\.\d+\.\d+$/,'Versão semanticamente válida');
   assert.ok(js.startsWith(runtime), 'JS deve usar a mesma versão, podendo incluir sufixo de cache');

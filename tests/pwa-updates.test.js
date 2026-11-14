@@ -11,7 +11,7 @@ const version=app.match(/const APP_VERSION='([^']+)'/)?.[1];
 
 test('versão, scripts, estilos e service worker usam a mesma versão',()=>{
  assert.equal(version,JSON.parse(read('version.json')).version);
- assert.ok(html.includes('./app.js?v='+version));
+ assert.ok(html.includes('./app-loader.js?v='+version));
  assert.ok(html.includes('./style.css?v='+version));
  assert.ok(html.includes('V '+version));
  assert.ok(app.includes("register('./sw.js?v="+version+"'"));

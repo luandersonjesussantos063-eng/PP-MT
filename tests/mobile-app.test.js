@@ -17,7 +17,11 @@ test('preparação Android/iOS gera aplicativo local e não altera os arquivos d
   assert.equal(result.hasAssets,false);
   const index=readFileSync(join(tmp,'www','index.html'),'utf8');
   assert.match(index,/mobile-runtime\.js/);
-  assert.match(index,/app\.js/);
+  assert.match(index,/app-loader\.js/);
+  assert.ok(existsSync(join(tmp,'www','app.bundle.js')));
+  const nativeBundle=readFileSync(join(tmp,'www','app.bundle.js'),'utf8');
+  assert.match(nativeBundle,/A contrata/);
+  assert.doesNotMatch(nativeBundle,/Assinar por \$\{PLAN.price\}/);
   assert.doesNotMatch(index,/<script\s+defer\s+src="\.\/analytics\.js/);
   const account=readFileSync(join(tmp,'www','planos','account.js'),'utf8');
   assert.match(account,/renderMembership/);

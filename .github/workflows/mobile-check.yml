@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - run: npm ci
       - name: Verificar qualidade e bloqueio de pagamentos externos
         run: node --test tests/mobile-app.test.js
       - name: Preparar recursos locais do Android e iOS

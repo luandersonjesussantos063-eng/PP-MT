@@ -19,3 +19,6 @@ Revisados nomes visíveis, metadados, notificações, ajuda e artigos. Paleta ig
 
 ## Interface simplificada 3.1.0
 Tela inicial com um próximo passo, bloco recomendado de até 5 questões e plano recolhido. Navegação com Hoje, Estudar, Revisar, Progresso e Mais; extras em grupos recolhidos, busca opcional e menos saídas durante o estudo. Rotina pode ser ajustada depois do primeiro bloco. Sons novos ficam desligados por padrão; preferências explicitamente salvas continuam respeitadas. Contas, histórico, gabaritos, cotas e pagamentos preservados.
+
+## Inicialização 3.1.1
+O painel abre por `app-loader.js` e um pacote único `app.bundle.js`, gerado com `npm run build:app`. A tela inicial mostra carregamento e recuperação de erro, em vez de deixar a apresentação estática parecer o app. Login e painel disparam confirmação de inicialização. Teste de abertura usa os módulos reais, inclusive autenticação, sem simular seu módulo. Sem apagar armazenamento ou progresso.

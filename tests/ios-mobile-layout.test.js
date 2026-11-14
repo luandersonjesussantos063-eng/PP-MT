@@ -28,7 +28,7 @@ test('iOS mantém PWA instalável, versão e cache sincronizados',()=>{
  assert.match(html,/apple-mobile-web-app-capable" content="yes"/);
  assert.match(html,/viewport-fit=cover/);
  assert.ok(html.includes('style.css?v='+CURRENT_VERSION));
- assert.ok(html.includes('app.js?v='+CURRENT_VERSION));
+ assert.ok(html.includes('app-loader.js?v='+CURRENT_VERSION));
  assert.ok(app.includes("APP_VERSION='"+CURRENT_VERSION+"'"));
  assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
  assert.ok(sw.includes('style.css?v='+CURRENT_VERSION));

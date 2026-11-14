@@ -22,7 +22,7 @@ test('preparo offline inclui todos os módulos locais, áudio, imagens e bibliot
 test('reabertura e arquivos do estudo continuam acessíveis sem nenhuma resposta de rede',async()=>{
  const w=worker();await w.install();
  const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
- const currentApp=html.match(/app\.js\?v=[^"]+/)?.[0];
+ const currentApp=html.match(/app-loader\.js\?v=[^"]+/)?.[0];
  const currentAuth=source.match(/\.\/auth\.js\?v=[^']+/)?.[0]?.slice(2);
  assert.ok(currentApp&&currentAuth,'As revisões publicadas devem existir');
  for(const path of ['index.html',currentApp,currentAuth,'assets/vendor/supabase-2.117.2.js','syllabus-data.js?v=2.15.0']){const r=await w.request('https://app.test/PP-MT/'+path,path==='index.html'?'navigate':'cors');assert.equal(r.status,200,path)}

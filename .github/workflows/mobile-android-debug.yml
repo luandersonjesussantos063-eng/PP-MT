@@ -70,6 +70,7 @@ jobs:
         env:
           PPMT_ANDROID_DEBUG_PAYMENTS: 'true'
         run: |
+          npm run build:app
           node mobile/prepare.mjs
           ./node_modules/.bin/esbuild ./mobile/android-payments.mjs --bundle --format=esm --platform=browser --outfile=mobile/www/android-payments.js
 

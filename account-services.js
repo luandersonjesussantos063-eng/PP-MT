@@ -1,4 +1,4 @@
-import {getSupabaseClient} from './auth.js?v=3.1.0';
+import {getSupabaseClient} from './auth.js?v=3.1.1';
 // Compartilha a mesma instância para que o callback Google seja processado apenas uma vez.
 const supabase=getSupabaseClient();
 // Rota relativa ao aplicativo permite manter o GitHub Pages como endereço antigo
