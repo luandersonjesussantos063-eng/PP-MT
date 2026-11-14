@@ -1,5 +1,5 @@
 // Conteúdo exclusivo do pacote das lojas: nenhuma cobrança ou link para checkout.
-import {loadMembership} from '../auth.js?v=3.0.1';
+import {loadMembership} from '../auth.js?v=3.1.0';
 export async function renderMembership(container){
  container.innerHTML=`<div class="plan-presentation"><section class="plan-hero">
  <p class="plan-kicker">PREPARAÇÃO POLICIAL · PMMG</p><h1>Seu plano de estudos</h1>

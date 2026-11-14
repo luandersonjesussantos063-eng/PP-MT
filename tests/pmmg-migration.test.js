@@ -39,11 +39,11 @@ const bundle=await build({stdin:{contents:read('app.js')+'\nwindow.__pmmgTest={b
  b.onLoad({filter:/\/account-services\.js$/},()=>({contents:`export const loginWithGoogle=async()=>{},takeGoogleReturn=()=>false,takeGoogleAuthError=()=>null,myPremiumOffers=async()=>[],studyQuota=async()=>({allowed:true,premium:true,daily_remaining:999});`,loader:'js'}));
  b.onLoad({filter:/\/notifications\.js$/},()=>({contents:`export function createNotificationCenter(){return {paintBell(){},start(){},stop(){},unregisterOnLogout:async()=>{},renderInbox:async()=>{}}}`,loader:'js'}));
 }}]});
-async function open(){
+async function open(seed=legacy){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
- const w=dom.window;w.__seed=structuredClone(legacy);w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
- w.fetch=async()=>({ok:true,json:async()=>({version:'3.0.1'})});w.eval(bundle.outputFiles[0].text);
+ const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>Promise.resolve();w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
+ w.fetch=async()=>({ok:true,json:async()=>({version:'3.1.0'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{
@@ -82,4 +82,58 @@ test('identidade visual herda os tons exatos do app PMMG anterior',()=>{
  const css=read('style.css');
  for(const token of ['--bg:#101337','--panel:#191d5e','--accent:#ffcb05','border-bottom:3px solid #bb2127'])assert.ok(css.includes(token),token);
  for(const file of ['style.css','planos/style.css','planos/premium.css','planos/assinar.css'])assert.doesNotMatch(read(file),/#d5b36a|#dcb975|#edc784/i,file);
+});
+test('tela inicial tem só um próximo passo, cinco destinos e detalhes recolhidos',async()=>{
+ const {dom,w,errors}=await open();
+ try{
+  const doc=w.document;
+  assert.equal(doc.querySelectorAll('#nav a').length,5);
+  assert.deepEqual([...doc.querySelectorAll('#nav a')].map(x=>x.hash),['#inicio','#estudar','#erros','#desempenho','#mais']);
+  assert.equal(doc.querySelectorAll('.focus-home .primary').length,1);
+  assert.equal(doc.querySelectorAll('.command-v218,.command-metrics,.command-quick,.quick-actions').length,0);
+  assert.equal(doc.querySelector('.focus-details').open,false);
+  const before=JSON.parse(w.localStorage.getItem('ppmt-v2:test-account'));
+  doc.querySelector('#beginLearning').click();await new Promise(r=>setTimeout(r,10));
+  w.__pmmgTest.navigate();
+  const state=JSON.parse(w.localStorage.getItem('ppmt-v2:test-account'));
+  assert.ok(state.program.learning.ids.length<=5);
+  assert.deepEqual(state.program.profile,before.program.profile);
+  assert.equal(doc.querySelectorAll('#learnNext.primary').length,1);
+  doc.querySelector('#learnNext').click();
+  const option=doc.querySelector('[data-learning-answer]');assert.ok(option);option.click();
+  await new Promise(r=>setTimeout(r,10));
+  assert.ok(doc.querySelector('.feedback'));
+  assert.equal(JSON.parse(w.localStorage.getItem('ppmt-v2:test-account')).attempts.length,1);
+  assert.deepEqual(errors.map(e=>e.message),[]);
+ }finally{dom.window.close()}
+});
+test('Mais mantém todas as ferramentas em grupos fechados, sem esconder a atualização',async()=>{
+ const {dom,w}=await open();
+ try{
+  w.location.hash='mais';w.__pmmgTest.navigate();const doc=w.document;
+  assert.equal(doc.querySelectorAll('.focus-menu>details').length,4);
+  assert.ok([...doc.querySelectorAll('.focus-menu>details')].every(d=>!d.open));
+  for(const target of ['#simulados','#provas','#dados','#rotina','#plano','#questoes','#videoaulas'])assert.ok(doc.querySelector(`.focus-menu a[href="${target}"]`),target);
+  assert.ok(doc.querySelector('#checkAppUpdates'));
+  const details=doc.querySelector('#answerSoundToggle').closest('details');details.open=true;
+  doc.querySelector('#answerSoundToggle').click();assert.equal(details.open,true);
+  w.location.hash='questoes';w.__pmmgTest.navigate();assert.equal(doc.querySelector('.question-filters').open,false);
+  assert.equal(doc.querySelector('#nav [aria-current="page"]').hash,'#mais');
+ }finally{dom.window.close()}
+});
+test('primeiro acesso começa sem formulário longo e bloco salvo pode ser retomado',async()=>{
+ const {dom,w}=await open({contest:'PMMG',attempts:[],favorites:[],custom:[],sessions:[],program:{}});
+ let snapshot;
+ try{
+  assert.ok(w.document.querySelector('#beginLearning'));
+  assert.equal(w.document.querySelector('#routineForm'),null);
+  w.document.querySelector('#beginLearning').click();await new Promise(r=>setTimeout(r,10));
+  snapshot=JSON.parse(w.localStorage.getItem('ppmt-v2:test-account'));
+  assert.ok(snapshot.program.profile);assert.ok(snapshot.program.learning.ids.length<=5);
+ }finally{dom.window.close()}
+ const resumed=await open(snapshot);
+ try{
+  assert.match(resumed.w.document.querySelector('#beginLearning').textContent,/Continuar estudo/);
+  assert.deepEqual(JSON.parse(resumed.w.localStorage.getItem('ppmt-v2:test-account')).program.learning.ids,snapshot.program.learning.ids);
+ }finally{resumed.dom.window.close()}
 });

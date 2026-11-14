@@ -16,3 +16,6 @@ O banco exclusivo pago do PP-MT não foi convertido em PMMG. A página Premium i
 
 ## Identidade PMMG 3.0.1
 Revisados nomes visíveis, metadados, notificações, ajuda e artigos. Paleta igual ao app PMMG anterior: azul #191d5e, vermelho #bb2127 e amarelo #ffcb05; fundos #101337 e painéis azuis. Preservados domínio, chaves de armazenamento, APIs e endereço real do fornecedor em MT.
+
+## Interface simplificada 3.1.0
+Tela inicial com um próximo passo, bloco recomendado de até 5 questões e plano recolhido. Navegação com Hoje, Estudar, Revisar, Progresso e Mais; extras em grupos recolhidos, busca opcional e menos saídas durante o estudo. Rotina pode ser ajustada depois do primeiro bloco. Sons novos ficam desligados por padrão; preferências explicitamente salvas continuam respeitadas. Contas, histórico, gabaritos, cotas e pagamentos preservados.

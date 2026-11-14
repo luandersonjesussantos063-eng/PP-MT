@@ -16,11 +16,11 @@ test('dashboard compacto mostra missão e indicadores sem segunda barra de progr
  assert.doesNotMatch(view,/command-overview|SEU DESEMPENHO DIÁRIO|Conhecer Premium/);
 });
 test('interface evita mostrar anúncio grande a aluno Premium em todas as abas',()=>{
- assert.match(app,/if\(quotaSnapshot&&!quotaSnapshot\.premium\)parent\.insertAdjacentHTML/);
+ assert.match(app,/if\(parent&&quotaSnapshot&&!quotaSnapshot\.premium\)parent\.insertAdjacentHTML/);
  assert.match(app,/membershipMarker\.textContent=quotaSnapshot\.premium/);
 });
 test('plano diário aparece antes dos atalhos e sincronização bem-sucedida não ocupa altura fixa',()=>{
- assert.match(app,/today\.after\(quick\)/);
+ assert.match(app,/class="card focus-home"/);
  assert.match(app,/el\.hidden=!currentUser\|\|\(!offline&&syncStatus==='saved'\)/);
  const currentVersion=app.match(/const APP_VERSION='([^']+)'/)?.[1];
  assert.ok(currentVersion,'A versão do aplicativo deve existir');

@@ -25,9 +25,9 @@ test('notificações alteram só o pontinho, sem substituir ou apagar o sino',()
 });
 test('versão e cache offline incluem o novo desenho e sua lógica',()=>{
  assert.ok(app.includes("APP_VERSION='"+CURRENT_VERSION+"'"));
- assert.match(app,/notifications\.js\?v=3\.0\.1/);
+ assert.match(app,/notifications\.js\?v=3\.1\.0/);
  assert.ok(html.includes('app.js?v='+CURRENT_VERSION));
  assert.ok(html.includes('style.css?v='+CURRENT_VERSION));
  assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
- assert.match(sw,/notifications\.js\?v=3\.0\.1/);
+ assert.match(sw,/notifications\.js\?v=3\.1\.0/);
 });

@@ -988,3 +988,41 @@ header{border-bottom:3px solid #bb2127}
 nav a.active,.ppmt-mobile-dock a.active{border-color:#bb2127;color:#ffdb52}
 .command-kicker-dot,.subject-check{background:#bb2127;color:#f8f9ff}
 button:focus-visible,a:focus-visible{outline-color:#ffcb05}
+
+/* Foco: uma ação principal e detalhes sob demanda. */
+#content{max-width:1040px;margin-inline:auto}
+h1,h2,h3{font-family:Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-.02em;text-transform:none}
+h1{font-size:clamp(26px,5vw,36px);line-height:1.25}
+h2{font-size:21px;line-height:1.35}
+.focus-home{max-width:680px;margin:20px auto;padding:32px;border-radius:16px;box-shadow:none}
+.focus-home .eyebrow{letter-spacing:.08em;font-size:11px;margin-bottom:16px}
+.focus-intro{font-size:17px;line-height:1.65;color:#d5daf0;max-width:40ch}
+.focus-next{margin:28px 0;padding:20px;background:#101337;border-radius:12px;border:1px solid #414784}
+.focus-next>span{font-size:11px;letter-spacing:.06em}
+.focus-next h2{margin:10px 0 0;font-size:23px}
+.focus-primary{width:100%;min-height:56px;font-size:18px;border-radius:10px;box-shadow:none}
+.focus-reassurance{font-size:14px;text-align:center;color:#bac0df;margin:14px 0 0}
+.focus-details{max-width:680px;margin:16px auto;padding:0;border-radius:12px;box-shadow:none;overflow:hidden}
+.focus-details>summary{padding:19px 20px;cursor:pointer;font-weight:650;font-size:16px;line-height:1.5;color:#f8f9ff}
+.focus-details[open]>summary{border-bottom:1px solid #414784;margin-bottom:16px}
+.focus-details> :not(summary){margin-left:20px;margin-right:20px}
+.focus-details>:last-child{margin-bottom:20px}
+.focus-text-link{display:block;margin-top:18px;margin-bottom:14px;min-height:32px;color:#ffdb52}
+.focus-menu-links{display:grid;gap:0}
+.focus-menu-links a,.focus-subject{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:17px 0;color:#f8f9ff;text-decoration:none;border:0;border-bottom:1px solid #414784;background:transparent;font-size:16px;text-align:left;width:100%;line-height:1.5}
+.focus-menu-links span{color:#ffdb52}
+.focus-study-start{max-width:680px;margin:20px auto;padding:24px;border-radius:14px}
+.focus-study-start>.primary{width:100%;min-height:54px;font-size:17px}
+.focus-inner-details{margin:20px 0;line-height:1.65}
+.focus-inner-details>summary{padding:12px 0;cursor:pointer;color:#bac0df}
+.focus-session-meta{line-height:1.7}
+.study-quota-note{font-size:13px}
+#content .question-filters{max-width:none;margin:0 0 20px}
+.focus-menu .sound-settings{display:block;padding:0;box-shadow:none;border:0;margin-bottom:28px}
+.focus-menu h2{font-size:18px}
+.focus-menu .app-update-controls{margin-top:28px;border-top:1px solid #414784;padding-top:20px}
+header .version,header .desktop-context,.brand-copy .app-version-badge{display:none}
+nav a.active{box-shadow:none;border-left:3px solid #bb2127}
+.layout aside .brand-copy small{display:none}
+@media(max-width:640px){.focus-home{margin:8px 0 18px;padding:23px 20px}.focus-details{margin:14px 0}.focus-next{margin:23px 0}.focus-home h1{font-size:28px}.focus-intro{font-size:16px}.focus-study-start{margin:12px 0}.learning-session .actions{justify-content:flex-start}.learning-session>p.muted{font-size:14px}header .version{display:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
