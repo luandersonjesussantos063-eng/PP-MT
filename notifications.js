@@ -83,12 +83,12 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
  }
  function statusText(){
   if(!supported())return 'Este navegador não permite alertas em segundo plano. No iPhone, instale o aplicativo na tela inicial antes de ativar.';
-  if(Notification.permission==='denied')return 'Notificações bloqueadas nas configurações do navegador. Libere a permissão do PP-MT.';
+  if(Notification.permission==='denied')return 'Notificações bloqueadas nas configurações do navegador. Libere a permissão do PMMG.';
   if(Notification.permission==='granted')return 'Permissão concedida. Avisos importantes podem chegar mesmo com o aplicativo fechado, quando a inscrição neste aparelho estiver ativa.';
   return 'Ative para receber alertas de ofertas e novidades do concurso no celular ou PC, mesmo com o app fechado.';
  }
  async function enable(){
-  if(!supported()){toast('Instale o PP-MT na tela inicial ou use um navegador compatível com Web Push.');return;}
+  if(!supported()){toast('Instale o PMMG na tela inicial ou use um navegador compatível com Web Push.');return;}
   try{
    // Permission must be requested directly from a user interaction.
    const permission=await Notification.requestPermission();
@@ -124,7 +124,7 @@ export function createNotificationCenter({loadOffers,registerPush,toast}){
    return '<article class="card ppmt-notice-card"><div class="row"><strong>'+esc(item.title)+'</strong><small>'+esc(item.date?new Date(item.date).toLocaleDateString('pt-BR'):'')+'</small></div><p>'+esc(item.body)+'</p>'+entry+'</article>';
   }).join('');
   // Keep the notification inbox focused on the notices; configuration is optional and collapsed.
-  panel.innerHTML='<div class="ppmt-notice-header"><div><h2>Notificações</h2><p class="muted">Avisos e novidades da Polícia Penal de Mato Grosso.</p></div></div>'
+  panel.innerHTML='<div class="ppmt-notice-header"><div><h2>Notificações</h2><p class="muted">Avisos e novidades da Polícia Militar de Minas Gerais.</p></div></div>'
    +'<div class="ppmt-notice-list">'+(cards||'<section class="card ppmt-notice-empty"><p>Você está em dia. Nenhuma notificação por enquanto.</p></section>')+'</div>'
    +'<details class="ppmt-notice-settings" id="ppmtNoticeSettings"'+(settingsOpen?' open':'')+'><summary>Configurar alertas no aparelho</summary>'
    +'<div class="ppmt-notice-settings-body"><p class="muted">'+esc(statusText())+'</p>'

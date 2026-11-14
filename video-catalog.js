@@ -7,8 +7,6 @@ export const CURATED_VIDEO_LESSONS = [
     videoId:'yUpRa62vcSI', title:'Crase - Aula 01 | Professor Noslen', channel:'Professor Noslen'},
   {id:'pt-concordancia', subject:'Língua Portuguesa', keywords:['concordancia verbal','concordancia em'],
     videoId:'jdqhnVUvqOc', title:'Como dominar a concordância verbal para concursos', channel:'Prof. Álvaro Ferreira'},
-  {id:'mt-biomas', subject:'História e Geografia de Mato Grosso', keywords:['biomas','bioma','cerrado','pantanal','amazonia'],
-    videoId:'uHYgh89B67w', title:'O que é Bioma e quais são os 6 Biomas brasileiros?', channel:'IBGE Explica'},
   {id:'etica-moral', subject:'Ética e Filosofia', keywords:['etica, moral','etica e moral','etica, valores','etica moral','consciencia critica'],
     videoId:'dcg0o-jB2MA', title:'Ética e moral: diferença, conceito e exemplos', channel:'Saber em Foco'},
   {id:'adm-funcoes', subject:'Administração Geral', keywords:['planejar, organizar, dirigir e controlar','funcoes administrativas','processo administrativo: planejamento','planejamento, organizacao','planejamento e controle'],

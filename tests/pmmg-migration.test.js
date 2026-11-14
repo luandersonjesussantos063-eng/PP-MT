@@ -43,7 +43,7 @@ async function open(){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window;w.__seed=structuredClone(legacy);w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
- w.fetch=async()=>({ok:true,json:async()=>({version:'3.0.0'})});w.eval(bundle.outputFiles[0].text);
+ w.fetch=async()=>({ok:true,json:async()=>({version:'3.0.1'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{
@@ -62,4 +62,24 @@ test('app real inicia com a conta existente, migra estado e abre banco, textos e
   assert.ok(w.document.querySelector('#learnNext'));
   assert.deepEqual(errors.map(e=>e.message),[]);
  }finally{dom.window.close()}
+});
+test('nomes públicos e metadados apresentam somente a identidade PMMG',async()=>{
+ const {readdirSync}=await import('node:fs');
+ const files=['index.html',...readdirSync('planos',{recursive:true}).filter(f=>f.endsWith('.html')).map(f=>'planos/'+f)];
+ for(const file of files){
+  const dom=new JSDOM(read(file));
+  try{
+   dom.window.document.querySelectorAll('script,style').forEach(el=>el.remove());
+   assert.doesNotMatch(dom.window.document.documentElement.textContent,/Polícia Penal|POLÍCIA PENAL|PPMT|PP-MT|SEJUDH/,file);
+   for(const meta of dom.window.document.querySelectorAll('meta[name=description],meta[property="og:title"],meta[property="og:description"]'))assert.doesNotMatch(meta.content,/Polícia Penal|Mato Grosso|PPMT|PP-MT/,file);
+  }finally{dom.window.close()}
+ }
+ const app=read('app.js'),notices=read('notifications.js');
+ assert.doesNotMatch(app,/SEJUDH\/MT 2016\/2017|Ler comentários MT|Itens de MT com ressalvas/);
+ assert.doesNotMatch(notices,/Polícia Penal de Mato Grosso|Libere a permissão do PP-MT/);
+});
+test('identidade visual herda os tons exatos do app PMMG anterior',()=>{
+ const css=read('style.css');
+ for(const token of ['--bg:#101337','--panel:#191d5e','--accent:#ffcb05','border-bottom:3px solid #bb2127'])assert.ok(css.includes(token),token);
+ for(const file of ['style.css','planos/style.css','planos/premium.css','planos/assinar.css'])assert.doesNotMatch(read(file),/#d5b36a|#dcb975|#edc784/i,file);
 });

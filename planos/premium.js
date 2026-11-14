@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runPremiumPractice,getSupabaseClient} from '../auth.js?v=2.20.4';
+import {signIn,verifiedUser,runPremiumPractice,getSupabaseClient} from '../auth.js?v=3.0.1';
 import {loginWithGoogle} from '../account-services.js?v=2.20.4';
 
 const $=id=>document.getElementById(id);

@@ -30,7 +30,6 @@ test('aulas separadas por disciplina evitam associação errada',()=>{
 test('cobre casos de matérias distintas incluindo acentos',()=>{
  const cases=[
   ['Direito Constitucional','Garantias e remédios constitucionais','sWny-GrwamU'],
-  ['História e Geografia de Mato Grosso','Biomas de Mato Grosso','uHYgh89B67w'],
   ['Ética e Filosofia','Ética, moral e consciência crítica','dcg0o-jB2MA'],
   ['Administração Geral','Planejar, organizar, dirigir e controlar','KbH16qemQNs'],
   ['Direito Penal e Processual Penal','Prisão em flagrante: hipóteses legais','dnFWpSW1ryU'],

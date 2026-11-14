@@ -101,7 +101,7 @@ export async function runBillingSandbox(action, payerEmail) {
   if(!online())throw new Error('Conecte-se à internet para testar pagamentos.');
   if(!['create','status','cancel','buyer_info'].includes(action))throw new Error('Ação inválida.');
   const user=await verifiedUser();
-  if(!user)throw new Error('Faça login com sua conta PPMT antes de continuar.');
+  if(!user)throw new Error('Faça login com sua conta PMMG antes de continuar.');
   const body={action};
   if(action==='create')body.payer_email=String(payerEmail||'').trim().toLowerCase();
   const {data,error}=await client().functions.invoke('ppmt-billing-test',{body});
@@ -123,7 +123,7 @@ export async function runPixPilot(action){
   if(!online())throw new Error('Conecte-se à internet para consultar o Pix.');
   if(!['check','create','status'].includes(action))throw new Error('Ação Pix inválida.');
   const user=await verifiedUser();
-  if(!user)throw new Error('Entre na sua conta PPMT.');
+  if(!user)throw new Error('Entre na sua conta PMMG.');
   const {data,error}=await client().functions.invoke('ppmt-pix-pilot',{body:{action}});
   if(error){
     let message='';
@@ -137,12 +137,12 @@ export async function runPixPilot(action){
 }
 
 
-// Portal do PPMT Premium R$ 19,99/mês. Cartão recorrente; Pix/boleto/débito renovados no site.
+// Portal do PMMG Premium R$ 19,99/mês. Cartão recorrente; Pix/boleto/débito renovados no site.
 export async function runMonthlyBilling(action) {
  if(!online())throw new Error('Conecte-se à internet para consultar sua mensalidade.');
  if(!['status','manual_checkout','card_start','card_cancel','cancel_manual','readiness'].includes(action))throw new Error('Ação de cobrança inválida.');
  const user=await verifiedUser();
- if(!user)throw new Error('Entre na sua conta PP-MT.');
+ if(!user)throw new Error('Entre na sua conta PMMG.');
  const {data,error}=await client().functions.invoke('ppmt-monthly-billing',{body:{action}});
  if(error){
   let message='';
@@ -160,7 +160,7 @@ export async function runMonthlyBilling(action) {
 export async function explainQuestionWithAI(question) {
  if(!online())throw new Error('A explicação com IA exige conexão à internet.');
  const user=await verifiedUser();
- if(!user)throw new Error('Entre na sua conta PP-MT.');
+ if(!user)throw new Error('Entre na sua conta PMMG.');
  const {data,error}=await client().functions.invoke('ppmt-ai-explain',{
   body:{action:'explain',question}
  });
@@ -180,7 +180,7 @@ export async function runPremiumPractice(action,fields={}) {
   if(!navigator.onLine)throw new Error('O treino Premium exige conexão para verificar o acesso.');
   if(!['status','next','answer'].includes(action))throw new Error('Ação inválida.');
   const user=await verifiedUser();
-  if(!user)throw new Error('Entre na conta PP-MT.');
+  if(!user)throw new Error('Entre na conta PMMG.');
   const body={action};
   if(action==='answer'){body.id=fields.id;body.selected_index=fields.selected_index;}
   const {data,error}=await client().functions.invoke('ppmt-premium-practice',{body});
@@ -199,7 +199,7 @@ export async function runCentavoPremium(action){
  if(!online())throw new Error('Conecte-se para testar o Pix.');
  if(!['check','create','status'].includes(action))throw new Error('Ação inválida.');
  const user=await verifiedUser();
- if(!user)throw new Error('Entre na conta PP-MT.');
+ if(!user)throw new Error('Entre na conta PMMG.');
  const {data,error}=await client().functions.invoke('ppmt-centavo-premium',{body:{action}});
  if(error){
   let message='';
@@ -218,7 +218,7 @@ export async function runCentavoPremium(action){
 export async function runMercadoPagoDiagnostic(){
  if(!online())throw new Error('Conecte-se para verificar o Mercado Pago.');
  const user=await verifiedUser();
- if(!user)throw new Error('Entre na sua conta PP-MT.');
+ if(!user)throw new Error('Entre na sua conta PMMG.');
  const {data,error}=await client().functions.invoke('ppmt-mp-readonly-diagnostic',{body:{action:'probe'}});
  if(error){
   let message='';
@@ -241,7 +241,7 @@ export async function pushSubscriptionAction(action, subscription){
   let serverCode='';
   try{serverCode=String((await error.context?.clone?.().json())?.error||'')}catch{}
   const status=error.context?.status;
-  if(status===401||serverCode==='login required')throw new Error('Sua sessão expirou. Entre novamente no PP-MT.');
+  if(status===401||serverCode==='login required')throw new Error('Sua sessão expirou. Entre novamente no PMMG.');
   if(status===400||status===404)throw new Error('Este aparelho ainda não está cadastrado corretamente. Desative e ative os alertas novamente.');
   if(status===503)throw new Error('Servidor de notificações indisponível. Tente novamente.');
   throw new Error('Falha ao conectar ao servidor de notificações. Confira a conexão e atualize o aplicativo.');

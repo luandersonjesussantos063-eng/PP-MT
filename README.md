@@ -13,3 +13,6 @@ Os módulos de conteúdo PP-MT permanecem no git para recuperação, mas não en
 `npm start` abre servidor local. A publicação usa `.github/workflows/deploy.yml`. O fluxo Android reutiliza Capacitor e gera um APK de teste PMMG. Um APK antigo empacotado exige reinstalação da nova versão. Os mecanismos existentes de assinatura/cotas permanecem no backend.
 
 O banco exclusivo pago do PP-MT não foi convertido em PMMG. A página Premium identifica essa limitação e encaminha ao banco PMMG. Os serviços de cobrança e as assinaturas existentes foram preservados. Duas alternativas incompletas na transcrição de origem (2018/23 e 2024/46) foram conferidas e corrigidas pela reprodução original; gabaritos preservados.
+
+## Identidade PMMG 3.0.1
+Revisados nomes visíveis, metadados, notificações, ajuda e artigos. Paleta igual ao app PMMG anterior: azul #191d5e, vermelho #bb2127 e amarelo #ffcb05; fundos #101337 e painéis azuis. Preservados domínio, chaves de armazenamento, APIs e endereço real do fornecedor em MT.
