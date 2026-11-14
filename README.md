@@ -22,3 +22,6 @@ Tela inicial com um próximo passo, bloco recomendado de até 5 questões e plan
 
 ## Inicialização 3.1.1
 O painel abre por `app-loader.js` e um pacote único `app.bundle.js`, gerado com `npm run build:app`. A tela inicial mostra carregamento e recuperação de erro, em vez de deixar a apresentação estática parecer o app. Login e painel disparam confirmação de inicialização. Teste de abertura usa os módulos reais, inclusive autenticação, sem simular seu módulo. Sem apagar armazenamento ou progresso.
+
+## Interface do vídeo 3.2.0
+Reutiliza a interface original Missão Farda em `missao/`, com abas Hoje, Questões, Trilha e Evolução. É exibida após o login existente, com armazenamento separado por conta e perfil, e sincronização em user_state.program.missaoFarda. Tentativas anteriores são convertidas em eventos na primeira escolha de perfil; originais preservados. Quotas continuam verificadas pelo serviço existente ao iniciar treinos. Controles Minha conta e Sair mantêm acesso à configuração anterior.

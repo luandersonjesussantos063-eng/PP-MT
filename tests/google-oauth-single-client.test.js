@@ -13,12 +13,12 @@ test('Google, login por senha e Premium usam uma unica instancia Supabase para a
  const premium=read('planos/premium.js');
  const membership=read('planos/account.js');
  assert.match(auth,/export function getSupabaseClient\(\)\{return client\(\);\}/);
- assert.match(social,/import \{getSupabaseClient\} from '\.\/auth\.js\?v=3\.1\.1'/);
+ assert.match(social,/import \{getSupabaseClient\} from '\.\/auth\.js\?v=3\.2\.0'/);
  assert.match(social,/const supabase=getSupabaseClient\(\)/);
  assert.doesNotMatch(social,/createClient\(/);
  assert.match(premium,/const filterClient=getSupabaseClient\(\)/);
- assert.match(app,/from '\.\/auth\.js\?v=3\.1\.1'/);
- assert.match(membership,/from '\.\.\/auth\.js\?v=3\.1\.1'/);
+ assert.match(app,/from '\.\/auth\.js\?v=3\.2\.0'/);
+ assert.match(membership,/from '\.\.\/auth\.js\?v=3\.2\.0'/);
 });
 test('Google respeita o endereco acessado e permite retorno de checkout sem misturar origens',()=>{
  const social=read('account-services.js');
@@ -39,6 +39,6 @@ test('cache do PWA atualiza login em Android e iOS sem deixar modulos antigos',(
  assert.ok(index.includes('V '+CURRENT_VERSION));
  assert.ok(sw.includes('ppmt-'+CURRENT_VERSION+'-'));
  assert.match(sw,/account-services\.js\?v=2\.20\.4/);
- assert.match(sw,/auth\.js\?v=3\.1\.1/);
+ assert.match(sw,/auth\.js\?v=3\.2\.0/);
  assert.match(premium,/premium\.js\?v=2\.20\.4/);
 });

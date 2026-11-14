@@ -1,13 +1,14 @@
+import {mountReferenceUI,leaveReferenceUI} from './reference-ui.js?v=3.2.0';
 function signalAppReady(){window.__PMMG_READY__=true;window.dispatchEvent(new Event('pmmg:ready'))}
-import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.1.1';
-import {migratePMMGState} from './pmmg-state.js?v=3.1.1';
+import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.0';
+import {migratePMMGState} from './pmmg-state.js?v=3.2.0';
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=3.1.1';
+import {createNotificationCenter} from './notifications.js?v=3.2.0';
 import {createProgressSync,cachedAccount} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 const AUTHORIAL_MT_QUESTIONS=[];
@@ -24,13 +25,13 @@ const EXAM_SOURCES=PMMG_EXAMS;const SOURCE_TOTAL=PMMG_QUESTIONS.length,IMPORTED_
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.1.1';
-import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.1.1';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.0';
+import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.0';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 import {videoLessonForErrorHTML} from './video-lessons.js?v=2.20.6';
-import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.1.1';
+import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.0';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='3.1.1';
+const APP_VERSION='3.2.0';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -131,7 +132,7 @@ const rawBank=()=>[...BUILTIN,...store.custom].map(normalizedSubject).map(enrich
 const bank=()=>rawBank().filter(q=>isLastEditalQuestion(q)&&compatibleWithMT(q));
 let syncStatus='saved';
 const progressSync=createProgressSync({storage:localStorage,write:saveUserState,verify:verifiedUser,onStatus:(id,status)=>{if(id===currentUser?.id){syncStatus=status;syncConnectionUI()}}});
-function syncConnectionUI(){const el=$('#connectionStatus');if(!el)return;const offline=navigator.onLine===false;el.hidden=!currentUser||(!offline&&syncStatus==='saved');el.textContent=offline?'Offline · salvo no aparelho':({saved:'Progresso sincronizado',pending:'Salvo no aparelho · sincronização pendente',syncing:'Sincronizando progresso…',login:'Salvo no aparelho · entre novamente para sincronizar',offline:'Offline · salvo no aparelho'})[syncStatus];el.dataset.status=offline?'offline':syncStatus;}
+function syncConnectionUI(){const el=$('#connectionStatus');if(!el)return;const offline=navigator.onLine===false;el.hidden=!currentUser||(!offline&&syncStatus==='saved');el.textContent=offline?'Offline · salvo no aparelho':({saved:'Progresso sincronizado',pending:'Salvo no aparelho · sincronização pendente',syncing:'Sincronizando progresso…',login:'Salvo no aparelho · entre novamente para sincronizar',offline:'Offline · salvo no aparelho'})[syncStatus];el.dataset.status=offline?'offline':syncStatus;const frame=document.getElementById('reference-app');if(frame?.contentWindow)frame.contentWindow.dispatchEvent(new frame.contentWindow.CustomEvent('mf-sync-status',{detail:el.textContent||'Progresso sincronizado'}));}
 window.addEventListener('offline',syncConnectionUI);
 window.addEventListener('online',()=>{if(currentUser)save();syncConnectionUI()});
 function save(){if(!currentUser)return false;try{ensureProgram();store.program.reviews=scheduleCorrectReviews(store.attempts,store.program.reviews||{});store.updatedAt=new Date().toISOString();localStorage.setItem(userKey(),JSON.stringify(store));progressSync.queue(currentUser.id,store);syncConnectionUI();return true}catch{toast('Não foi possível salvar neste navegador. Exporte um backup.');return false}}
@@ -145,7 +146,7 @@ async function loadAccount(user){run=null;reviewState=null;assistState=Object.cr
  else if(legacyStore){store=normalizeStore(legacyStore);localStorage.removeItem(KEY);legacyStore=null}
  else store=emptyStore();
  ensureProgram();const restoredExam=restoreExam(store.program.activeExam,rawBank());run=location.hash.slice(1)===(restoredExam?.originTab||'simulados')?restoredExam:null;accountUI();notificationCenter.start(user);save();navigate();void refreshStudyQuota()}
-function renderAuth(){notificationCenter.stop();currentUser=null;syncConnectionUI();$('#nav').innerHTML='';accountUI();const c=$('#content');c.innerHTML=`<section class="auth-shell"><div class="auth-card"><img src="./icon.svg" alt="PMMG" class="auth-logo"><div class="eyebrow">PMMG • ACESSO DO CANDIDATO</div><h1>Seu progresso é só seu.</h1><p class="muted"><a href="./planos/">Conheça o PMMG e os planos →</a></p><p class="muted">Seu plano diário, revisões e progresso ficam vinculados à sua conta.</p><div class="auth-tabs"><button id="loginTab" class="active">Entrar</button><button id="signupTab">Criar conta</button></div><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="primary auth-submit" type="submit">Entrar</button></form><div class="oauth-divider"><span>ou continue com</span></div><button type="button" class="google-login-btn" id="googleSignIn"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.9 24.5c0-1.6-.2-3.2-.4-4.7H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7l7.4 5.8C43.7 37.5 46.9 31.7 46.9 24.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7L32 36.5c-2.1 1.4-4.7 2.2-8 2.2-6.3 0-11.6-4.1-13.5-9.7l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Entrar com Google</span></button><p id="authHint" class="muted auth-hint">${navigator.onLine===false?'Conecte-se à internet para entrar pela primeira vez neste aparelho.':'Use seu e-mail e senha para continuar.'}</p></div></section>`;
+function renderAuth(){leaveReferenceUI(true);notificationCenter.stop();currentUser=null;syncConnectionUI();$('#nav').innerHTML='';accountUI();const c=$('#content');c.innerHTML=`<section class="auth-shell"><div class="auth-card"><img src="./icon.svg" alt="PMMG" class="auth-logo"><div class="eyebrow">PMMG • ACESSO DO CANDIDATO</div><h1>Seu progresso é só seu.</h1><p class="muted"><a href="./planos/">Conheça o PMMG e os planos →</a></p><p class="muted">Seu plano diário, revisões e progresso ficam vinculados à sua conta.</p><div class="auth-tabs"><button id="loginTab" class="active">Entrar</button><button id="signupTab">Criar conta</button></div><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="primary auth-submit" type="submit">Entrar</button></form><div class="oauth-divider"><span>ou continue com</span></div><button type="button" class="google-login-btn" id="googleSignIn"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.9 24.5c0-1.6-.2-3.2-.4-4.7H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7l7.4 5.8C43.7 37.5 46.9 31.7 46.9 24.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7L32 36.5c-2.1 1.4-4.7 2.2-8 2.2-6.3 0-11.6-4.1-13.5-9.7l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Entrar com Google</span></button><p id="authHint" class="muted auth-hint">${navigator.onLine===false?'Conecte-se à internet para entrar pela primeira vez neste aparelho.':'Use seu e-mail e senha para continuar.'}</p></div></section>`;
  let mode='login';const setMode=m=>{mode=m;$('#loginTab').classList.toggle('active',m==='login');$('#signupTab').classList.toggle('active',m==='signup');$('.auth-submit').textContent=m==='login'?'Entrar':'Criar conta';$('#authPassword').autocomplete=m==='login'?'current-password':'new-password';$('#authHint').textContent=m==='login'?'Use seu e-mail e senha para continuar.':'Crie uma conta. Se a confirmação de e-mail estiver ativa, você receberá uma mensagem para confirmar.'};$('#loginTab').onclick=()=>setMode('login');$('#signupTab').onclick=()=>setMode('signup');if(new URLSearchParams(location.search).get('cadastro')==='1')setMode('signup');
  $('#authForm').onsubmit=async e=>{e.preventDefault();const email=$('#authEmail').value.trim(),password=$('#authPassword').value,btn=$('.auth-submit');btn.disabled=true;btn.textContent='Aguarde...';try{if(mode==='login'){const user=await signIn(email,password);await loadAccount(user)}else{const data=await signUp(email,password);if(data.session&&data.user){await loadAccount(data.user)}else{setMode('login');$('#authHint').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}}}catch(err){$('#authHint').textContent=err.message||'Não foi possível autenticar.'}finally{btn.disabled=false;btn.textContent=mode==='login'?'Entrar':'Criar conta'}}
  const googleBtn=$('#googleSignIn');
@@ -515,9 +516,13 @@ function renderMyOffers(){
  void notificationCenter.renderInbox($('#notificationHub'));
 }
 function render(){
+ leaveReferenceUI();
  $('#nav').innerHTML=pages.filter(([id])=>['inicio','estudar','erros','desempenho','mais'].includes(id)).map(([id,icon,name])=>{const locked=lockStudy(id),mobilePrimary=true,navActive=tab===id||(id==='mais'&&!['inicio','estudar','erros','desempenho','mais'].includes(tab));return `<a href="#${locked?'missao':id}" class="${navActive?'active':''} ${locked?'locked':''} ${mobilePrimary?'mobile-primary':'mobile-extra'}" ${navActive?'aria-current="page"':''}><span class="navicon">${locked?'🔒':icon}</span>${name}</a>`}).join('');
  const c=$('#content');
- if(tab==='inicio')renderToday();
+ if(tab==='inicio'){
+  renderToday();
+  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click()});
+ }
  if(tab==='missao')renderMission();
  if(tab==='estudar')renderLearn();
  if(tab==='livre')renderFreeTraining();
@@ -717,7 +722,7 @@ async function enableAppAutoUpdates(){
   persistStudyLocal();location.reload();
  });
  try{
-  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.1.1',{updateViaCache:'none'});
+  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.0',{updateViaCache:'none'});
   setTimeout(()=>void checkAppUpdates(),3000);
   window.addEventListener('online',()=>void checkAppUpdates());
   document.addEventListener('visibilitychange',()=>{
@@ -879,7 +884,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.1.1-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.1.1')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.1.1');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.0-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.0')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.0');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 

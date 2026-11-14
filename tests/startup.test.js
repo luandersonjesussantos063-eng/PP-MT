@@ -19,7 +19,7 @@ test('entrada HTML mostra carregamento, nunca apresenta o texto estático como s
  const {dom,w}=browser();try{
   assert.ok(w.document.querySelector('#app-startup'));
   assert.equal(w.document.querySelector('#startup-recovery').hidden,true);
-  assert.match(w.document.querySelector('script[src*="app-loader.js"]').src,/app-loader\.js\?v=3\.1\.1/);
+  assert.match(w.document.querySelector('script[src*="app-loader.js"]').src,/app-loader\.js\?v=3\.2\.0/);
   assert.doesNotMatch(w.document.querySelector('#content').textContent,/Plataforma independente|Conheça o aplicativo/);
  }finally{dom.window.close()}
 });

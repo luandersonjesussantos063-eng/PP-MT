@@ -42,3 +42,10 @@ test('notícias buscam a publicação atual e mantêm última cópia ao perder c
  w.context.fetch=async()=>{throw Error('offline')};
  assert.equal(await (await w.request(url)).text(),'new feed 2');
 });
+
+test('interface Missão Farda abre offline com HTML e módulos da própria tela',async()=>{
+ const w=worker();await w.install();
+ for(const path of ['missao/index.html?v=3.2.0','missao/app.js?v=3.2.0','missao/ui.css?v=3.2.0','missao/account-bridge.js?v=3.2.0']){
+  const r=await w.request('https://app.test/PP-MT/'+path,path.includes('index.html')?'navigate':'cors');assert.equal(r.status,200,path);assert.ok((await r.text()).includes(path),path);
+ }
+});

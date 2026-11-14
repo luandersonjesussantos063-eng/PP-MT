@@ -12,7 +12,7 @@
  const timer=setTimeout(()=>showRecovery('O carregamento está demorando. Você pode tentar novamente sem apagar seus estudos.'),15000);
  window.addEventListener('pmmg:ready',()=>{ready=true;clearTimeout(timer)},{once:true});
  window.addEventListener('error',()=>showRecovery('Não foi possível abrir o app. Tente carregar novamente.'),{once:true});
- import('./app.bundle.js?v=3.1.1').catch(error=>{
+ import('./app.bundle.js?v=3.2.0').catch(error=>{
   clearTimeout(timer);console.error('PMMG: falha no carregamento do aplicativo',error);
   showRecovery('Não foi possível carregar o app. Verifique a conexão e tente novamente.');
  });
