@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {MT_QUESTIONS} from '../official.js';import {CONCEPT_PRACTICE} from '../practice.js';import {validateBank} from '../core.js';
-import {enrichConcept,chooseConceptBlock,dailyStudyPlan,compatibleWithMT,conceptProgress} from '../curriculum.js';import {findSimilar} from '../help.js';
+import {MT_QUESTIONS} from '../../official.js';import {CONCEPT_PRACTICE} from '../../practice.js';import {validateBank} from '../../core.js';
+import {enrichConcept,chooseConceptBlock,dailyStudyPlan,compatibleWithMT,conceptProgress} from '../../curriculum.js';import {findSimilar} from '../../help.js';
 const bank=[...MT_QUESTIONS,...CONCEPT_PRACTICE].map(enrichConcept);
 test('cada um dos 48 conceitos regulares tem exercício distinto, fonte e bloco coerente',()=>{
  validateBank(CONCEPT_PRACTICE);assert.equal(CONCEPT_PRACTICE.length,48);

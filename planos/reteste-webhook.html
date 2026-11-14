@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0b111b">
-<title>PP-MT · Segundo Pix de R$ 0,01 — Webhook</title>
+<title>PMMG · Segundo Pix de R$ 0,01 — Webhook</title>
 <link rel="icon" href="../icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css?v=2.15.0">
 <link rel="stylesheet" href="./pix.css?v=2.15.0">
 </head>
 <body>
-<header class="top"><a class="brand" href="../"><img src="../icon.svg" width="42" height="46" alt=""><span>PPMT<small>PREPARAÇÃO POLICIAL</small></span></a><nav><a href="./piloto-centavo.html">Primeiro teste</a><a href="./diagnostico.html">Diagnóstico</a></nav></header>
+<header class="top"><a class="brand" href="../"><img src="../icon.svg" width="42" height="46" alt=""><span>PMMG<small>PREPARAÇÃO POLICIAL</small></span></a><nav><a href="./piloto-centavo.html">Primeiro teste</a><a href="./diagnostico.html">Diagnóstico</a></nav></header>
 <main class="wrap pix-layout" id="conteudo">
 <p class="eyebrow">ADMINISTRADOR · VERIFICAÇÃO DE WEBHOOK</p>
 <h1>Segundo Pix de <em>R$ 0,01</em></h1>
@@ -17,7 +17,7 @@
 <p>O Pix é real: confirme o valor e o recebedor no seu banco antes de pagar. A geração do código não cobra automaticamente e não libera um novo período Premium. O plano público de R$ 19,99/mês permanece fechado.</p></section>
 <p id="session" class="pix-info" role="status">Verificando login…</p>
 <section id="login-panel" class="pix-card" hidden>
-<h2>Entrar no PP-MT</h2><form id="login-form">
+<h2>Entrar no PMMG</h2><form id="login-form">
 <label for="email">E-mail</label><input id="email" type="email" autocomplete="username" required>
 <label for="password">Senha</label><input id="password" type="password" autocomplete="current-password" required>
 <button id="login-btn" class="button primary" type="submit">Entrar</button></form></section>
@@ -40,7 +40,7 @@
 <p id="feedback" class="pix-info" role="alert" hidden></p>
 <p class="micro">O webhook é marcado como validado apenas quando a assinatura é autenticada e o pagamento é consultado na API oficial. Se aparecer pagamento aprovado sem webhook autenticado, envie o resultado para investigação.</p>
 </main>
-<footer class="wrap"><a href="../">PPMT</a><p>NovaByte Soluções · Reteste privado</p></footer>
+<footer class="wrap"><a href="../">PMMG</a><p>NovaByte Soluções · Reteste privado</p></footer>
 <script type="module">
 import {createClient} from '../assets/vendor/supabase-2.117.2.js';
 const db=createClient('https://fermfbmhwlafwopwndoj.supabase.co','sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN',{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
@@ -121,12 +121,12 @@ async function load(){
   const {data,error}=await db.auth.getUser();if(error)throw error;
   const logged=Boolean(data?.user);
   $('login-panel').hidden=logged;$('retest-panel').hidden=!logged;
-  $('session').textContent=logged?'Conta PP-MT conectada.':'Entre na conta PP-MT para continuar.';
+  $('session').textContent=logged?'Conta PMMG conectada.':'Entre na conta PMMG para continuar.';
   setBusy(false);
   if(logged)await run('check');
  }catch{
   $('login-panel').hidden=false;$('retest-panel').hidden=true;
-  $('session').textContent='Entre na sua conta PP-MT.';
+  $('session').textContent='Entre na sua conta PMMG.';
  }finally{setBusy(false);}
 }
 $('login-form').addEventListener('submit',async e=>{

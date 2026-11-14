@@ -54,26 +54,10 @@ test('estados corrigidos permanecem visíveis após a camada canônica',()=>{
 });
 
 
-test('treino ativo segue apenas as nove áreas do último edital de MT',()=>{
-  const block=app.slice(app.indexOf('const LAST_EDITAL_SUBJECTS='),app.indexOf('function save()'));
-  for(const subject of [
-    'Língua Portuguesa',
-    'História e Geografia de Mato Grosso',
-    'Ética e Filosofia',
-    'Direito Constitucional',
-    'Administração Geral',
-    'Direito Administrativo',
-    'Direito Penal e Processual Penal',
-    'Direitos Humanos',
-    'Legislação Básica'
-  ]) assert.ok(block.includes(subject),subject);
-  for(const extra of ['Informática','Raciocínio Lógico e Matemática','Atualidades','Segurança Pública','Conhecimentos Gerais','Legislação Estadual']){
-    assert.ok(!block.includes(`'${extra}'`),extra);
-  }
-  assert.match(block,/const bank=\(\)=>rawBank\(\)\.filter\(q=>isLastEditalQuestion\(q\)&&compatibleWithMT\(q\)\)/);
-  assert.match(block,/'Direito Penal':'Direito Penal e Processual Penal'/);
-  assert.match(block,/'Direito Processual Penal':'Direito Penal e Processual Penal'/);
-  assert.match(block,/'Legislação Penal':'Legislação Básica'/);
+test('treino ativo usa disciplinas e questões PMMG',()=>{
+ assert.match(app,/const LAST_EDITAL_SUBJECTS=PMMG_SUBJECTS/);
+ assert.match(app,/const OFFICIAL_QUESTIONS=PMMG_QUESTIONS/);
+ assert.doesNotMatch(app,/import.*from '\.\/official\.js/);
 });
 
 test('erros e métricas ignoram matérias fora do foco atual',()=>{

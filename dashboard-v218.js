@@ -1,4 +1,4 @@
-// PP-MT 2.18.0 | dashboard é apenas apresentação; permissões continuam no Supabase.
+// PMMG 2.18.0 | dashboard é apenas apresentação; permissões continuam no Supabase.
 const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=(n,d)=>d>0?Math.min(100,Math.max(0,Math.round(n/d*100))):0;
 export function commandDashboard({
@@ -10,11 +10,11 @@ export function commandDashboard({
  const premium=quota?.premium===true;
  const remaining=Number.isFinite(Number(quota?.daily_remaining))?Math.max(0,Number(quota.daily_remaining)):null;
  const tagline=done?'Meta de tempo alcançada. Continue se quiser fortalecer a preparação.':'A próxima evolução começa no seu treino de hoje.';
- const missionLabel=mission?String(mission):'Preparação direcionada à Polícia Penal de MT';
+ const missionLabel=mission?String(mission):'Preparação direcionada à Polícia Militar de Minas Gerais';
  return `<section class="command-v218" aria-labelledby="command-title">
   <div class="command-main">
    <div class="command-intro">
-    <div class="command-kicker"><span class="command-kicker-dot"></span> CENTRAL DE COMANDO / PP-MT</div>
+    <div class="command-kicker"><span class="command-kicker-dot"></span> CENTRAL DE COMANDO / PMMG</div>
     <p class="command-date">${safe(stamp)}</p>
     <h1 id="command-title">Operação <em>Aprovação.</em></h1>
     <p class="command-description">${safe(tagline)}</p>

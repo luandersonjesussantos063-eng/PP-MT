@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {AUTHORIAL_MT_QUESTIONS as allBatch,AUTHORIAL_MT_CONCEPTS as allConcepts} from '../authorial-mt.js';
-import {MT_QUESTIONS,OFFICIAL_QUESTIONS} from '../official.js';
-import {CONCEPT_PRACTICE} from '../practice.js';
-import {QUESTIONS} from '../data.js';
-import {validateBank} from '../core.js';
-import {chooseConceptBlock,compatibleWithMT,conceptProgress,CONCEPTS} from '../curriculum.js';
-import {findSimilar} from '../help.js';
-import {packExam,restoreExam} from '../exam-session.js';
+import {AUTHORIAL_MT_QUESTIONS as allBatch,AUTHORIAL_MT_CONCEPTS as allConcepts} from '../../authorial-mt.js';
+import {MT_QUESTIONS,OFFICIAL_QUESTIONS} from '../../official.js';
+import {CONCEPT_PRACTICE} from '../../practice.js';
+import {QUESTIONS} from '../../data.js';
+import {validateBank} from '../../core.js';
+import {chooseConceptBlock,compatibleWithMT,conceptProgress,CONCEPTS} from '../../curriculum.js';
+import {findSimilar} from '../../help.js';
+import {packExam,restoreExam} from '../../exam-session.js';
 const batch=allBatch.filter(q=>q.edition==='mt-edital-2016-lote-2026-10'),concepts=allConcepts.filter(c=>batch.some(q=>q.id===c.id));
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 test('lote acrescenta exatamente 100 IDs distintos sem colisão com o acervo',()=>{

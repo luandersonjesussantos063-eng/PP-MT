@@ -12,7 +12,7 @@ const PAGES=[
  'premium.html','premium.js','premium.css','style.css','plan.js','privacidade.html','termos.html'
 ];
 const copy=(from,to)=>{if(!existsSync(from))throw Error('Arquivo necessário não encontrado: '+from);cpSync(from,to,{recursive:true});};
-const makeLanding=()=>`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PP-MT · Preparação Policial</title><link rel="stylesheet" href="./style.css"></head><body><main class="wrap legal"><h1>PP-MT — Preparação Policial</h1><p>App independente para Polícia Penal de Mato Grosso: questões, simulados, revisão e desempenho.</p><a class="button primary" href="../#inicio">Começar a estudar gratuitamente →</a><p><a href="./privacidade.html">Política de privacidade</a></p><p>Sem vínculo com órgãos do Governo de Mato Grosso.</p></main></body></html>`;
+const makeLanding=()=>`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PMMG · Preparação Policial</title><link rel="stylesheet" href="./style.css"></head><body><main class="wrap legal"><h1>PMMG — Preparação Policial</h1><p>App independente para Polícia Militar de Minas Gerais: questões, simulados, revisão e desempenho.</p><a class="button primary" href="../#inicio">Começar a estudar gratuitamente →</a><p><a href="./privacidade.html">Política de privacidade</a></p><p>Sem vínculo com órgãos do Governo de Minas Gerais.</p></main></body></html>`;
 
 export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,androidDebugPayments=false}={}){
  const mobile=join(root,'mobile');
@@ -89,5 +89,5 @@ export function buildNativeBundle({root=ROOT,out=DEFAULT_OUT,includeAssets=true,
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const result=buildNativeBundle({androidDebugPayments:process.env.PPMT_ANDROID_DEBUG_PAYMENTS==='true'});
- console.log('PP-MT: pacote web nativo gerado:',result.out,'arquivos na raiz:',result.files);
+ console.log('PMMG: pacote web nativo gerado:',result.out,'arquivos na raiz:',result.files);
 }

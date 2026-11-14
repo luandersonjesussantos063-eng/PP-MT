@@ -1,8 +1,8 @@
 {
   "appId": "br.com.novabytesolucoes.ppmt",
-  "appName": "PP-MT Preparação Policial",
+  "appName": "PMMG — Missão Farda",
   "webDir": "www",
-  "backgroundColor": "#101b2b",
+  "backgroundColor": "#191d5e",
   "server": {
     "hostname": "localhost",
     "androidScheme": "https",

@@ -87,7 +87,7 @@ async function refreshStats(){
 async function filteredNext(){
  // Cliente Supabase com a mesma sessão, apenas para enviar filtros; gabaritos permanecem no servidor.
  const user=await verifiedUser();
- if(!user)throw new Error('Faça login na conta PP-MT.');
+ if(!user)throw new Error('Faça login na conta PMMG.');
  const {data,error}=await filterClient.functions.invoke('ppmt-premium-practice',{
   body:{action:'next',mode,subject:mode==='subject'?subject:''}
  });
@@ -127,6 +127,7 @@ async function nextQuestion(){
   const q=data.question;
   if(!q||!Array.isArray(q.options)||!q.id||q.options.length<3)
    throw new Error('O servidor não retornou uma questão válida.');
+  if(!q.id.startsWith('pmmg'))throw new Error('O banco exclusivo anterior pertence ao PP-MT. Para estudar PMMG, abra o Banco de questões no painel principal.');
   current=q;
   show('training-panel',true);show('locked-panel',false);
   $('subject').textContent=q.subject+' · '+q.topic;

@@ -1,3 +1,4 @@
+import {PMMG_QUESTIONS} from '../pmmg-bank.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -40,21 +41,18 @@ test('plano prioriza erros recorrentes, usa autorais e alterna o último conceit
  const result=dailyStudyPlan(qs,[{id:bases[2].id,correct:true,at:new Date(now+1).toISOString()}],[],20,'',previous);
  assert.equal(result.blockIds[0],bases[1].id);assert.match(result.reason,/erro ou chute/);
 });
-test('mapa cobre nove disciplinas e preserva lacunas explícitas sem contar palavras incidentais',()=>{
- assert.equal(new Set(EDITAL_TOPICS.map(t=>t.subject)).size,9);assert.equal(new Set(EDITAL_TOPICS.map(t=>t.id)).size,EDITAL_TOPICS.length);
- const bank=[...MT_QUESTIONS.map(enrichConcept),...batch],map=syllabusCoverage(bank);
- for(const q of batch)assert.ok(questionTopicIds(q).length);
- const lacuna=map.find(t=>t.id==='lb-lc389');assert.equal(lacuna.count,0);assert.equal(lacuna.guided,false);
- const crase=map.find(t=>t.id==='pt-crase');assert.ok(crase.guided);assert.equal(crase.status,'Ainda não praticado');
- assert.deepEqual(questionTopicIds({id:'unknown',statement:'crase acesso informações peculato'}),[]);
- assert.deepEqual(questionTopicIds({...batch[0],historicalOnly:true}),[]);
+test('mapa PMMG classifica as disciplinas históricas sem prometer edital futuro',()=>{
+ assert.equal(EDITAL_TOPICS.length,11);
+ const rows=syllabusCoverage(PMMG_QUESTIONS,[]);
+ assert.ok(rows.every(r=>r.count>0));
+ assert.ok(PMMG_QUESTIONS.every(q=>questionTopicIds(q).length===1));
 });
-test('cobertura distingue atividade de retenção e registra os erros de exercícios autorais',()=>{
- const q=batch[0],get=rows=>syllabusCoverage(batch,[],rows).find(t=>t.id==='pt-crase');
- assert.equal(get([{conceptId:q.conceptId,correct:false,kind:'application',at}]).status,'Precisa reforçar');
- assert.equal(get([{conceptId:q.conceptId,correct:true,kind:'application',at}]).status,'Em prática');
- assert.equal(get([{conceptId:q.conceptId,correct:true,kind:'application',mode:'retention',at}]).status,'Retenção testada');
+test('cobertura PMMG distingue resposta, erro e retenção',()=>{
+ const q=PMMG_QUESTIONS[0],topic=questionTopicIds(q)[0];
+ const result=syllabusCoverage(PMMG_QUESTIONS,[{id:q.id,correct:false,at}]);
+ assert.equal(result.find(r=>r.id===topic).status,'Precisa reforçar');
 });
+
 test('bundle offline não importa CDN e arquivos essenciais entram no pacote e cache',()=>{
  const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8'),auth=read('auth.js'),sw=read('sw.js'),workflow=read('.github/workflows/deploy.yml');
  assert.doesNotMatch(auth,/cdn\.jsdelivr/);

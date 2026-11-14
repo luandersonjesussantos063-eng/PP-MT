@@ -1,6 +1,6 @@
 {
-  "version": "2.20.9",
+  "version": "3.0.0",
   "published_from": "PP-MT/main",
-  "purpose": "PWA version verification",
-  "updated_at": "2026-10-12"
+  "purpose": "Migração para PMMG preservando infraestrutura PP-MT",
+  "updated_at": "2026-11-14"
 }

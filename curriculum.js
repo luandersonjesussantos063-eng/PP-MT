@@ -1,14 +1,9 @@
-import {AUTHORIAL_MT_CONCEPTS} from './authorial-mt.js?v=2.13.0';
-import {MT_QUESTIONS} from './official.js?v=27';
-export const CONCEPTS=[...MT_QUESTIONS.filter(q=>!q.historicalOnly).map(q=>({id:q.id,title:q.topic,subject:q.subject,lesson:q.lesson,baseId:q.id})),...AUTHORIAL_MT_CONCEPTS];
+import {PMMG_QUESTIONS} from './pmmg-bank.js?v=3.0.0';
+export const CONCEPTS=[];
 const known=new Set(CONCEPTS.map(c=>c.id));
-export function enrichConcept(q){return known.has(q.id)?{...q,conceptId:q.id}:q}
+export function enrichConcept(q){return q}
 export function sameConcept(a,b){return !!a?.conceptId&&a.conceptId===b?.conceptId}
-export function compatibleWithMT(q){
- const text=[q.statement,...(q.options||[])].join(' ').toLocaleLowerCase('pt-BR');
- // Federal content from other contests is retained; explicit other-state rules stay in archive.
- return !/(constituição|lei|decreto|estatuto|servidores|polícia penal|agentes penitenciários|sistema penitenciário).{0,100}(estado (da|de|do) (bahia|alagoas|espírito santo|rio grande do sul)|ba\b|seap\/ba|sejus\/es)|constituição (baiana|alagoana|capixaba|gaúcha)/i.test(text);
-}
+export function compatibleWithMT(q){return q?.id?.startsWith('pmmg')===true}
 export function conceptProgress(questions,attempts,generated=[],now=Date.now()){
  const groups=new Map();
  for(const q of questions)if(q.conceptId&&!q.historicalOnly&&!groups.has(q.conceptId))groups.set(q.conceptId,{id:q.conceptId,title:q.topic,subject:q.subject,questions:questions.filter(x=>sameConcept(x,q)).length});
@@ -22,7 +17,7 @@ export function conceptProgress(questions,attempts,generated=[],now=Date.now()){
  });
 }
 export function chooseConceptBlock(questions,attempts,count=4,subject='',generated=[]){
- const eligible=questions.filter(q=>q.conceptId&&q.lesson&&!q.historicalOnly&&(!subject||q.subject===subject));
+ const eligible=questions.filter(q=>q.conceptId&&!q.historicalOnly&&(!subject||q.subject===subject));
  const ids=[...new Set(eligible.map(q=>q.conceptId))];if(!ids.length)return [];
  const records=[...attempts,...(Array.isArray(generated)?generated:[])].sort((a,b)=>Date.parse(a.at)-Date.parse(b.at));
  const conceptFor=a=>a.conceptId||eligible.find(q=>q.id===(a.reviewOf||a.id)||q.id===a.originalId)?.conceptId;

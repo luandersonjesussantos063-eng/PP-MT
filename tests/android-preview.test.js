@@ -23,7 +23,7 @@ test('Android Preview não publica APK e só compila variante debug',()=>{
 test('empacotamento móvel usa código local e mantém identidade PP-MT',()=>{
  const cfg=JSON.parse(read('mobile/capacitor.config.json'));
  assert.equal(cfg.appId,'br.com.novabytesolucoes.ppmt');
- assert.equal(cfg.appName,'PP-MT Preparação Policial');
+ assert.equal(cfg.appName,'PMMG — Missão Farda');
  assert.equal(cfg.webDir,'www');
  assert.equal(cfg.server?.url,undefined);
  assert.equal(cfg.server?.cleartext,false);

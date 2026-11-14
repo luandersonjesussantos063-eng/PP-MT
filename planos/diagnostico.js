@@ -5,7 +5,7 @@ async function check(){
  $('message').textContent='Conferindo configurações…';
  try{
   const user=await verifiedUser();show('login-box',!user);show('status-box',false);
-  if(!user){$('message').textContent='Entre na sua conta PP-MT.';return;}
+  if(!user){$('message').textContent='Entre na sua conta PMMG.';return;}
   const result=await runMonthlyBilling('readiness');
   const flags=result.checks||{};
   const merchantStatus=flags.merchant_http_status;

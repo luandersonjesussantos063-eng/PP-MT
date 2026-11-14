@@ -1,6 +1,6 @@
 {
   "name": "pp-mt",
-  "version": "2.15.0",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,12 +9,14 @@
     "build:vendor": "node tools/build_vendor.mjs",
     "build:syllabus": "node tools/build_syllabus.mjs",
     "build:offline": "node tools/build_offline_assets.mjs",
-    "update:news": "python3 tools/update_concurso.py"
+    "update:news": "python3 tools/update_concurso.py",
+    "test:legacy": "node --test tests/legacy/*.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.117.2"
   },
   "devDependencies": {
-    "esbuild": "0.25.12"
+    "esbuild": "0.25.12",
+    "jsdom": "^31.0.1"
   }
 }

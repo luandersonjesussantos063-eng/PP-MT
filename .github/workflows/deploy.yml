@@ -1,10 +1,8 @@
-name: Publicar PP MT no GitHub Pages
+name: Publicar PMMG no GitHub Pages
 on:
   push:
     branches: [main]
   workflow_dispatch:
-  schedule:
-    - cron: "17 */3 * * *" # monitorar em intervalos de 3 horas (UTC); envio push separado a cada 5 min
 permissions:
   contents: read
   pages: write
@@ -27,28 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Conferir publicações oficiais
-        if: github.event_name != 'push'
-        run: |
-          python3 -m unittest discover -s tests -p 'test_concurso_monitor.py'
-          python3 tools/update_concurso.py
-      - name: Preservar resultado da checagem
-        if: github.event_name != 'push'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/news/concurso.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Atualiza acompanhamento oficial do concurso"
-            for attempt in 1 2 3; do
-              if git push origin HEAD:main; then break; fi
-              git fetch origin main
-              git rebase origin/main
-              if [ "$attempt" = "3" ]; then exit 1; fi
-            done
-          fi
       - run: npm ci
-      - run: npm run build:vendor && npm run build:syllabus && npm run build:offline
+      - run: npm run build:vendor && npm run build:offline
       - name: Atualizar sitemap das páginas públicas
         run: python3 tools/build_seo_sitemap.py
       - run: node --check app.js && node --check notifications.js && node --check help.js && node --check easy-similar.js && node --check easy-practice.js && node --check auth.js && node --check analytics.js
@@ -58,7 +36,7 @@ jobs:
       - name: Preparar arquivos públicos
         run: |
           mkdir dist
-          cp analytics.js account-services.js dashboard-v218.js authorial-mt.js performance.js free-training.js concurso-news.js offline.js syllabus.js syllabus-data.js index.html style.css notifications.js app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js easy-similar.js easy-practice.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js video-lessons.js video-catalog.js sw.js icon.svg manifest.webmanifest atualizar.html version.json dist/
+          cp pmmg-bank.js pmmg-state.js analytics.js account-services.js dashboard-v218.js authorial-mt.js performance.js free-training.js concurso-news.js offline.js syllabus.js syllabus-data.js index.html style.css notifications.js app.js lessons.js review-generator.js practice.js curriculum.js exam-session.js answer-sounds.js learning.js auth.js help.js easy-similar.js easy-practice.js exam-sources.js core.js data.js official.js official-1.js official-2.js official-3.js official-4.js official-al-2021.js official-es-2013-sejus.js official-ba-2024-seap.js official-rs-2022-susepe.js imported-exams.js video-lessons.js video-catalog.js sw.js icon.svg manifest.webmanifest atualizar.html version.json dist/
           cp *.png dist/
           cp sitemap.xml robots.txt dist/
           cp -R assets planos admin dist/

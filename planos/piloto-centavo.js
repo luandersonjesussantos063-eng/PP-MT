@@ -84,7 +84,7 @@ async function load(){
  try{
   const user=await verifiedUser();
   $('login-panel').hidden=!!user;$('pilot-panel').hidden=!user;
-  $('session').textContent=user?'Conta PP-MT conectada.':'Entre na sua conta PP-MT para continuar.';
+  $('session').textContent=user?'Conta PMMG conectada.':'Entre na sua conta PMMG para continuar.';
   controls(false);
   if(user)await run('check');
  }catch{

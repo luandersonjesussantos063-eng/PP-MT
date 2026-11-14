@@ -970,3 +970,9 @@ nav a.active{background:#29313a;color:var(--accent)}
 .app-update-banner{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:12px;max-width:calc(100vw - 24px);z-index:100;border:1px solid #d5b36a;background:#1b1f20;color:#f6eee0;padding:13px 16px;border-radius:9px;box-shadow:0 10px 36px #000b;font-size:13px}
 .app-update-banner button{flex-shrink:0}
 @media(max-width:640px){.app-update-banner{width:calc(100vw - 24px);flex-direction:column;text-align:center;bottom:84px}.app-update-banner button{width:100%}}
+
+/* PMMG: identidade fornecida pelo usuário. */
+:root{--accent:#ffcb05;--gold:#ffcb05;--primary:#191d5e;}
+aside,.command-main{background:linear-gradient(135deg,#101337,#191d5e)}
+.primary,.command-primary{background:#ffcb05;color:#191d5e;border-color:#ffcb05}
+.subject-check,.command-kicker-dot{background:#bb2127}

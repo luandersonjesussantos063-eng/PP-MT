@@ -5,7 +5,7 @@ export async function renderMembership(container){
  container.innerHTML=`
  <div class="plan-presentation">
   <section class="plan-hero">
-   <p class="plan-kicker">PREPARAÇÃO POLICIAL · PP-MT</p>
+   <p class="plan-kicker">PREPARAÇÃO POLICIAL · PMMG</p>
    <h1>Seu plano de <em>evolução.</em></h1>
    <p>Estude gratuitamente para conhecer a plataforma ou assuma o comando da <strong>Central Tática Premium</strong>, com questões exclusivas e missões direcionadas aos seus pontos fracos.</p>
    <div id="membershipStatus" role="status" class="plan-current">Verificando situação da sua conta…</div>

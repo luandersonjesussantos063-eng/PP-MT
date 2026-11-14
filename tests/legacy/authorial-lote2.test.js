@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {AUTHORIAL_MT_QUESTIONS as all,AUTHORIAL_MT_CONCEPTS} from '../authorial-mt.js';
-import {OFFICIAL_QUESTIONS} from '../official.js';import {QUESTIONS} from '../data.js';import {CONCEPT_PRACTICE} from '../practice.js';
-import {validateBank} from '../core.js';import {findSimilar} from '../help.js';import {chooseConceptBlock,compatibleWithMT} from '../curriculum.js';import {questionTopicIds,EDITAL_TOPICS} from '../syllabus.js';
+import {AUTHORIAL_MT_QUESTIONS as all,AUTHORIAL_MT_CONCEPTS} from '../../authorial-mt.js';
+import {OFFICIAL_QUESTIONS} from '../../official.js';import {QUESTIONS} from '../../data.js';import {CONCEPT_PRACTICE} from '../../practice.js';
+import {validateBank} from '../../core.js';import {findSimilar} from '../../help.js';import {chooseConceptBlock,compatibleWithMT} from '../../curriculum.js';import {questionTopicIds,EDITAL_TOPICS} from '../../syllabus.js';
 const batch=all.filter(q=>q.edition==='mt-edital-2016-lote-2026-10-02');
 test('50 questões autorais novas, sem colisão, com alternativas comentadas e vínculo real com matéria do edital',()=>{
  validateBank([...OFFICIAL_QUESTIONS,...QUESTIONS,...CONCEPT_PRACTICE,...all]);assert.equal(batch.length,50);assert.equal(all.length,150);assert.equal(new Set(all.map(q=>q.statement)).size,150);
