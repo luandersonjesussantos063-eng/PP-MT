@@ -132,3 +132,42 @@ test('botão de instalar da nova interface usa o instalador da conta e some no m
  const a=open({installation:{installed:false,label:'Instalar no iPhone/iPad'}});try{a.w.document.querySelector('[data-profile=luanderson]').click();const button=a.w.document.querySelector('#install-app');assert.equal(button.hidden,false);assert.match(button.getAttribute('aria-label'),/iPhone/);button.click();assert.equal(a.actions.installs,1);assert.deepEqual(a.errors,[])}finally{a.dom.window.close()}
  const b=open();try{assert.equal(b.w.document.querySelector('#install-app').hidden,true)}finally{b.dom.window.close()}
 });
+
+test('início oferece uma ação e continuar preserva a sessão e o consumo de acesso',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();
+  assert.equal(d.querySelector('#daily-start').textContent,'Começar treino');
+  assert.equal(d.querySelector('#view-home .metric-grid'),null);
+  assert.equal(d.querySelector('#study-guide').open,false);
+  assert.equal(d.querySelector('#training-options').open,false);
+  d.querySelector('#daily-start').click();await pause();
+  const session=JSON.stringify(a.saved.at(-1).state.session),charged=a.charges.length;
+  assert.equal(d.querySelector('#training-config').open,false);
+  d.querySelector('[data-tab=home]').click();
+  assert.equal(d.querySelector('#daily-start').textContent,'Continuar treino');
+  assert.equal(d.querySelector('.micro-goal').hidden,true);
+  d.querySelector('#daily-start').click();await pause();
+  assert.equal(d.querySelector('#view-train').hidden,false);
+  assert.equal(JSON.stringify(a.saved.at(-1).state.session),session);
+  assert.equal(a.charges.length,charged);
+  // Opening settings during a session remains possible and is not undone by grading.
+  d.querySelector('#training-config').open=true;
+  d.querySelector('.option').click();d.querySelector('#check').click();
+  assert.equal(d.querySelector('#training-config').open,true);
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('menu agrupa preferências, ferramentas e conta e explica sincronização das anotações',()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();
+  assert.deepEqual([...d.querySelectorAll('#legacy-settings > details > summary')].map(n=>n.textContent),['Preferências','Ferramentas','Conta e backup']);
+  assert.ok(d.querySelector('#legacy-settings #account-signout'));
+  assert.ok(d.querySelector('#legacy-settings .sync-settings'));
+  d.querySelector('#account-settings').click();assert.equal(d.querySelector('#account-settings').getAttribute('aria-expanded'),'true');
+  d.querySelector('#close-legacy-settings').click();assert.equal(d.querySelector('#account-settings').getAttribute('aria-expanded'),'false');
+  d.querySelector('#essay').value='Minha dúvida';d.querySelector('#essay').dispatchEvent(new a.w.Event('input'));
+  assert.match(d.querySelector('#essay-status').textContent,/sincronização automática pela conta/);
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});

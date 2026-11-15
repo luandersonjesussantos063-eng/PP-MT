@@ -70,8 +70,8 @@ function initSync(){
  };
  const install=$('install-app'),installation=window.MFAccount.installationState();install.hidden=installation.installed!==false;install.setAttribute('aria-label',installation.label||'Instalar aplicativo');install.onclick=()=>window.MFAccount.install();
  window.addEventListener('appinstalled',()=>{install.hidden=true;});
- $('account-settings').onclick=()=>{const panel=$('legacy-settings');panel.hidden=!panel.hidden;if(!panel.hidden){renderLegacySettings();panel.scrollIntoView?.({behavior:'smooth',block:'start'});}};
- $('close-legacy-settings').onclick=()=>{$('legacy-settings').hidden=true;};
+ $('account-settings').onclick=()=>{const panel=$('legacy-settings');panel.hidden=!panel.hidden;$('account-settings').setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden){renderLegacySettings();panel.scrollIntoView?.({behavior:'smooth',block:'start'});$('close-legacy-settings').focus();}};
+ $('close-legacy-settings').onclick=()=>{$('legacy-settings').hidden=true;$('account-settings').setAttribute('aria-expanded','false');$('account-settings').focus();};
  $('legacy-sound').onclick=()=>{window.MFAccount.setSound(window.MFAccount.preferences().sound===false);renderLegacySettings();};
  document.querySelectorAll('[data-legacy-tool]').forEach(button=>{button.onclick=()=>window.MFAccount.openTool(button.dataset.legacyTool);});
  $('account-signout').onclick=()=>window.MFAccount.logout();
@@ -117,11 +117,15 @@ function renderHome(){
  $("due-count").textContent=String(getDue());
  $("weeks-active").textContent=week+"/7";
  $("phase").textContent=C.phase(events.length,C.daysBetween(DAY,C.DEFAULT_EXAM_DATE));
- $("home-review-text").textContent=getDue()?getDue()+" questão(ões) aguardando revisão. Comece por elas se tiver disposição.":"Sem revisões vencidas. Você pode explorar questões novas.";
+ $("home-review-text").textContent=getDue()?getDue()+" questão(ões) para revisar.":"Nenhuma revisão pendente.";
+ $("review-shortcut").hidden=!getDue();
  const last=lastDate(),gap=last?C.daysBetween(last,DAY):null;
  $("greeting").textContent=gap!==null&&gap>=2?"Um recomeço pequeno já vale.":events.length===0?"Começar é só resolver uma questão.":"Mais um passo na sua preparação.";
- $("daily-copy").textContent=gap!==null&&gap>=2?"Não há nada para recuperar ou compensar. Escolha 2 questões e avance no seu ritmo.":"Hoje vale resolver poucas questões reais, revisar os erros e encerrar sem cobrança.";
- $("resume").hidden=!currentSession()||currentSession().finished;
+ const ongoing=currentSession()&&!currentSession().finished;
+ $("daily-copy").textContent=ongoing?"Seu treino está salvo. Continue de onde parou.":"Escolha seu ritmo e resolva uma questão de cada vez.";
+ $("daily-start").textContent=ongoing?"Continuar treino":"Começar treino";
+ $("resume").hidden=true;
+ document.querySelector('.micro-goal').hidden=!!ongoing;
  $("week-tip").textContent="Sugestão de hoje: "+C.nextSubject(DAY)+". Você pode mudar de matéria sempre que precisar.";
  weekGrid($("week-calendar"));upcoming();
  const chosen=Number(state.settings.goal)||5;
@@ -356,7 +360,14 @@ function checkClick(){
  if(!s.picks[q.id]&&!q.annulled){toast("Marque uma alternativa antes de corrigir, ou pule para a próxima questão.");return;}
  gradeOne(q);renderAll();
 }
-function renderTraining(){renderSources();renderQuestion();}
+function renderTraining(){
+ renderSources();renderQuestion();
+ const config=$('training-config'),session=currentSession();
+ const key=session?String(session.started)+':'+String(session.finished):'empty';
+ if(config.dataset.session!==key){config.open=!session;config.dataset.session=key;}
+ config.querySelector('summary').textContent=session?'Escolher outro treino':'Escolher treino';
+ document.querySelector('.training-layout').classList.toggle('has-session',!!session);
+}
 
 function renderLesson(){
  const key=$("lesson-subject").value,lesson=LESSONS[key]||LESSONS.Português;
@@ -383,7 +394,7 @@ function renderPath(){
  line.appendChild(checkbox);add(line,"span","",topic);
  });
  });
- $("essay").value=state.essay||"";$("essay-status").textContent=(state.essay||"").trim().split(/\s+/).filter(Boolean).length+" palavras no rascunho · salvo localmente";
+ $("essay").value=state.essay||"";$("essay-status").textContent=(state.essay||"").trim().split(/\s+/).filter(Boolean).length+" palavras · salvo no aparelho, com sincronização automática pela conta";
  const weekStart=C.dayShift(DAY,-((new Date(DAY+"T12:00:00Z").getUTCDay()+6)%7));
  $("essay-week").checked=state.essayWeek===weekStart;
 }
@@ -449,7 +460,7 @@ function initEvents(){
  $("profile-picker").addEventListener("keydown",e=>{if(e.key==="Escape"&&activeProfile){$("profile-cancel").click();}if(e.key==="Tab"){const buttons=[...$("profile-picker").querySelectorAll("button")].filter(b=>!b.hidden),first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){last.focus();e.preventDefault();}else if(!e.shiftKey&&document.activeElement===last){first.focus();e.preventDefault();}}});
  document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
  document.querySelectorAll("[data-goal]").forEach(b=>b.addEventListener("click",()=>{state.settings.goal=Number(b.dataset.goal);save();renderHome();}));
- $("daily-start").addEventListener("click",()=>sessionNew({kind:"daily",exam:"all",subject:"all",count:state.settings.goal||5,grading:"practice"}));
+ $("daily-start").addEventListener("click",()=>currentSession()&&!currentSession().finished?show('train'):sessionNew({kind:"daily",exam:"all",subject:"all",count:state.settings.goal||5,grading:"practice"}));
  $("two-questions").addEventListener("click",()=>sessionNew({kind:"daily",exam:"all",subject:"all",count:2,grading:"practice"}));
  $("resume").addEventListener("click",()=>show("train"));
  $("diagnostic-home").addEventListener("click",()=>sessionNew({kind:"diagnostic",count:10}));
@@ -466,7 +477,7 @@ function initEvents(){
  $("timer-reset").addEventListener("click",()=>timerStart(true));
  $("lesson-subject").addEventListener("change",renderLesson);
  $("lesson-practice").addEventListener("click",()=>{const subject=$("lesson-subject").value;$("exam").value="pmmg2024";fillSubjects();sessionNew({kind:"daily",exam:"pmmg2024",subject,count:5,grading:"practice"});});
- $("essay").addEventListener("input",()=>{state.essay=$("essay").value;save();$("essay-status").textContent=state.essay.trim().split(/\s+/).filter(Boolean).length+" palavras no rascunho · salvo localmente";});
+ $("essay").addEventListener("input",()=>{state.essay=$("essay").value;save();$("essay-status").textContent=state.essay.trim().split(/\s+/).filter(Boolean).length+" palavras · salvo no aparelho, com sincronização automática pela conta";});
  $("essay-week").addEventListener("change",()=>{
  const offset=(new Date(DAY+"T12:00:00Z").getUTCDay()+6)%7;
  state.essayWeek=$("essay-week").checked?C.dayShift(DAY,-offset):"";save();
@@ -486,8 +497,8 @@ function initEvents(){
  window.addEventListener("offline",updateOnline);
 }
 function updateOnline(){
- const label=$("connection-status");label.textContent=navigator.onLine?"● Provas reais":"○ Sem conexão";
- if(!navigator.onLine)label.title="O aplicativo pode abrir sem internet, mas o caderno original de questões exige conexão.";
+ const label=$("connection-status");label.textContent=navigator.onLine?"Conectado":"Sem conexão";
+ label.title=navigator.onLine?"Sincronização automática pela conta.":"Continue com os arquivos disponíveis no aparelho. A sincronização precisa de internet.";
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&activeProfile)save();});
 function boot(){

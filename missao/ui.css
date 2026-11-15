@@ -102,3 +102,48 @@ body{padding-bottom:calc(var(--mf-bottom-nav) + var(--mf-safe-bottom,env(safe-ar
 /* Keep touch controls legible without Safari zooming the form. */
 @media(max-width:700px){input,select,textarea{font-size:16px}.head-inner{gap:8px}.head-links{gap:6px;flex-wrap:wrap;justify-content:flex-end}.head-links button{min-height:44px;padding:8px;font-size:12px}}
 @supports(height:100dvh){body{min-height:100dvh}.profile-overlay{max-height:100dvh;overflow-y:auto}}
+
+/* Estudo com uma ação principal e opções recolhidas. */
+#view-home .home-grid{display:block;max-width:720px;margin:20px auto 14px}
+#view-home .hero{min-height:0;padding:24px;background:var(--panel);box-shadow:none}
+#view-home h1{font-size:clamp(25px,4vw,34px);margin-bottom:12px}
+#view-home .hero-actions .primary{width:100%}
+#view-home .hero-actions{margin-top:20px}
+.home-review{max-width:720px;margin:0 auto 18px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:none}
+.home-review p{margin:0;font-size:14px}.home-review button{min-height:44px;flex:none}
+.quiet-details{margin:16px 0;box-shadow:none}
+.quiet-details>summary,.training-options>summary,.config>summary{cursor:pointer;min-height:44px;align-content:center;font-weight:750;line-height:1.5}
+.quiet-details>summary{font-size:16px}
+.quiet-details[open]>summary{margin-bottom:16px}
+#study-guide{max-width:720px;margin:16px auto}
+#study-guide .two-cols{grid-template-columns:1fr}
+#study-guide .page-heading{display:block;margin-top:16px}
+#study-guide .page-heading h1{font-size:24px}
+#study-guide .exam-date{display:none}
+.settings-group{border-top:1px solid var(--edge);padding-top:12px;margin-top:12px}
+.settings-group>summary{cursor:pointer;min-height:44px;align-content:center;font-weight:750}
+.settings-group>details{margin:12px 0;padding:8px 0}
+#account-signout{margin-top:16px}
+.config{position:static;padding:18px 22px}
+.config>summary{font-size:16px}
+.config-body{padding-top:8px}
+.training-options{border-top:1px solid var(--edge);margin:12px 0;padding-top:8px}
+.training-options>summary{font-size:14px;color:var(--dim)}
+.training-layout{grid-template-columns:minmax(0,1fr);max-width:900px;margin:20px auto}
+.training-layout:not(.has-session) .question-panel{display:none}
+.training-layout.has-session .question-panel{min-height:0}
+.training-layout.has-session .config:not([open]){background:none;border-color:transparent;box-shadow:none;padding-block:4px}
+.training-layout.has-session .config>summary{font-size:14px;color:var(--dim)}
+#view-insights>.snapshot{margin:20px 0 16px;max-width:none;box-shadow:none}
+#view-insights>.metric-grid{margin-bottom:20px}
+.panel{box-shadow:0 4px 16px #080b2722}
+@media(max-width:580px){
+ .head-inner{padding-block:10px}.logo strong{font-size:16px}.logo small{font-size:10px}
+ #account-settings{font-size:26px;padding:0 12px;line-height:1;min-width:44px}
+ .profile-bar{padding:12px 0}.profile-identity>img{width:36px;height:54px}
+ #view-home .hero{padding:20px}.home-review{padding:14px 16px}
+ .quiet-details{padding:16px}.config{padding:14px 16px}
+ .question-panel{padding:18px}.question-actions{gap:8px;flex-wrap:wrap}
+ .question-actions .primary{flex:1;min-width:130px}
+ .profile-choice,.legacy-tool-links button{min-height:48px}
+}

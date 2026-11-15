@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=3.2.2';
+import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=3.2.3';
 import {loginWithGoogle,myPremiumOffers} from '../account-services.js?v=2.20.4';
 
 const $=id=>document.getElementById(id);
