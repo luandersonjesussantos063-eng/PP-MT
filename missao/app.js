@@ -68,6 +68,8 @@ function initSync(){
   }
   if(activeProfile){state=loadProfile(activeProfile);if(document.activeElement!==$('essay'))renderAll();}
  };
+ const install=$('install-app'),installation=window.MFAccount.installationState();install.hidden=installation.installed!==false;install.setAttribute('aria-label',installation.label||'Instalar aplicativo');install.onclick=()=>window.MFAccount.install();
+ window.addEventListener('appinstalled',()=>{install.hidden=true;});
  $('account-settings').onclick=()=>{const panel=$('legacy-settings');panel.hidden=!panel.hidden;if(!panel.hidden){renderLegacySettings();panel.scrollIntoView?.({behavior:'smooth',block:'start'});}};
  $('close-legacy-settings').onclick=()=>{$('legacy-settings').hidden=true;};
  $('legacy-sound').onclick=()=>{window.MFAccount.setSound(window.MFAccount.preferences().sound===false);renderLegacySettings();};

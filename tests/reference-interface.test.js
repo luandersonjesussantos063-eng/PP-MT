@@ -5,11 +5,11 @@ import {JSDOM,VirtualConsole} from 'jsdom';
 import {toReferenceState,mountReferenceUI,leaveReferenceUI} from '../reference-ui.js';
 const read=f=>fs.readFileSync(new URL('../missao/'+f,import.meta.url),'utf8');
 const pause=()=>new Promise(r=>setTimeout(r,5));
-function open({id='account-a',snapshot={profiles:{},activeProfile:null,legacy:toReferenceState({})},allowed=true,preferences={sound:true,xp:60,profile:{schedule:'shift',time:'19:00'},seconds:3600}}={}){
- const errors=[],saved=[],charges=[],actions={tools:[],help:[],sounds:[]};const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
+function open({installation={installed:true},id='account-a',snapshot={profiles:{},activeProfile:null,legacy:toReferenceState({})},allowed=true,preferences={sound:true,xp:60,profile:{schedule:'shift',time:'19:00'},seconds:3600}}={}){
+ const errors=[],saved=[],charges=[],actions={tools:[],help:[],sounds:[],installs:0};const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/missao/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window;w.scrollTo=()=>{};w.confirm=()=>true;
- const bridge={id,initial:()=>snapshot,save(data){const name=data.activeProfile;saved.push({name,state:JSON.parse(JSON.stringify(data.profiles[name]))})},pull:async()=>null,allow:async(kind,count)=>{charges.push({kind,count});return allowed},preferences:()=>preferences,setSound:value=>{preferences.sound=value},openTool:route=>actions.tools.push(route),help:(...args)=>actions.help.push(args),answerFeedback:correct=>actions.sounds.push(correct),openAccount(){},logout(){}};
+ const bridge={id,installationState:()=>installation,install:()=>{actions.installs++},initial:()=>snapshot,save(data){const name=data.activeProfile;saved.push({name,state:JSON.parse(JSON.stringify(data.profiles[name]))})},pull:async()=>null,allow:async(kind,count)=>{charges.push({kind,count});return allowed},preferences:()=>preferences,setSound:value=>{preferences.sound=value},openTool:route=>actions.tools.push(route),help:(...args)=>actions.help.push(args),answerFeedback:correct=>actions.sounds.push(correct),openAccount(){},logout(){}};
  Object.defineProperty(w,'parent',{value:{MFAccountBridge:bridge}});
  for(const file of ['banco-transcrito.js','core.js','sync.js','account-bridge.js','strike.js','app.js'])w.eval(read(file));
  return {dom,w,saved,charges,errors,actions};
@@ -126,4 +126,9 @@ test('prazo de simulado é preservado ao retomar a sessão',async()=>{
   snapshot=a.saved.at(-1).state;deadline=snapshot.session.clock.deadline;assert.ok(deadline>Date.now());assert.equal(d.querySelector('#timer-reset').disabled,true);
  }finally{a.dom.window.close()}
  const b=open({snapshot:{profiles:{luanderson:snapshot},activeProfile:'luanderson'}});try{b.w.document.querySelector('[data-profile=luanderson]').click();assert.equal(b.saved.at(-1).state.session.clock.deadline,deadline)}finally{b.dom.window.close()}
+});
+
+test('botão de instalar da nova interface usa o instalador da conta e some no modo aplicativo',()=>{
+ const a=open({installation:{installed:false,label:'Instalar no iPhone/iPad'}});try{a.w.document.querySelector('[data-profile=luanderson]').click();const button=a.w.document.querySelector('#install-app');assert.equal(button.hidden,false);assert.match(button.getAttribute('aria-label'),/iPhone/);button.click();assert.equal(a.actions.installs,1);assert.deepEqual(a.errors,[])}finally{a.dom.window.close()}
+ const b=open();try{assert.equal(b.w.document.querySelector('#install-app').hidden,true)}finally{b.dom.window.close()}
 });

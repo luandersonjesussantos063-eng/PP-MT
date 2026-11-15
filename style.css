@@ -1036,3 +1036,10 @@ body.reference-mode>#reference-shell{display:block;position:fixed;inset:0;z-inde
 body.reference-mode>#toast{z-index:2000}
 
 body.reference-mode>.tactical-overlay,body.reference-mode>.install-overlay{z-index:2500}
+
+/* iPhone: respect the notch and home indicator around the embedded app. */
+body.reference-mode>#reference-shell{box-sizing:border-box;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+.install-overlay{padding-top:max(16px,env(safe-area-inset-top,0px));padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+.install-sheet{max-height:calc(100vh - 36px);max-height:calc(100dvh - 36px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.install-url-label{display:block;font-size:14px;margin:16px 0 8px}.install-url-label input{font-size:16px;width:100%;min-width:0}.auth-install{margin-top:12px}
+@media(max-width:700px){input,select,textarea{font-size:16px}}

@@ -31,3 +31,6 @@ Deslizar horizontalmente em qualquer direção elimina uma alternativa; repetir 
 
 ## Recursos do PP-MT reconectados
 Configurações agrupadas acessíveis pela engrenagem; rotina e escala 12×36, desempenho/horas, estudo guiado, revisões, simulados, videoaulas, backup, notificações e plano continuam no motor original. A nova tela usa os mesmos sons/preferências, ajuda tática (comando, armadilhas, aula curta, exemplo fácil e eliminação por XP), IA Premium acionada pelo aluno, favoritos por perfil e cronômetro persistente com prazo do simulado. Respostas novas são espelhadas de forma idempotente no histórico do motor anterior para manter XP e desempenho; históricos originais não são excluídos. Comentários e exercícios específicos de MT não são reclassificados como PMMG.
+
+### Instalação no iPhone e iPad — 3.2.2
+O botão Instalar fica disponível antes e depois do login. No iOS abre o guia Safari → Compartilhar → Adicionar à Tela de Início (ativar Abrir como App da Web quando disponível). Inclui cópia do endereço para sair de navegadores internos, detecção de iPad com agente de desktop e áreas seguras de tela. A distribuição atual é PWA, sem publicação na App Store.

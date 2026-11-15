@@ -1,14 +1,14 @@
-import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.1';
+import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.2';
 function signalAppReady(){window.__PMMG_READY__=true;window.dispatchEvent(new Event('pmmg:ready'))}
-import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.1';
-import {migratePMMGState} from './pmmg-state.js?v=3.2.1';
+import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.2';
+import {migratePMMGState} from './pmmg-state.js?v=3.2.2';
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=3.2.1';
+import {createNotificationCenter} from './notifications.js?v=3.2.2';
 import {createProgressSync,cachedAccount} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 const AUTHORIAL_MT_QUESTIONS=[];
@@ -25,13 +25,13 @@ const EXAM_SOURCES=PMMG_EXAMS;const SOURCE_TOTAL=PMMG_QUESTIONS.length,IMPORTED_
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.1';
-import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.1';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.2';
+import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.2';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 import {videoLessonForErrorHTML} from './video-lessons.js?v=2.20.6';
-import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.1';
+import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.2';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='3.2.1';
+const APP_VERSION='3.2.2';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -146,7 +146,7 @@ async function loadAccount(user){run=null;reviewState=null;assistState=Object.cr
  else if(legacyStore){store=normalizeStore(legacyStore);localStorage.removeItem(KEY);legacyStore=null}
  else store=emptyStore();
  ensureProgram();const restoredExam=restoreExam(store.program.activeExam,rawBank());run=location.hash.slice(1)===(restoredExam?.originTab||'simulados')?restoredExam:null;accountUI();notificationCenter.start(user);save();navigate();void refreshStudyQuota()}
-function renderAuth(){leaveReferenceUI(true);notificationCenter.stop();currentUser=null;syncConnectionUI();$('#nav').innerHTML='';accountUI();const c=$('#content');c.innerHTML=`<section class="auth-shell"><div class="auth-card"><img src="./icon.svg" alt="PMMG" class="auth-logo"><div class="eyebrow">PMMG • ACESSO DO CANDIDATO</div><h1>Seu progresso é só seu.</h1><p class="muted"><a href="./planos/">Conheça o PMMG e os planos →</a></p><p class="muted">Seu plano diário, revisões e progresso ficam vinculados à sua conta.</p><div class="auth-tabs"><button id="loginTab" class="active">Entrar</button><button id="signupTab">Criar conta</button></div><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="primary auth-submit" type="submit">Entrar</button></form><div class="oauth-divider"><span>ou continue com</span></div><button type="button" class="google-login-btn" id="googleSignIn"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.9 24.5c0-1.6-.2-3.2-.4-4.7H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7l7.4 5.8C43.7 37.5 46.9 31.7 46.9 24.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7L32 36.5c-2.1 1.4-4.7 2.2-8 2.2-6.3 0-11.6-4.1-13.5-9.7l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Entrar com Google</span></button><p id="authHint" class="muted auth-hint">${navigator.onLine===false?'Conecte-se à internet para entrar pela primeira vez neste aparelho.':'Use seu e-mail e senha para continuar.'}</p></div></section>`;
+function renderAuth(){leaveReferenceUI(true);notificationCenter.stop();currentUser=null;syncConnectionUI();$('#nav').innerHTML='';accountUI();const c=$('#content');c.innerHTML=`<section class="auth-shell"><div class="auth-card"><img src="./icon.svg" alt="PMMG" class="auth-logo"><div class="eyebrow">PMMG • ACESSO DO CANDIDATO</div><h1>Seu progresso é só seu.</h1><p class="muted"><a href="./planos/">Conheça o PMMG e os planos →</a></p><p class="muted">Seu plano diário, revisões e progresso ficam vinculados à sua conta.</p><div class="auth-tabs"><button id="loginTab" class="active">Entrar</button><button id="signupTab">Criar conta</button></div><form id="authForm"><label>E-mail<input id="authEmail" type="email" autocomplete="email" required placeholder="seuemail@exemplo.com"></label><label>Senha<input id="authPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="Mínimo 6 caracteres"></label><button class="primary auth-submit" type="submit">Entrar</button></form><div class="oauth-divider"><span>ou continue com</span></div><button type="button" class="google-login-btn" id="googleSignIn"><svg width="19" height="19" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.9 24.5c0-1.6-.2-3.2-.4-4.7H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7l7.4 5.8C43.7 37.5 46.9 31.7 46.9 24.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.5-.8-3.1-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.3 0 11.6-2.1 15.4-5.7L32 36.5c-2.1 1.4-4.7 2.2-8 2.2-6.3 0-11.6-4.1-13.5-9.7l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Entrar com Google</span></button><p id="authHint" class="muted auth-hint">${navigator.onLine===false?'Conecte-se à internet para entrar pela primeira vez neste aparelho.':'Use seu e-mail e senha para continuar.'}</p><button type="button" class="secondary auth-install" data-install-app>${isIOSDevice()?'Instalar no iPhone/iPad':'Instalar no celular'}</button></div></section>`;
  let mode='login';const setMode=m=>{mode=m;$('#loginTab').classList.toggle('active',m==='login');$('#signupTab').classList.toggle('active',m==='signup');$('.auth-submit').textContent=m==='login'?'Entrar':'Criar conta';$('#authPassword').autocomplete=m==='login'?'current-password':'new-password';$('#authHint').textContent=m==='login'?'Use seu e-mail e senha para continuar.':'Crie uma conta. Se a confirmação de e-mail estiver ativa, você receberá uma mensagem para confirmar.'};$('#loginTab').onclick=()=>setMode('login');$('#signupTab').onclick=()=>setMode('signup');if(new URLSearchParams(location.search).get('cadastro')==='1')setMode('signup');
  $('#authForm').onsubmit=async e=>{e.preventDefault();const email=$('#authEmail').value.trim(),password=$('#authPassword').value,btn=$('.auth-submit');btn.disabled=true;btn.textContent='Aguarde...';try{if(mode==='login'){const user=await signIn(email,password);await loadAccount(user)}else{const data=await signUp(email,password);if(data.session&&data.user){await loadAccount(data.user)}else{setMode('login');$('#authHint').textContent='Conta criada. Confira seu e-mail para confirmar o cadastro e depois entre.'}}}catch(err){$('#authHint').textContent=err.message||'Não foi possível autenticar.'}finally{btn.disabled=false;btn.textContent=mode==='login'?'Entrar':'Criar conta'}}
  const googleBtn=$('#googleSignIn');
@@ -154,7 +154,7 @@ function renderAuth(){leaveReferenceUI(true);notificationCenter.stop();currentUs
   try{await loginWithGoogle();}
   catch(e){googleBtn.disabled=false;$('#authHint').textContent=e?.message||'Não foi possível acessar o Google. Tente entrar com e-mail e senha.';}
  };
- signalAppReady();
+ syncInstallUI();signalAppReady();
 }
 async function bootstrap(){
  if(!cachedAccount(localStorage))renderAuth();
@@ -194,17 +194,21 @@ function postMissionCardHTML(){if(!todayDone())return '';const s=postMissionStep
 async function startRecommendedBlock(){const s=postMissionStep();if(s.key==='done')return;if(s.key==='errors'){tab='erros';reviewState=null;history.replaceState(null,'','#erros');renderErrorReview();return}let qs=[],all=realBank();if(s.key==='weak')qs=all.filter(q=>q.subject===s.subject);else qs=all.slice();if(!qs.length)qs=all.slice();qs=shuffle(qs).slice(0,Math.min(s.count,qs.length));if(!qs.length){toast('Ainda não há questões suficientes para este bloco.');return}if(!await allowStudy('block',qs.length))return;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+Math.max(5,s.minutes)*60000,originTab:'simulados',label:s.title,guided:true,quotaGranted:true};tab='simulados';history.replaceState(null,'','#simulados');showExamQuestion()}
 function bindStudyGoal(){const el=$('#studyGoal');if(!el)return;el.value=String(store.program.dailyGoalMinutes||120);el.onchange=()=>{store.program.dailyGoalMinutes=Number(el.value);save();render();toast('Meta líquida diária atualizada.')}}
 
-function isStandalone(){return window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
-function isIOSDevice(){return /iphone|ipad|ipod/i.test(navigator.userAgent)}
-function closeInstallGuide(){document.querySelector('.install-overlay')?.remove()}
+function isStandalone(){return !!window.__PPMT_NATIVE__||window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true}
+function isIOSDevice(){return /iphone|ipad|ipod/i.test(navigator.userAgent)||(/Macintosh/i.test(navigator.userAgent)&&navigator.maxTouchPoints>1)}
+function installationState(){return {installed:isStandalone(),ios:isIOSDevice(),label:isIOSDevice()?'Instalar no iPhone/iPad':'Instalar aplicativo'}}
+let installReturnFocus=null;
+function closeInstallGuide(){document.querySelector('.install-overlay')?.remove();document.removeEventListener('keydown',installGuideKeys);installReturnFocus?.focus?.()}
+function installGuideKeys(event){if(event.key==='Escape'){event.preventDefault();closeInstallGuide()}if(event.key==='Tab'){const buttons=[...document.querySelectorAll('.install-overlay button,.install-overlay a,.install-overlay input')];const first=buttons[0],last=buttons.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}}
 function installGuide(){
- closeInstallGuide();
+ closeInstallGuide();installReturnFocus=document.activeElement;
  const ios=isIOSDevice();
  const body=ios
-  ? '<ol><li>Abra o PMMG no Safari.</li><li>Toque em <b>Compartilhar</b> (quadrado com seta para cima).</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Toque em <b>Adicionar</b>.</li></ol><p>Depois ele abre em tela cheia, como um aplicativo comum.</p>'
+  ? '<p>Coloque o PMMG na tela inicial, com o brasão e abertura em modo aplicativo.</p><ol><li>Abra este endereço no <b>Safari</b> do iPhone ou iPad.</li><li>Toque em <b>Compartilhar</b> (quadrado com seta para cima). Se necessário, abra primeiro o menu <b>Mais</b> do Safari.</li><li>Escolha <b>Adicionar à Tela de Início</b>.</li><li>Se aparecer, ative <b>Abrir como App da Web</b> e toque em <b>Adicionar</b>.</li></ol><details><summary>Abriu pelo WhatsApp, Instagram ou outro app?</summary><p>Use o menu desse aplicativo para abrir no Safari, ou copie o endereço abaixo e cole no Safari.</p></details><label class="install-url-label">Endereço do app<input id="installURL" type="url" readonly value="https://ppmt.novabytesolucoes.com.br/"></label><button id="copyInstallURL" class="secondary" type="button">Copiar endereço</button><p id="installCopyStatus" role="status"></p><p>Abra pelo novo ícone e entre com a mesma conta para sincronizar seu progresso. Se a opção de adicionar não aparecer, procure em <b>Editar Ações</b> no menu Compartilhar.</p>'
   : '<ol><li>Abra o menu do navegador.</li><li>Toque em <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.</li><li>Confirme a instalação.</li></ol><p>No Android, quando o navegador liberar a instalação automática, o botão “Instalar” faz isso direto.</p>';
  document.body.insertAdjacentHTML('beforeend',`<div class="install-overlay" role="dialog" aria-modal="true" aria-label="Instalar PMMG"><div class="install-sheet"><div class="install-sheet-head"><div><span class="eyebrow">PMMG NO CELULAR</span><h2>${ios?'Instalar no iPhone/iPad':'Instalar no Android'}</h2></div><button id="closeInstallGuide" class="secondary">✕</button></div>${body}</div></div>`);
- $('#closeInstallGuide').onclick=closeInstallGuide;
+ $('#closeInstallGuide').onclick=closeInstallGuide;$('#closeInstallGuide').setAttribute('aria-label','Fechar instruções de instalação');$('#closeInstallGuide').focus();document.addEventListener('keydown',installGuideKeys);
+ const copy=$('#copyInstallURL');if(copy)copy.onclick=async()=>{try{await navigator.clipboard.writeText($('#installURL').value);$('#installCopyStatus').textContent='Endereço copiado. Cole no Safari.'}catch{$('#installURL').focus();$('#installURL').select();$('#installCopyStatus').textContent='Mantenha pressionado o endereço selecionado e escolha Copiar.'}};
  document.querySelector('.install-overlay').onclick=e=>{if(e.target.classList.contains('install-overlay'))closeInstallGuide()}
 }
 async function installApp(){
@@ -225,8 +229,8 @@ function installCardHTML(){
 }
 function syncInstallUI(){
  const top=$('#installTop');
- if(top){top.hidden=isStandalone();top.onclick=installApp}
- document.querySelectorAll('[data-install-app]').forEach(b=>b.onclick=installApp)
+ if(top){top.hidden=isStandalone();top.textContent=isIOSDevice()?'⇩ Instalar no iPhone':'⇩ Instalar';top.onclick=installApp}
+ document.querySelectorAll('[data-install-app]').forEach(b=>{b.hidden=isStandalone();b.onclick=installApp})
 }
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;syncInstallUI()});
 window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;syncInstallUI();toast('PMMG instalado. Agora ele pode ser aberto pela tela inicial.');if(tab==='mais')renderMore()});
@@ -536,7 +540,7 @@ function render(){
  const c=$('#content');
  if(tab==='inicio'){
   renderToday();
-  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{for(const row of referenceAttempts(snapshot,store.attempts)){const q=bank().find(q=>q.id===row.id);if(q){row.xpAwarded=localDay(new Date(row.at))===localDay()?applyQuestionXP(q,row.correct):0;row.assists=[...assistFor(q.id).used];row.assistXp=assistFor(q.id).spent||0;store.attempts.push(row)}}const favorites=snapshot.profiles[snapshot.activeProfile]?.settings?.favorites;if(Array.isArray(favorites))store.favorites=favorites.filter(id=>bank().some(q=>q.id===id));store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click(),tools:{setSound:value=>{store.program.answerSound=value;answerSounds.stop();save()},open:route=>{location.hash=route},sound:correct=>answerSounds.play(correct),activity:()=>{studyTracker.paused=false;noteStudyActivity()},help:openReferenceHelp}});
+  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{for(const row of referenceAttempts(snapshot,store.attempts)){const q=bank().find(q=>q.id===row.id);if(q){row.xpAwarded=localDay(new Date(row.at))===localDay()?applyQuestionXP(q,row.correct):0;row.assists=[...assistFor(q.id).used];row.assistXp=assistFor(q.id).spent||0;store.attempts.push(row)}}const favorites=snapshot.profiles[snapshot.activeProfile]?.settings?.favorites;if(Array.isArray(favorites))store.favorites=favorites.filter(id=>bank().some(q=>q.id===id));store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click(),tools:{install:installApp,installationState,setSound:value=>{store.program.answerSound=value;answerSounds.stop();save()},open:route=>{location.hash=route},sound:correct=>answerSounds.play(correct),activity:()=>{studyTracker.paused=false;noteStudyActivity()},help:openReferenceHelp}});
  }
  if(tab==='missao')renderMission();
  if(tab==='estudar')renderLearn();
@@ -737,7 +741,7 @@ async function enableAppAutoUpdates(){
   persistStudyLocal();location.reload();
  });
  try{
-  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.1',{updateViaCache:'none'});
+  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.2',{updateViaCache:'none'});
   setTimeout(()=>void checkAppUpdates(),3000);
   window.addEventListener('online',()=>void checkAppUpdates());
   document.addEventListener('visibilitychange',()=>{
@@ -899,7 +903,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.1-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.1')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.1');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.2-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.2')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.2');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 

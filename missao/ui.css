@@ -78,8 +78,8 @@ a{color:#ffdb52}.topbar{background:#191d5ef2;border-bottom:3px solid #bb2127}
 
 /* Navegação inferior fixa solicitada pelo usuário. */
 :root{--mf-bottom-nav:78px}
-body{padding-bottom:calc(var(--mf-bottom-nav) + env(safe-area-inset-bottom,0px) + 20px)}
-.tabs{position:fixed;inset:auto 0 0 0;top:auto;z-index:60;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;width:100%;margin:0;padding:0 8px env(safe-area-inset-bottom,0px);background:#191d5efa;border-top:1px solid #414784;border-bottom:0;box-shadow:0 -8px 24px #080b2733;backdrop-filter:blur(14px)}
+body{padding-bottom:calc(var(--mf-bottom-nav) + var(--mf-safe-bottom,env(safe-area-inset-bottom,0px)) + 20px)}
+.tabs{position:fixed;inset:auto 0 0 0;top:auto;z-index:60;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;width:100%;margin:0;padding:0 8px var(--mf-safe-bottom,env(safe-area-inset-bottom,0px));background:#191d5efa;border-top:1px solid #414784;border-bottom:0;box-shadow:0 -8px 24px #080b2733;backdrop-filter:blur(14px)}
 .tabs .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:0;min-height:var(--mf-bottom-nav);padding:10px 4px;border-top:3px solid transparent;border-bottom:0;font-size:12px;font-weight:750;line-height:1.2;color:#bac0df}
 .tabs .tab span{display:block;margin:0;font-size:21px;line-height:1}
 .tabs .tab.active{color:#ffcb05;border-top-color:#bb2127;border-bottom:0;background:#24286d77}
@@ -98,3 +98,7 @@ body{padding-bottom:calc(var(--mf-bottom-nav) + env(safe-area-inset-bottom,0px) 
 @media(prefers-reduced-motion:reduce){.answer-options .option{transition:none}}
 
 .legacy-settings-heading,.legacy-sound-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.legacy-settings h2{font-size:21px;margin:0}.legacy-settings>details{margin-top:18px;border-top:1px solid var(--edge);padding-top:16px}.legacy-settings summary{font-size:16px;font-weight:700;cursor:pointer;line-height:1.5}.legacy-tool-links{display:grid;gap:8px;margin-top:14px}.legacy-tool-links button{text-align:left;border:1px solid var(--edge);background:#101337;color:var(--ink);padding:14px;border-radius:9px;line-height:1.5}.legacy-sound-row{padding-top:16px}.legacy-question-tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.legacy-question-tools button{font-size:13px;padding:11px 13px}.option.is-eliminated{opacity:.45;border-style:dashed}.option.is-eliminated>span:not(.letter){text-decoration:line-through}
+
+/* Keep touch controls legible without Safari zooming the form. */
+@media(max-width:700px){input,select,textarea{font-size:16px}.head-inner{gap:8px}.head-links{gap:6px;flex-wrap:wrap;justify-content:flex-end}.head-links button{min-height:44px;padding:8px;font-size:12px}}
+@supports(height:100dvh){body{min-height:100dvh}.profile-overlay{max-height:100dvh;overflow-y:auto}}

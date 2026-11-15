@@ -2,6 +2,7 @@
  'use strict';
  const bridge=window.parent!==window&&window.parent.MFAccountBridge;
  if(!bridge){window.location.replace('../');return;}
+ document.documentElement.style.setProperty('--mf-safe-bottom','0px');
  const id=bridge.id,base='missao-farda-pmmg-state-v3:'+id;
  let profiles={},activeProfile=null,pulling=false;
  const clone=value=>JSON.parse(JSON.stringify(value));
@@ -27,6 +28,7 @@
     this.onIncoming?.(profiles);bridge.save({profiles:clone(profiles),activeProfile});
    }catch{}finally{pulling=false}
   },
+  installationState:()=>bridge.installationState?.()||{installed:true},install:()=>bridge.install?.(),
   preferences:()=>bridge.preferences?.()||{},setSound:value=>bridge.setSound?.(value),openTool:route=>bridge.openTool?.(route),help:(id,mode,answer)=>bridge.help?.(id,mode,answer),answerFeedback:correct=>bridge.answerFeedback?.(correct),
   questionInfo:id=>window.MFQuestionInfo?.(id),eliminate:(id,letter)=>window.MFEliminate?.(id,letter),
   allow:(kind,count)=>bridge.allow(kind,count),openAccount:()=>bridge.openAccount(),logout:()=>bridge.logout()
