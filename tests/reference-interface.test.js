@@ -11,7 +11,7 @@ function open({installation={installed:true},id='account-a',snapshot={profiles:{
  const w=dom.window;w.scrollTo=()=>{};w.confirm=()=>true;
  const bridge={id,installationState:()=>installation,install:()=>{actions.installs++},initial:()=>snapshot,save(data){const name=data.activeProfile;saved.push({name,state:JSON.parse(JSON.stringify(data.profiles[name]))})},pull:async()=>null,allow:async(kind,count)=>{charges.push({kind,count});return allowed},preferences:()=>preferences,setSound:value=>{preferences.sound=value},openTool:route=>actions.tools.push(route),help:(...args)=>actions.help.push(args),answerFeedback:correct=>actions.sounds.push(correct),openAccount(){},logout(){}};
  Object.defineProperty(w,'parent',{value:{MFAccountBridge:bridge}});
- for(const file of ['banco-transcrito.js','core.js','sync.js','account-bridge.js','strike.js','app.js'])w.eval(read(file));
+ for(const file of ['banco-transcrito.js','pcmg-bank.js','core.js','sync.js','account-bridge.js','strike.js','app.js'])w.eval(read(file));
  return {dom,w,saved,charges,errors,actions};
 }
 test('navegação mantém quatro abas: Início, Estudar, Trilha e Desempenho',()=>{
@@ -346,5 +346,54 @@ test('histórico complementar atravessa a ponte da conta e treinos novos prioriz
  const a=open();try{
   const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('#daily-start').click();await pause();
   assert.ok(a.saved.at(-1).state.session.ids[0].startsWith('pmmg2024-'));assert.ok(a.saved.at(-1).state.session.ids.every(id=>!/^pmmg(2015|2017)-/.test(id)));assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('Jackeline recebe treino misto real e Luanderson mantém banco PMMG ao trocar perfis',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=jackeline]').click();
+  assert.match(d.querySelector('#daily-copy').textContent,/PMMG \+ PCMG/);
+  assert.equal(d.querySelector('#exam').value,'all');
+  assert.ok(d.querySelector('#exam option[value=pcmg2025]'));
+  assert.ok(d.querySelector('#exam option[value=pcmg2021]'));
+  assert.ok(d.querySelector('#lesson-subject option[value=Criminologia]'));
+  d.querySelector('#daily-start').click();await pause();
+  const ids=a.saved.at(-1).state.session.ids;
+  assert.equal(ids.length,5);assert.ok(ids.some(id=>id.startsWith('pcmg')));assert.ok(ids.some(id=>id.startsWith('pmmg')));
+  assert.equal(ids.filter(id=>id.startsWith('pcmg')).length,3);
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=luanderson]').click();
+  assert.equal(d.querySelector('#exam option[value=pcmg2025]'),null);
+  assert.equal(d.querySelector('#performance-exam option[value=pcmg2021]'),null);
+  assert.equal(d.querySelector('#lesson-subject option[value=Criminologia]'),null);
+  d.querySelector('#daily-start').click();await pause();
+  assert.ok(a.saved.at(-1).state.session.ids.every(id=>id.startsWith('pmmg')));
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=jackeline]').click();
+  assert.deepEqual(a.saved.at(-1).state.session.ids,ids);
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('PCMG aceita alternativa E, inclui desempenho, favoritos e mantém eventos na sincronização',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=jackeline]').click();d.querySelector('[data-tab=train]').click();
+  d.querySelector('#exam').value='pcmg2025';d.querySelector('#exam').dispatchEvent(new a.w.Event('change'));
+  d.querySelector('#mode').value='full';d.querySelector('#create-session').click();await pause();
+  assert.equal(a.saved.at(-1).state.session.ids.length,70);
+  assert.equal(d.querySelectorAll('.option').length,5);
+  assert.match(d.querySelector('#question-chip').textContent,/PCMG 2025/);
+  // End the full exam with the official E answer to question 1.
+  d.querySelector('.option[data-letter=E]').click();
+  assert.equal(d.querySelector('.option[data-letter=E]').getAttribute('aria-pressed'),'true');
+  d.querySelector('#question-numbers').lastElementChild.click();d.querySelector('#check').click();
+  const state=a.saved.at(-1).state;
+  assert.equal(state.progress['pcmg2025-1'].correct,true);
+  assert.equal(state.events[0].answer,'E');
+  assert.equal(state.sessions.at(-1).total,69);
+  d.querySelector('[data-tab=insights]').click();
+  assert.equal(d.querySelector('#performance-total').textContent,'1');
+  assert.equal(d.querySelector('#performance-correct').textContent,'1');
+  assert.equal(a.w.MFCore.isValid(a.w.PCMG_BANK.questions.find(q=>q.id==='pcmg2025-59')),false);
+  const merged=a.w.MFSync.merge(state,{...state,events:[]});assert.equal(merged.events[0].answer,'E');
+  assert.deepEqual(a.errors,[]);
  }finally{a.dom.window.close()}
 });

@@ -2,9 +2,9 @@ const copy=x=>JSON.parse(JSON.stringify(x));
 export function toReferenceState(store={}){
  const state={version:3,progress:{},events:[],sessions:[],topics:{},essay:'',essayWeek:'',settings:{goal:5,timer:'off',favorites:[...(store.favorites||[])]},session:null};
  for(const row of store.attempts||[]){
-  if(!/^pmmg(2015|2017|2018|2021|2023|2024)-\d+$/.test(row.id)||!Number.isInteger(row.selected)||row.selected<0||row.selected>3)continue;
+  if(!(/^(pmmg(2015|2017|2018|2021|2023|2024)|pcmg(2021|2025))-\d+$/.test(row.id))||!Number.isInteger(row.selected)||row.selected<0||row.selected>(row.id.startsWith('pcmg2025-')?4:3))continue;
   const at=Date.parse(row.at);if(!Number.isFinite(at))continue;
-  const answer='ABCD'[row.selected],day=new Date(at).toISOString().slice(0,10),exam=row.id.split('-')[0];
+  const answer='ABCDE'[row.selected],day=new Date(at).toISOString().slice(0,10),exam=row.id.split('-')[0];
   state.events.push({id:row.id,day,at,answer,correct:row.correct===true,exam});
   const previous=state.progress[row.id],due=store.program?.reviews?.[row.id]?.dueAt;
   state.progress[row.id]={answer,correct:row.correct===true,day,at,attempts:(previous?.attempts||0)+1,successStreak:row.correct?(previous?.successStreak||0)+1:0,due:due?.slice(0,10)||day,reason:row.reason||''};
@@ -47,7 +47,7 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
 
  };
  let shell=document.getElementById('reference-shell');
- if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Início, Estudar, Trilha e Desempenho';frame.src='./missao/index.html?v=3.2.6';shell.appendChild(frame);document.body.appendChild(shell)}
+ if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Início, Estudar, Trilha e Desempenho';frame.src='./missao/index.html?v=3.2.7';shell.appendChild(frame);document.body.appendChild(shell)}
  document.body.classList.add('reference-mode');
 }
 
@@ -56,7 +56,7 @@ export function referenceAttempts(snapshot,existing=[]){
  const legacy=new Set(existing.filter(a=>!a.referenceProfile).map(a=>a.id+'|'+Date.parse(a.at)+'|'+a.selected));
  const rows=[];
  for(const profile of ['luanderson','jackeline'])for(const e of snapshot?.profiles?.[profile]?.events||[]){
-  const selected='ABCD'.indexOf(e.answer),at=Number(e.at);if(selected<0||!Number.isFinite(at)||!/^pmmg/.test(e.id))continue;
+  const selected='ABCDE'.indexOf(e.answer),at=Number(e.at);if(selected<0||!Number.isFinite(at)||!(/^(pmmg(2015|2017|2018|2021|2023|2024)|pcmg(2021|2025))-\d+$/.test(e.id))||e.id.startsWith('pcmg')&&profile!=='jackeline')continue;
   const key=profile+'|'+e.id+'|'+at+'|'+selected,base=e.id+'|'+at+'|'+selected;
   if(exact.has(key)||legacy.has(base))continue;exact.add(key);
   rows.push({id:e.id,selected,correct:e.correct===true,at:new Date(at).toISOString(),mode:'practice',referenceProfile:profile});

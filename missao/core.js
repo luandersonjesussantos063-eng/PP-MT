@@ -2,26 +2,28 @@
 (function(root){
 "use strict";
 const GROUPS=["Português", "Direito Penal", "Direito Constitucional", "Direito Penal Militar", "Direitos Humanos", "Legislação Extravagante", "Estatística", "Literatura", "Inglês", "Noções de Direito e Direitos Humanos", "Raciocínio Lógico-Matemático"];
+const PCMG_SUBJECTS=["Informática","Lei Orgânica da PCMG","Direito Administrativo","Direito Processual Penal","Medicina Legal","Criminologia","Noções de Direito"];
+GROUPS.push(...PCMG_SUBJECTS);
 const TARGETS={"Português": 20, "Direito Penal": 0, "Direito Constitucional": 0, "Direito Penal Militar": 0, "Direitos Humanos": 0, "Legislação Extravagante": 0, "Estatística": 0, "Literatura": 5, "Inglês": 5, "Noções de Direito e Direitos Humanos": 10, "Raciocínio Lógico-Matemático": 10};
 const DEFAULT_EXAM_DATE=null;
 function dayDate(date){const d=date instanceof Date?date:new Date(date||Date.now());return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-");}
 function dayShift(iso,n){const [y,m,d]=String(iso).split("-").map(Number);const z=new Date(Date.UTC(y,m-1,d+Number(n||0)));return z.toISOString().slice(0,10);}
 function daysBetween(a,b){return Math.round((Date.parse(b+"T12:00:00Z")-Date.parse(a+"T12:00:00Z"))/86400000);}
 function subjectGroup(q){return typeof q==="string"?q:q?.subject||"";}
-function isReal(q){return q&&/^pmmg(2015|2017|2018|2021|2023|2024)$/.test(q.exam)&&Number.isInteger(q.number)&&q.number>=1&&q.number<=(["pmmg2015","pmmg2017","pmmg2018","pmmg2021"].includes(q.exam)?40:50);}
-function isValid(q){return isReal(q)&&!q.annulled&&"ABCD".includes(q.key||"-");}
+function isReal(q){const limits={pmmg2015:40,pmmg2017:40,pmmg2018:40,pmmg2021:40,pmmg2023:50,pmmg2024:50,pcmg2021:60,pcmg2025:70};return !!q&&Object.hasOwn(limits,q.exam)&&Number.isInteger(q.number)&&q.number>=1&&q.number<=limits[q.exam];}
+function isValid(q){return isReal(q)&&!q.annulled&&/^[A-E]$/.test(q.key||'')&&!!q.options?.[q.key];}
 function cleanHistory(state,ids){const out={};Object.keys(state||{}).forEach(id=>{if(!ids.has(id))return;const p=state[id];if(p&&typeof p==="object")out[id]={...p};});return out;}
 function reviewDue(p,now){if(!p)return false;return p.due?String(p.due)<=now:p.correct===false;}
 function grade(q,choice,old,iso,reason=""){
-  if(!isReal(q))throw new Error("Questão não pertence à PMMG");
-  if(q.annulled||!/[A-D]/.test(q.key||""))return {answer:choice||"",correct:null,annulled:!!q.annulled,at:Date.now(),day:iso,attempts:(old?.attempts||0)+1,due:null,successStreak:0,reason:""};
-  if(!"ABCD".includes(choice||""))throw new Error("Alternativa inválida");
+  if(!isReal(q))throw new Error("Questão não pertence ao banco de provas");
+  if(q.annulled||!isValid(q))return {answer:choice||"",correct:null,annulled:!!q.annulled,at:Date.now(),day:iso,attempts:(old?.attempts||0)+1,due:null,successStreak:0,reason:""};
+  if(!Object.hasOwn(q.options,choice))throw new Error("Alternativa inválida");
   const hit=q.key===choice,streak=hit?(old?.successStreak||0)+1:0;
   const days=hit?([0,3,7,14,30,45,60][Math.min(6,streak)]):1;
   return {answer:choice,correct:hit,annulled:false,at:Date.now(),day:iso,attempts:(old?.attempts||0)+1,due:dayShift(iso,days),successStreak:streak,reason};
 }
 function score(events,questions){
- const map=new Map(questions.map(q=>[q.id,q]));const valid=(events||[]).filter(e=>isValid(map.get(e.id))&&(e.answer||"ABCD".includes(e.choice||"")));
+ const map=new Map(questions.map(q=>[q.id,q]));const valid=(events||[]).filter(e=>isValid(map.get(e.id))&&(e.answer||/^[A-E]$/.test(e.choice||"")));
  const correct=valid.filter(e=>e.correct===true).length;
  return {attempts:valid.length,correct,wrong:valid.length-correct,percent:valid.length?Math.round(correct/valid.length*100):null};
 }
@@ -32,8 +34,8 @@ function statsBySubject(events,questions){
  for(const s of GROUPS){const t=result[s];t.percent=t.attempts?Math.round(t.correct/t.attempts*100):null;t.unique=t.unique.size;}
  return result;
 }
-function weakestSubject(stats){
- return GROUPS.slice().sort((a,b)=>{
+function weakestSubject(stats,groups=GROUPS){
+ return groups.slice().sort((a,b)=>{
   const pa=stats[a]?.attempts>=3?stats[a].percent:65;
   const pb=stats[b]?.attempts>=3?stats[b].percent:65;
   return pa-pb||TARGETS[b]-TARGETS[a];
@@ -55,11 +57,19 @@ function choose(questions,progress={},options={}){
  if(subject!=="all")pool=pool.filter(q=>subjectGroup(q)===subject||q.subject===subject);
  if(kind==="review")pool=pool.filter(q=>progress[q.id]&&reviewDue(progress[q.id],now));
  if(kind==="new")pool=pool.filter(q=>!progress[q.id]);
+ if(options.mixContests&&exam==='all'&&kind!=='full'&&pool.some(q=>q.exam.startsWith('pcmg'))&&pool.some(q=>q.exam.startsWith('pmmg'))){
+  const civil=choose(pool.filter(q=>q.exam.startsWith('pcmg')),progress,{...options,mixContests:false,count:size});
+  const military=choose(pool.filter(q=>q.exam.startsWith('pmmg')),progress,{...options,mixContests:false,count:size});
+  const civilSeen=Object.keys(progress).filter(id=>id.startsWith('pcmg')).length,militarySeen=Object.keys(progress).filter(id=>id.startsWith('pmmg')).length;
+  const first=civilSeen<=militarySeen?civil:military,second=first===civil?military:civil,picked=[];
+  while(picked.length<size&&(first.length||second.length)){if(first.length)picked.push(first.shift());if(picked.length<size&&second.length)picked.push(second.shift());}
+  return picked;
+ }
  if(kind==="full")return pool.sort((a,b)=>a.number-b.number);
  pool.sort((a,b)=>{
   const rank=attemptRank(a,progress,now,kind)-attemptRank(b,progress,now,kind);
   if(rank!==0)return rank;
-  if(a.exam!==b.exam){const order=["pmmg2024","pmmg2023","pmmg2021","pmmg2018","pmmg2017","pmmg2015"];return order.indexOf(a.exam)-order.indexOf(b.exam);}
+  if(a.exam!==b.exam){const order=["pcmg2025","pcmg2021","pmmg2024","pmmg2023","pmmg2021","pmmg2018","pmmg2017","pmmg2015"];return order.indexOf(a.exam)-order.indexOf(b.exam);}
   return a.number-b.number;
  });
  if(subject!=="all"||kind==="review"||kind==="new")return pool.slice(0,size);

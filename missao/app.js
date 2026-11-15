@@ -1,15 +1,30 @@
-/* Missão Farda 3 — progresso local, estudo gradual e somente provas PMMG. */
+/* Missão Farda 3 — progresso local, estudo gradual e provas PMMG/PCMG por perfil. */
 "use strict";
 (function(){
-const DB=window.EXAM_BANK,C=window.MFCore;
+const BASE=window.EXAM_BANK,C=window.MFCore,PC=window.PCMG_BANK||{exams:{},questions:[]};
+let DB=BASE;
 if(!DB||!C){document.body.textContent="Não foi possível carregar o banco de provas. Atualize a página com internet.";return;}
-const $=id=>document.getElementById(id),DAY=C.dayDate(),IDS=new Set(DB.questions.map(q=>q.id)),QUESTION=new Map(DB.questions.map(q=>[q.id,q]));
+const ALL={exams:{...BASE.exams,...PC.exams},questions:[...BASE.questions,...PC.questions]};
+const $=id=>document.getElementById(id),DAY=C.dayDate(),IDS=new Set(ALL.questions.map(q=>q.id)),QUESTION=new Map(ALL.questions.map(q=>[q.id,q]));
 const LEGACYKEY="missao-farda-pmmg-state-v3:"+window.MFAccount.id,PROFILEKEY="missao-farda-pmmg-legacy-owner:"+window.MFAccount.id;
 const PROFILES={luanderson:"Luanderson",jackeline:"Jackeline Santana"};
 let activeProfile=null,STATEKEY=null;
+const profileGroups=()=>C.GROUPS.filter(subject=>DB.questions.some(q=>C.subjectGroup(q)===subject));
+const contestLabel=()=>activeProfile==='jackeline'?'PMMG + PCMG':'PMMG';
+function profileOptions(){
+ const exams=$('exam');exams.replaceChildren();
+ if(activeProfile==='jackeline'){const o=el('option','','PMMG + PCMG · treino misto');o.value='all';exams.append(o);}
+ for(const [id,e] of Object.entries(DB.exams)){const o=el('option','',e.short);o.value=id;exams.append(o);}
+ for(const id of ['performance-exam','performance-subject','lesson-subject']){
+ const select=$(id);select.replaceChildren();
+ if(id!=='lesson-subject'){const o=el('option','',id==='performance-exam'?'Todas as provas':'Todas as matérias');o.value='all';select.append(o);}
+ for(const [value,label] of id==='performance-exam'?Object.entries(DB.exams).map(([id,e])=>[id,e.short]):profileGroups().map(x=>[x,x])){const o=el('option','',label);o.value=value;select.append(o);}
+ }
+}
 const TOPICS={"Português": ["Interpretação de textos", "Sentidos e figuras de linguagem", "Classes de palavras e formação de palavras", "Concordância, regência e crase", "Pontuação e colocação pronominal", "Ortografia e acentuação"], "Literatura": ["Obras literárias cobradas em cada edição", "Narrador, personagens e construção do espaço", "Contexto e linguagem literária"], "Inglês": ["Leitura e interpretação de textos", "Vocabulário em contexto", "Relações entre frases e ideias"], "Noções de Direito e Direitos Humanos": ["Constituição Federal e direitos fundamentais", "Segurança pública e organização do Estado", "Declaração Universal dos Direitos Humanos", "Convenção Americana sobre Direitos Humanos"], "Raciocínio Lógico-Matemático": ["Proporções, porcentagens e regra de três", "Lógica e proposições", "Conjuntos e análise combinatória", "Geometria", "Probabilidade e estatística"], "Direito Penal": ["Crime e ilicitude", "Crimes e aplicação da lei penal"], "Direito Constitucional": ["Direitos e garantias fundamentais", "Organização do Estado e segurança pública"], "Direito Penal Militar": ["Crimes militares", "Extinção da punibilidade"], "Direitos Humanos": ["Declarações e convenções de direitos humanos", "Direitos e garantias"], "Legislação Extravagante": ["Normas indicadas na edição de 2021", "Leitura da lei e aplicação em situações concretas"], "Estatística": ["Probabilidade", "Leitura de tabelas e gráficos", "Média, mediana e distribuições"]};
-const LESSONS={"Português": {"title": "Comece pela base de Português", "intro": "Leia o comando antes das alternativas e identifique se ele pede a opção correta ou a incorreta. Volte ao texto para conferir sua interpretação.", "steps": ["Interpretação de textos", "Sentidos e figuras de linguagem", "Classes de palavras e formação de palavras", "Concordância, regência e crase", "Pontuação e colocação pronominal", "Ortografia e acentuação"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Direito Penal": {"title": "Comece pela base de Direito Penal", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Crime e ilicitude", "Crimes e aplicação da lei penal"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Direito Constitucional": {"title": "Comece pela base de Direito Constitucional", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Direitos e garantias fundamentais", "Organização do Estado e segurança pública"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Direito Penal Militar": {"title": "Comece pela base de Direito Penal Militar", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Crimes militares", "Extinção da punibilidade"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Direitos Humanos": {"title": "Comece pela base de Direitos Humanos", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Declarações e convenções de direitos humanos", "Direitos e garantias"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Legislação Extravagante": {"title": "Comece pela base de Legislação Extravagante", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Normas indicadas na edição de 2021", "Leitura da lei e aplicação em situações concretas"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Estatística": {"title": "Comece pela base de Estatística", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Probabilidade", "Leitura de tabelas e gráficos", "Média, mediana e distribuições"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Literatura": {"title": "Comece pela base de Literatura", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Obras literárias cobradas em cada edição", "Narrador, personagens e construção do espaço", "Contexto e linguagem literária"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Inglês": {"title": "Comece pela base de Inglês", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Leitura e interpretação de textos", "Vocabulário em contexto", "Relações entre frases e ideias"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Noções de Direito e Direitos Humanos": {"title": "Comece pela base de Noções de Direito e Direitos Humanos", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Constituição Federal e direitos fundamentais", "Segurança pública e organização do Estado", "Declaração Universal dos Direitos Humanos", "Convenção Americana sobre Direitos Humanos"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}, "Raciocínio Lógico-Matemático": {"title": "Comece pela base de Raciocínio Lógico-Matemático", "intro": "Escreva os dados, identifique o que a questão pede e faça as contas por etapas. Porcentagem é uma parte de 100; uma fração pode ser calculada dividindo pelo denominador e multiplicando pelo numerador.", "steps": ["Proporções, porcentagens e regra de três", "Lógica e proposições", "Conjuntos e análise combinatória", "Geometria", "Probabilidade e estatística"], "practice": "Escolha uma sessão curta de questões reais da PMMG e confira os textos e figuras originais antes de responder."}};
+const LESSONS={"Português": {"title": "Comece pela base de Português", "intro": "Leia o comando antes das alternativas e identifique se ele pede a opção correta ou a incorreta. Volte ao texto para conferir sua interpretação.", "steps": ["Interpretação de textos", "Sentidos e figuras de linguagem", "Classes de palavras e formação de palavras", "Concordância, regência e crase", "Pontuação e colocação pronominal", "Ortografia e acentuação"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Direito Penal": {"title": "Comece pela base de Direito Penal", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Crime e ilicitude", "Crimes e aplicação da lei penal"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Direito Constitucional": {"title": "Comece pela base de Direito Constitucional", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Direitos e garantias fundamentais", "Organização do Estado e segurança pública"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Direito Penal Militar": {"title": "Comece pela base de Direito Penal Militar", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Crimes militares", "Extinção da punibilidade"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Direitos Humanos": {"title": "Comece pela base de Direitos Humanos", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Declarações e convenções de direitos humanos", "Direitos e garantias"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Legislação Extravagante": {"title": "Comece pela base de Legislação Extravagante", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Normas indicadas na edição de 2021", "Leitura da lei e aplicação em situações concretas"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Estatística": {"title": "Comece pela base de Estatística", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Probabilidade", "Leitura de tabelas e gráficos", "Média, mediana e distribuições"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Literatura": {"title": "Comece pela base de Literatura", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Obras literárias cobradas em cada edição", "Narrador, personagens e construção do espaço", "Contexto e linguagem literária"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Inglês": {"title": "Comece pela base de Inglês", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Leitura e interpretação de textos", "Vocabulário em contexto", "Relações entre frases e ideias"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Noções de Direito e Direitos Humanos": {"title": "Comece pela base de Noções de Direito e Direitos Humanos", "intro": "Use os assuntos desta disciplina para orientar sua revisão. Confira o programa do próximo edital e a edição de cada questão.", "steps": ["Constituição Federal e direitos fundamentais", "Segurança pública e organização do Estado", "Declaração Universal dos Direitos Humanos", "Convenção Americana sobre Direitos Humanos"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}, "Raciocínio Lógico-Matemático": {"title": "Comece pela base de Raciocínio Lógico-Matemático", "intro": "Escreva os dados, identifique o que a questão pede e faça as contas por etapas. Porcentagem é uma parte de 100; uma fração pode ser calculada dividindo pelo denominador e multiplicando pelo numerador.", "steps": ["Proporções, porcentagens e regra de três", "Lógica e proposições", "Conjuntos e análise combinatória", "Geometria", "Probabilidade e estatística"], "practice": "Escolha uma sessão curta de questões reais e confira os textos e figuras originais antes de responder."}};
 
+for(const subject of ['Informática','Lei Orgânica da PCMG','Direito Administrativo','Direito Processual Penal','Medicina Legal','Criminologia','Noções de Direito'])TOPICS[subject]=['Consulte o conteúdo da disciplina no edital de Investigador','Revise seus erros e pratique questões reais'];
 const read=(key)=>{try{return JSON.parse(localStorage.getItem(key)||"null");}catch{return null;}};
 const defaultState=()=>({version:3,progress:{},events:[],sessions:[],topics:{},essay:"",essayWeek:"",settings:{goal:5,timer:"off",favorites:[]},session:null});
 function loadProfile(id){
@@ -19,7 +34,7 @@ const old=read("missao-farda-pmmg-progress-v1");
 if(canMigrate&&!read(LEGACYKEY)&&old&&typeof old==="object"){
  for(const [id,p] of Object.entries(old))if(IDS.has(id)&&p&&typeof p==="object"){
  state.progress[id]={...p,due:p.due||C.dayShift(p.day||DAY,p.correct===false?1:3),successStreak:p.correct?1:0};
- if(p.correct!==null&&"ABCD".includes(p.answer||"")){
+ if(p.correct!==null&&"ABCDE".includes(p.answer||"")){
  const q=QUESTION.get(id);state.events.push({id,day:p.day||DAY,at:Number(p.at)||Date.now(),answer:p.answer,correct:p.correct,exam:q.exam,subject:C.subjectGroup(q)});
  }
  }
@@ -33,7 +48,7 @@ state.events=Array.isArray(state.events)?state.events.filter(e=>e&&typeof e==="o
 state.sessions=Array.isArray(state.sessions)?state.sessions.filter(s=>s&&typeof s==="object").slice(-500):[];
 if(!state.topics||typeof state.topics!=="object")state.topics={};
 if(!state.settings||typeof state.settings!=="object")state.settings={goal:5,timer:"off"};
-if(state.session&&(!Array.isArray(state.session.ids)||state.session.ids.some(id=>!IDS.has(id))||!DB.exams[state.session.exam]&&state.session.exam!=="all"))state.session=null;
+if(state.session&&(!Array.isArray(state.session.ids)||state.session.ids.some(id=>!DB.questions.some(q=>q.id===id))||!DB.exams[state.session.exam]&&state.session.exam!=="all"))state.session=null;
 return state;
 }
 let state=defaultState();
@@ -47,7 +62,7 @@ function chooseProfile(id){
  if(!Object.hasOwn(PROFILES,id))return;
  if(activeProfile&&!save())return;
  syncClient?.stop();timerStop();remaining=0;timerPaused=false;readerOpenKey=null;
- activeProfile=id;STATEKEY=LEGACYKEY+"-"+id;state=loadProfile(id);
+ activeProfile=id;DB=id==='jackeline'?ALL:BASE;profileOptions();STATEKEY=LEGACYKEY+"-"+id;state=loadProfile(id);
  performancePanel='general';$('performance-filter-name').value='';
  if(save())try{if(!read(PROFILEKEY))localStorage.setItem(PROFILEKEY,JSON.stringify(id));}catch{}
  $("active-profile-name").textContent=PROFILES[id];
@@ -55,7 +70,7 @@ function chooseProfile(id){
  document.querySelectorAll("[data-profile]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.profile===id)));
  $("profile-picker").hidden=true;$("main").inert=false;
  $("timer-setting").value=state.settings.timer||"off";$("timer-setting").disabled=false;$("timer-box").hidden=true;$("timer-toggle").textContent="Pausar";
- $("exam").value="pmmg2024";$("mode").value="daily";$("subject").value="all";$("grading").value="practice";$("quantity").value=String(state.settings.goal||5);fillSubjects();renderSources();
+ $("exam").value=id==='jackeline'?'all':'pmmg2024';$("mode").value="daily";$("subject").value="all";$("grading").value="practice";$("quantity").value=String(state.settings.goal||5);fillSubjects();renderSources();
  renderHome();renderTraining();renderPath();renderInsights();show("home");
  $("switch-profile").focus();
  syncClient?.start(id);updateSyncCode();if(state.session&&!state.session.finished)timerStart();
@@ -116,13 +131,17 @@ function reviewNow(){
  if(sessionMistakes().length){openSessionReview(true);return;}
  sessionNew({kind:'mistakes',exam:'all',subject:'all',count:5,grading:'practice'});
 }
-function totalEvents(){return state.events.filter(e=>e&&"ABCD".includes(e.answer||"")&&!QUESTION.get(e.id)?.annulled);}
+function totalEvents(){return state.events.filter(e=>e&&DB.questions.some(q=>q.id===e.id)&&/^[A-E]$/.test(e.answer||"")&&C.isValid(QUESTION.get(e.id)));}
 function getDue(){return C.progressCount(state.progress,DB.questions,DAY).due;}
 function lastDate(){const d=state.events.map(x=>x.day).sort();return d.at(-1)||null;}
 function percent(n,d){return d?Math.round(n/d*100):0;}
 function meter(id,percentage){$(id).style.width=Math.max(0,Math.min(100,percentage))+"%";}
 function weekGrid(target){const activity=C.weeklyActivity(state.events,DAY),names=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];target.replaceChildren();activity.forEach(d=>{const date=new Date(d.day+"T12:00:00Z"),box=el("div","week-day");const b=add(box,"b",d.count?"done":"",d.count?String(d.count):"·");b.title=d.count+" tentativa(s) em "+d.day;add(box,"small","",names[date.getUTCDay()]);target.appendChild(box);});}
-function upcoming(){ $("days-left").textContent="Confira o próximo edital no CRS/PMMG";$("path-days").textContent="A confirmar";}
+function upcoming(){
+ $('registration-title').textContent=activeProfile==='jackeline'?'Seu foco: Soldado PMMG + Investigador PCMG.':'Seu foco agora é Soldado da PMMG.';
+ $('registration-subtitle').textContent=activeProfile==='jackeline'?'Provas de Investigador PCMG de 2021 e 2025 junto ao acervo PMMG. Escolha treino misto ou uma edição na aba Estudar.':'214 questões reais da PMMG: acervo principal de 2018, 2021, 2023 e 2024 e 34 selecionadas de 2015 e 2017.';
+ document.querySelector('label[for="exam"]').textContent=activeProfile==='jackeline'?'Prova ou treino misto':'Edição da PMMG';
+ $("days-left").textContent=activeProfile==='jackeline'?'Confira os próximos editais PMMG e PCMG':'Confira o próximo edital no CRS/PMMG';$("path-days").textContent="A confirmar";}
 function getWeeklyCount(){return new Set(C.weeklyActivity(state.events,DAY).filter(x=>x.count).map(x=>x.day)).size;}
 function renderHome(){
  const events=totalEvents(),score=C.score(events,DB.questions),seen=C.progressCount(state.progress,DB.questions,DAY),week=getWeeklyCount();
@@ -141,7 +160,7 @@ function renderHome(){
  const last=lastDate(),gap=last?C.daysBetween(last,DAY):null;
  $("greeting").textContent=gap!==null&&gap>=2?"Um recomeço pequeno já vale.":events.length===0?"Começar é só resolver uma questão.":"Mais um passo na sua preparação.";
  const ongoing=currentSession()&&!currentSession().finished;
- $("daily-copy").textContent=ongoing?"Seu treino está salvo. Continue de onde parou.":"Escolha seu ritmo e resolva uma questão de cada vez.";
+ $("daily-copy").textContent=(activeProfile==='jackeline'?'PMMG + PCMG · Investigador. ':'')+(ongoing?"Seu treino está salvo. Continue de onde parou.":"Escolha seu ritmo e resolva uma questão de cada vez.");
  $("daily-start").textContent=ongoing?"Continuar treino":"Começar treino";
  $("resume").hidden=true;
  document.querySelector('.micro-goal').hidden=!!ongoing;
@@ -151,19 +170,20 @@ function renderHome(){
  document.querySelectorAll("[data-goal]").forEach(b=>{const active=+b.dataset.goal===chosen;b.classList.toggle("selected",active);b.setAttribute("aria-pressed",String(active));});
 }
 function renderSources(){
+ const mixed=$('exam').value==='all';
  const exam=DB.exams[$("exam").value]||DB.exams.pmmg2024;
- const full=$('mode').querySelector('[value="full"]');full.disabled=!!exam.complementary;full.hidden=!!exam.complementary;
- if(exam.complementary&&$('mode').value==='full')$('mode').value='daily';
+ const full=$('mode').querySelector('[value="full"]');full.disabled=mixed||!!exam.complementary;full.hidden=mixed||!!exam.complementary;
+ if((mixed||exam.complementary)&&$('mode').value==='full')$('mode').value='daily';
  $('exam-selection-note').hidden=!exam.complementary;$('exam-selection-note').textContent=exam.complementary?exam.includedCount+' questões selecionadas de '+exam.originalTotal+'. Treino complementar; não é a prova completa. Gabarito publicado na época, sem confirmação da versão após recursos.':'';
- $("exam-note").textContent=exam.note;
- $("paper-link").href=exam.source;
+ $("exam-note").textContent=mixed?"Treino misto de PMMG e PCMG — Investigador. Cada questão identifica sua prova de origem. Para simulado completo e PDFs, escolha uma edição.":exam.note;
+ $("paper-link").hidden=mixed;$("key-link").hidden=mixed;$("paper-link").href=exam.source;
  $("paper-link").textContent="PDF da prova original ↗";
  $("key-link").href=exam.keySource||exam.source;
 }
 function fillSubjects(){const exam=$("exam").value,old=$("subject").value;
- const subjects=Array.from(new Set(DB.questions.filter(q=>q.exam===exam).map(q=>C.subjectGroup(q))));
+ const subjects=Array.from(new Set(DB.questions.filter(q=>exam==='all'||q.exam===exam).map(q=>C.subjectGroup(q))));
  $("subject").replaceChildren();const a=el("option","","Todas as disciplinas");a.value="all";$("subject").appendChild(a);
- C.GROUPS.filter(s=>subjects.includes(s)).forEach(s=>{const o=el("option","",s);o.value=s;$("subject").appendChild(o);});
+ profileGroups().filter(s=>subjects.includes(s)).forEach(s=>{const o=el("option","",s);o.value=s;$("subject").appendChild(o);});
  $("subject").value=subjects.includes(old)?old:"all";
 }
 function timerStop(){if(countdown){clearInterval(countdown);countdown=null;}}
@@ -194,12 +214,13 @@ async function sessionNew(options={}){
  }
  const kind=options.kind||$("mode").value;
  const grading=kind==="full"||kind==="diagnostic"?"exam":options.grading||$("grading").value;
- const exam=kind==="diagnostic"?"pmmg2024":options.exam||$("exam").value||"pmmg2024";
- if(kind==='full'&&DB.exams[exam]?.complementary){toast('Esta edição contém um recorte complementar. Escolha um treino de questões selecionadas.');return;}
+ const exam=kind==="diagnostic"?(activeProfile==='jackeline'?'all':'pmmg2024'):options.exam||$("exam").value||"pmmg2024";
+ if(exam!=='all'&&!Object.hasOwn(DB.exams,exam))return;
+ if(kind==='full'&&(exam==='all'||DB.exams[exam]?.complementary)){toast('Esta edição contém um recorte complementar. Escolha um treino de questões selecionadas.');return;}
  const subject=kind==="diagnostic"||kind==="full"?"all":options.subject||$("subject").value||"all";
  const count=kind==="diagnostic"?10:kind==="full"?DB.questions.filter(q=>q.exam===exam).length:Number(options.count||$("quantity").value||5);
  const candidates=kind==='favorites'?DB.questions.filter(q=>(state.settings.favorites||[]).includes(q.id)):kind==='mistakes'?outstandingMistakes():DB.questions;
- const list=C.choose(candidates,state.progress,{kind:['favorites','mistakes'].includes(kind)?'daily':kind,exam,subject,count,today:DAY,excludeAnnulled:kind!=='full'});
+ const list=C.choose(candidates,state.progress,{kind:['favorites','mistakes'].includes(kind)?'daily':kind,exam,subject,count,today:DAY,excludeAnnulled:kind!=='full',mixContests:activeProfile==='jackeline'});
  if(!list.length){toast(kind==="review"?"Ainda não há revisões vencidas. Faça um treino de questões novas.":"Não há questões disponíveis neste filtro. Tente outra disciplina ou edição.");show("train");return;}
  if(!await window.MFAccount.allow(grading==='exam'?'exam':'block',list.filter(C.isValid).length)){return;}
  if(activeProfile!==requestedProfile)return;
@@ -244,7 +265,7 @@ function outcome(){
 function showSessionResult(area){
  const s=currentSession(),result=outcome();
  $("question-chip").textContent="TREINO CONCLUÍDO";$("question-counter").textContent=result.total+" questões";
- $("question-meta").textContent="Resultado desta sessão · prova(s) da PMMG";
+ $("question-meta").textContent="Resultado desta sessão · "+contestLabel();
  const title=add(area,"h2","question-title",result.correct+" acerto(s) em "+result.valid+" questão(ões) válidas");
  add(area,"p","dim","Você concluiu seu treino. O que importa agora é descobrir o que revisar, e não buscar uma nota perfeita no primeiro dia.");
  const cards=add(area,"div","metric-grid");cards.style.margin="18px 0";
@@ -263,8 +284,8 @@ function renderQuestion(){
  const area=$("question-area");area.replaceChildren();
  $('feedback').hidden=true;
  const s=currentSession();
- if(!s){$("question-chip").textContent="PMMG · PROVAS REAIS";$("question-counter").textContent="";$("question-meta").textContent="Selecione uma edição e um treino.";
- const empty=add(area,"div","empty-state");add(empty,"div","empty-mark","▤");add(empty,"h2","","Seu treino começa aqui");add(empty,"p","","Escolha uma edição da PMMG. Você responderá às questões reais usando o caderno oficial como referência.");
+ if(!s){$("question-chip").textContent=contestLabel()+" · PROVAS REAIS";$("question-counter").textContent="";$("question-meta").textContent="Selecione uma edição e um treino.";
+ const empty=add(area,"div","empty-state");add(empty,"div","empty-mark","▤");add(empty,"h2","","Seu treino começa aqui");add(empty,"p","","Escolha uma edição de "+contestLabel()+". Você responderá às questões reais usando o caderno oficial como referência.");
  $("question-actions").hidden=true;$("question-numbers-wrap").hidden=true;meter("quiz-meter",0);return;}
  if(s.finished&&!s.reviewing){
  $("question-actions").hidden=true;$("question-numbers-wrap").hidden=true;meter("quiz-meter",100);
@@ -273,7 +294,7 @@ function renderQuestion(){
  s.index=Math.max(0,Math.min(items.length-1,Number(s.index)||0));
  const q=items[s.index],info=DB.exams[q.exam],chosen=s.picks[q.id]||"",graded=!!s.checked[q.id]&&s.grading==="practice"||!!s.finished;
  const moved=area.dataset.question!==q.id;area.dataset.question=q.id;
- $("question-chip").textContent="PMMG "+info.year+" · "+(info.complementary?'Treino complementar':info.board);
+ $("question-chip").textContent=(info.contest||"PMMG")+" "+info.year+" · "+(info.complementary?'Treino complementar':info.board);
  $("question-counter").textContent=(s.reviewIds&&s.reviewing?'Erros · ':'')+(s.index+1)+" / "+items.length;
  $("question-meta").textContent=C.subjectGroup(q)+" · questão original nº "+q.number+" · "+(info.type||"caderno original");
  meter("quiz-meter",percent(items.filter(x=>s.checked[x.id]).length,items.length));
@@ -284,7 +305,7 @@ function renderQuestion(){
   if(!paths?.length)return;
   const details=add(area,"details","source-passage");details.open=opened;
   add(details,"summary","",label);
-  paths.forEach((src,i)=>{const figure=add(details,"figure","question-figure"),picture=add(figure,"img");picture.src=src;picture.loading="lazy";picture.alt=label+" · PMMG "+info.year+" · parte "+(i+1);});
+  paths.forEach((src,i)=>{const figure=add(details,"figure","question-figure"),picture=add(figure,"img");picture.src=src;picture.loading="lazy";picture.alt=label+" · "+(info.contest||"PMMG")+" "+info.year+" · parte "+(i+1);});
  }
  sourceImages(q.supportImages,"Texto de apoio original",true);
  sourceImages(q.originalImages,"Questão original com destaques, tabelas e figuras",q.needsVisual);
@@ -297,7 +318,7 @@ function renderQuestion(){
  tools.appendChild(button(favorites.includes(q.id)?'★ Favorita':'☆ Salvar', 'outline',()=>{const i=favorites.indexOf(q.id);if(i<0)favorites.push(q.id);else favorites.splice(i,1);save();renderQuestion()}));
  if(s.grading==='practice'||s.finished)tools.appendChild(button('💡 Entender o conteúdo','outline',()=>window.MFAccount.help(q.id,'base',chosen)));
  if(graded&&chosen&&chosen!==q.key&&!q.annulled)tools.appendChild(button('Explicar meu erro com IA','outline',()=>window.MFAccount.help(q.id,'ai',chosen)));
- add(area,"h3","subheading",graded?"Alternativas e correção":"Marque sua resposta (A a D)");
+ add(area,"h3","subheading",graded?"Alternativas e correção":"Marque sua resposta (A a "+Object.keys(q.options).at(-1)+")");
  add(area,"p","swipe-hint","Deslize uma alternativa para o lado para riscá-la. Repita para desfazer.");
  const opts=add(area,"div","answer-options");
  s.strikes=s.strikes||{};s.strikes[q.id]=s.strikes[q.id]||[];
@@ -319,7 +340,7 @@ function renderQuestion(){
  if(graded||eliminated||b.classList.contains("is-struck"))return;
  s.picks[q.id]=letter;save();
  opts.querySelectorAll(".option").forEach((option,i)=>{
-  const picked="ABCD"[i]===letter;
+  const picked=option.dataset.letter===letter;
   option.classList.toggle("is-picked",picked);
   option.setAttribute("aria-pressed",String(picked));
  });
@@ -412,7 +433,7 @@ function renderTraining(){
 }
 
 function renderLesson(){
- const key=$("lesson-subject").value,lesson=LESSONS[key]||LESSONS.Português;
+ const key=$("lesson-subject").value,lesson=LESSONS[key]||{title:'Comece pela base de '+key,intro:'Leia o conteúdo exigido no edital de Investigador e resolva uma questão de cada vez.',steps:TOPICS[key]||['Consulte o programa da disciplina','Revise suas dúvidas e pratique'],practice:'Pratique questões reais da PCMG. Confira a edição, o gabarito definitivo e as referências do próximo edital.'};
  const target=$("lesson-content");target.replaceChildren();
  add(target,"h3","",lesson.title);
  add(target,"p","dim",lesson.intro);
@@ -422,17 +443,17 @@ function renderLesson(){
 }
 function renderPath(){
  const mistake=outstandingMistakes().sort((a,b)=>(state.progress[b.id]?.at||0)-(state.progress[a.id]?.at||0))[0];
- const subject=mistake?C.subjectGroup(mistake):C.weakestSubject(C.statsBySubject(totalEvents(),DB.questions))||'Português';
+ const subject=mistake?C.subjectGroup(mistake):C.weakestSubject(C.statsBySubject(totalEvents(),DB.questions),profileGroups())||'Português';
  $('path-next-title').textContent='Seu próximo passo: '+subject;
  $('path-next-copy').textContent=mistake?'Reforce o conteúdo de uma questão que você errou e pratique com duas questões.':'Leia a base desta matéria e pratique com duas questões, no seu ritmo.';
  $('path-study').dataset.subject=subject;$('path-practice').dataset.subject=subject;
- renderLesson();upcoming();const total=Object.values(TOPICS).reduce((a,b)=>a+b.length,0);
+ renderLesson();upcoming();const total=profileGroups().reduce((a,s)=>a+TOPICS[s].length,0);
  const done=Object.keys(state.topics).filter(k=>state.topics[k]===true).length;
  $("topics-complete").textContent=done+"/"+total;meter("topics-meter",percent(done,total));
  const target=$("weight-list");target.replaceChildren();
- C.GROUPS.forEach(s=>{const row=add(target,"div","weight-line");add(row,"span","",s);add(row,"strong","",C.TARGETS[s]?C.TARGETS[s]+"/50":"Prova 2021");const m=add(row,"div","meter");const fill=add(m,"span");fill.style.width=(C.TARGETS[s]/50*100)+"%";});
+ profileGroups().forEach(s=>{const row=add(target,"div","weight-line");add(row,"span","",s);add(row,"strong","",C.TARGETS[s]?C.TARGETS[s]+"/50 · PMMG":PC.questions.some(q=>q.subject===s)?"PCMG · Investigador":"PMMG 2021");const m=add(row,"div","meter");const fill=add(m,"span");fill.style.width=(C.TARGETS[s]/50*100)+"%";});
  const sy=$("syllabus");sy.replaceChildren();
- C.GROUPS.forEach(group=>{
+ profileGroups().forEach(group=>{
  const details=add(sy,"details");const summary=add(details,"summary","",""+group+" · "+TOPICS[group].filter((_,i)=>state.topics[group+"|"+i]).length+"/"+TOPICS[group].length);
  const list=add(details,"div","topic-list");
  TOPICS[group].forEach((topic,index)=>{
@@ -446,13 +467,13 @@ function renderPath(){
  $("essay-week").checked=state.essayWeek===weekStart;
 }
 function sanitizePerformance(value={}){
- return {period:['today','7','30','all'].includes(value?.period)?value.period:'today',subject:C.GROUPS.includes(value?.subject)?value.subject:'all',exam:Object.hasOwn(DB.exams,value?.exam)?value.exam:'all'};
+ return {period:['today','7','30','all'].includes(value?.period)?value.period:'today',subject:profileGroups().includes(value?.subject)?value.subject:'all',exam:Object.hasOwn(DB.exams,value?.exam)?value.exam:'all'};
 }
 function performanceFilter(){return sanitizePerformance(state.settings.performanceFilter);}
 function savedPerformanceFilters(){return Array.isArray(state.settings.performanceSaved)?state.settings.performanceSaved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&x.filter).slice(0,12):[];}
 function performanceEvents(filter){
  const today=C.dayDate(),start=filter.period==='7'?C.dayShift(today,-6):filter.period==='30'?C.dayShift(today,-29):filter.period==='today'?today:null;
- return totalEvents().filter(e=>{const q=QUESTION.get(e.id),at=Date.parse(e.day+'T12:00:00Z');return C.isValid(q)&&/^[ABCD]$/.test(e.answer)&&typeof e.correct==='boolean'&&/^\d{4}-\d{2}-\d{2}$/.test(e.day||'')&&Number.isFinite(at)&&new Date(at).toISOString().slice(0,10)===e.day&&e.day<=today&&(!start||e.day>=start)&&(filter.subject==='all'||C.subjectGroup(q)===filter.subject)&&(filter.exam==='all'||q.exam===filter.exam);});
+ return totalEvents().filter(e=>{const q=QUESTION.get(e.id),at=Date.parse(e.day+'T12:00:00Z');return C.isValid(q)&&/^[ABCDE]$/.test(e.answer)&&typeof e.correct==='boolean'&&/^\d{4}-\d{2}-\d{2}$/.test(e.day||'')&&Number.isFinite(at)&&new Date(at).toISOString().slice(0,10)===e.day&&e.day<=today&&(!start||e.day>=start)&&(filter.subject==='all'||C.subjectGroup(q)===filter.subject)&&(filter.exam==='all'||q.exam===filter.exam);});
 }
 function performanceBuckets(events,period){
  const today=C.dayDate(),first=events.map(e=>e.day).sort()[0]||today;
@@ -517,15 +538,15 @@ function renderInsights(){
  weekGrid($("insight-calendar"));
  const last=lastDate();$("last-activity").textContent=last?"Última atividade: "+last.split("-").reverse().join("/")+". Um intervalo não apaga seu progresso.":"Nenhum treino registrado ainda.";
  const list=$("subject-progress");list.replaceChildren();
- C.GROUPS.forEach(group=>{
+ profileGroups().forEach(group=>{
  const t=groups[group],row=add(list,"div","subject-line");
  add(row,"span","",group);add(row,"strong","",t.percent===null?"—":t.percent+"%");
  const box=add(row,"div","meter");const bar=add(box,"span");bar.style.width=(t.percent||0)+"%";
  add(row,"small","",t.attempts+" tentativa(s) • "+t.unique+" questão(ões) diferentes");
  });
- const weak=C.weakestSubject(groups);
+ const weak=C.weakestSubject(groups,profileGroups());
  $("next-recommendation").textContent=total.attempts<10?"Faça seu diagnóstico de 10 questões":"Prioridade sugerida: "+weak;
- $("next-recommendation-detail").textContent=total.attempts<10?"Use questões da PMMG para conhecer seu ponto de partida, sem pressão.":"O destaque considera seu aproveitamento por disciplina quando há pelo menos 3 tentativas. É uma sugestão, não um diagnóstico definitivo.";
+ $("next-recommendation-detail").textContent=total.attempts<10?"Use questões de "+contestLabel()+" para conhecer seu ponto de partida, sem pressão.":"O destaque considera seu aproveitamento por disciplina quando há pelo menos 3 tentativas. É uma sugestão, não um diagnóstico definitivo.";
 }
 function renderAll(){if(activeTab==="home")renderHome();if(activeTab==="train")renderTraining();if(activeTab==="path")renderPath();if(activeTab==="insights")renderInsights();}
 function download(name,text,type){
@@ -534,7 +555,7 @@ function download(name,text,type){
 function backupExport(){download("missao-farda-backup-"+activeProfile+"-"+DAY+".json",JSON.stringify({...JSON.parse(C.exportSafe(state)),profile:{id:activeProfile,name:PROFILES[activeProfile]}},null,2),"application/json;charset=utf-8");toast("Backup gerado. Guarde o arquivo em um lugar seguro.");}
 function csvExport(){
  const lines=[["Data","Prova","Disciplina","Questão","Resposta","Acertou"]];
- for(const ev of state.events){const q=QUESTION.get(ev.id);if(!q)continue;lines.push([ev.day,DB.exams[q.exam].year,C.subjectGroup(q),q.number,ev.answer,ev.correct?"SIM":"NÃO"]);}
+ for(const ev of state.events){const q=QUESTION.get(ev.id);if(!q||!DB.exams[q.exam])continue;lines.push([ev.day,DB.exams[q.exam].year,C.subjectGroup(q),q.number,ev.answer,ev.correct?"SIM":"NÃO"]);}
  const csv=lines.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(";")).join("\r\n");download("missao-farda-tentativas-"+activeProfile+"-"+DAY+".csv","\ufeff"+csv,"text/csv;charset=utf-8");
 }
 function restore(file){
@@ -546,7 +567,7 @@ function restore(file){
  if(parsed.profile&&parsed.profile.id!==activeProfile){toast("Este backup pertence a "+(PROFILES[parsed.profile.id]||"outro perfil")+". Troque de perfil para restaurar.");return;}
  if(!window.confirm("Restaurar este backup recuperará os dados de "+PROFILES[activeProfile]+". O histórico será unido ao que já estiver sincronizado. Continuar?"))return;
  const incoming=parsed.state;const safe=defaultState();safe.progress=C.cleanHistory(incoming.progress||{},IDS);
- safe.events=Array.isArray(incoming.events)?incoming.events.filter(e=>e&&IDS.has(e.id)&&"ABCD".includes(e.answer||"")).slice(-12000):[];
+ safe.events=Array.isArray(incoming.events)?incoming.events.filter(e=>e&&IDS.has(e.id)&&"ABCDE".includes(e.answer||"")).slice(-12000):[];
  safe.sessions=Array.isArray(incoming.sessions)?incoming.sessions.filter(x=>x&&typeof x==="object").slice(-500):[];
  safe.topics=incoming.topics&&typeof incoming.topics==="object"?Object.fromEntries(Object.entries(incoming.topics).filter(([k,v])=>Object.entries(TOPICS).some(([group,l])=>l.some((_,i)=>k===group+"|"+i))&&typeof v==="boolean")):{};
  safe.essay=typeof incoming.essay==="string"?incoming.essay.slice(0,20000):"";
@@ -559,7 +580,7 @@ function restore(file){
  reader.readAsText(file);
 }
 function shortcuts(e){if(!$("profile-picker").hidden||activeTab!=="train"||!currentSession()||currentSession().finished||["INPUT","TEXTAREA","SELECT"].includes(document.activeElement?.tagName)||e.altKey||e.ctrlKey||e.metaKey)return;
- const key=e.key.toUpperCase();if("ABCD".includes(key)&&key.length===1){const s=currentSession(),q=sessionItems()[s.index];if(!q.options[key]||(s.checked[q.id]&&s.grading==="practice"))return;s.picks[q.id]=key;save();renderQuestion();e.preventDefault();}
+ const key=e.key.toUpperCase();if("ABCDE".includes(key)&&key.length===1){const s=currentSession(),q=sessionItems()[s.index];if(!q.options[key]||(s.checked[q.id]&&s.grading==="practice"))return;s.picks[q.id]=key;save();renderQuestion();e.preventDefault();}
 }
 function initEvents(){
  for(const subject of C.GROUPS){const option=el('option','',subject);option.value=subject;$('performance-subject').append(option);}
@@ -581,7 +602,7 @@ function initEvents(){
   state.settings.performanceSaved=[...saved,{id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name,filter}];save();$('performance-filter-name').value='';toast('Filtro salvo neste perfil.');renderInsights();
  };
  window.MFQuestionInfo=id=>{const session=currentSession();if(!session||session.finished||session.grading!=='practice'||session.ids[session.index]!==id||session.checked[id])return null;return {answer:session.picks[id]||'',eliminated:session.eliminated?.[id]||[]}};
- window.MFEliminate=(id,letter)=>{const info=window.MFQuestionInfo(id),q=QUESTION.get(id);if(!info||!q||q.key===letter||!'ABCD'.includes(letter))return false;const session=currentSession();session.eliminated=session.eliminated||{};session.eliminated[id]=[...new Set([...(session.eliminated[id]||[]),letter])];if(session.picks[id]===letter)delete session.picks[id];save();renderQuestion();return true;};
+ window.MFEliminate=(id,letter)=>{const info=window.MFQuestionInfo(id),q=QUESTION.get(id);if(!info||!q||q.key===letter||!Object.hasOwn(q.options,letter))return false;const session=currentSession();session.eliminated=session.eliminated||{};session.eliminated[id]=[...new Set([...(session.eliminated[id]||[]),letter])];if(session.picks[id]===letter)delete session.picks[id];save();renderQuestion();return true;};
  $('train-favorites').onclick=()=>sessionNew({kind:'favorites',exam:'all',subject:'all',count:10,grading:'practice'});
 
  document.querySelectorAll("[data-profile]").forEach(b=>b.addEventListener("click",()=>chooseProfile(b.dataset.profile)));
@@ -616,10 +637,10 @@ function initEvents(){
  state.essayWeek=$("essay-week").checked?C.dayShift(DAY,-offset):"";save();
  });
  $("next-step").addEventListener("click",()=>{
- const stats=C.statsBySubject(totalEvents(),DB.questions),weak=C.weakestSubject(stats);
+ const stats=C.statsBySubject(totalEvents(),DB.questions),weak=C.weakestSubject(stats,profileGroups());
  if(totalEvents().length<10){sessionNew({kind:"diagnostic"});return;}
- $("exam").value="pmmg2024";fillSubjects();$("subject").value=weak;
- sessionNew({kind:"daily",exam:"pmmg2024",subject:weak,count:5,grading:"practice"});
+ $("exam").value=activeProfile==='jackeline'?'all':'pmmg2024';fillSubjects();$("subject").value=weak;
+ sessionNew({kind:"daily",exam:activeProfile==='jackeline'?'all':'pmmg2024',subject:weak,count:5,grading:"practice"});
  });
  $("export-backup").addEventListener("click",backupExport);
  $("export-csv").addEventListener("click",csvExport);
