@@ -1,14 +1,14 @@
-import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.5';
+import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.6';
 function signalAppReady(){window.__PMMG_READY__=true;window.dispatchEvent(new Event('pmmg:ready'))}
-import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.5';
-import {migratePMMGState} from './pmmg-state.js?v=3.2.5';
+import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.6';
+import {migratePMMGState} from './pmmg-state.js?v=3.2.6';
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=3.2.5';
+import {createNotificationCenter} from './notifications.js?v=3.2.6';
 import {createProgressSync,cachedAccount} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 const AUTHORIAL_MT_QUESTIONS=[];
@@ -25,13 +25,13 @@ const EXAM_SOURCES=PMMG_EXAMS;const SOURCE_TOTAL=PMMG_QUESTIONS.length,IMPORTED_
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.5';
-import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.5';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.6';
+import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.6';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 import {videoLessonForErrorHTML} from './video-lessons.js?v=2.20.6';
-import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.5';
+import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.6';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='3.2.5';
+const APP_VERSION='3.2.6';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -748,7 +748,7 @@ async function enableAppAutoUpdates(){
   persistStudyLocal();location.reload();
  });
  try{
-  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.5',{updateViaCache:'none'});
+  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.6',{updateViaCache:'none'});
   setTimeout(()=>void checkAppUpdates(),3000);
   window.addEventListener('online',()=>void checkAppUpdates());
   document.addEventListener('visibilitychange',()=>{
@@ -780,8 +780,8 @@ function supportHTML(q){
  return `<details class="question-context source-text-context" open><summary>📄 ${esc(shared.title)} · leia antes de responder</summary><p class="source-note">As questões 1 a 10 usam este mesmo texto, que está na página ${shared.page} da prova original.</p><div class="source-text-frame-wrap"><iframe class="source-text-frame" src="${esc(src)}" title="${esc(shared.title)}"></iframe></div><div class="source-text-actions"><a class="button secondary" href="${esc(src)}" target="_blank" rel="noopener noreferrer">Abrir texto em tela cheia ↗</a></div></details>`;
 }
 function originalHTML(q){if(!q.facsimile?.length)return '';return `<details class="question-original" ${q.showOriginal?'open':''}><summary>Ver formatação original, figuras e destaques</summary>${imagesHTML(q.facsimile,'Questão '+q.source.number)}</details>`}
-function importedArchiveHTML(){return `<section class="card spaced"><div class="eyebrow">QUESTÕES DISPONÍVEIS</div><h2>Provas PMMG para treinar</h2><div class="exam-source-grid">${IMPORTED_EXAMS.map(e=>`<article class="exam-source-card"><div><b>${esc(e.state)} · ${e.year} · ${esc(e.board)}</b><span>${esc(e.exam)}</span></div><strong>${e.importedQuestionCount}</strong><small>${e.annulled.length?e.annulled.length+' anuladas excluídas · ':''}Gabarito ${e.answerStatus==='definitivo'?'definitivo':'fornecido; situação final não confirmada'}</small><button data-train-exam="${e.id}" class="primary">Estudar questões</button><button data-full-exam="${e.id}">Responder prova</button><a href="${e.examUrl}" target="_blank" rel="noopener noreferrer">Prova original ↗</a><a href="${e.answerUrl}" target="_blank" rel="noopener noreferrer">Gabarito ↗</a></article>`).join('')}</div><p class="muted">Acervo histórico. Os gabaritos seguem cada prova histórica. Confira o edital da edição que vai prestar.</p></section>`}
-function bindImportedArchive(){document.querySelectorAll('[data-train-exam]').forEach(b=>b.onclick=()=>{filter={search:'',subject:'',kind:'prova',exam:b.dataset.trainExam};location.hash='questoes'});document.querySelectorAll('[data-full-exam]').forEach(b=>b.onclick=async()=>{const qs=OFFICIAL_QUESTIONS.filter(q=>examId(q)===b.dataset.fullExam);if(!qs.length||!await allowStudy('exam',qs.length))return;examResult=null;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+240*60000,originTab:'provas',label:'Prova completa',quotaGranted:true};showExamQuestion()})}
+function importedArchiveHTML(){return `<section class="card spaced"><div class="eyebrow">QUESTÕES DISPONÍVEIS</div><h2>Provas PMMG para treinar</h2><div class="exam-source-grid">${IMPORTED_EXAMS.map(e=>`<article class="exam-source-card"><div><b>${esc(e.state)} · ${e.year} · ${esc(e.board)}</b><span>${esc(e.exam)}</span></div><strong>${e.importedQuestionCount}</strong><small>${e.annulled.length?e.annulled.length+' anuladas excluídas · ':''}Gabarito ${e.answerStatus==='definitivo'?'definitivo':'fornecido; situação final não confirmada'}</small><button data-train-exam="${e.id}" class="primary">Estudar questões</button>${e.complementary?'<small>Recorte complementar: '+e.importedQuestionCount+' selecionadas de '+e.total+'. Não é a prova completa.</small>':`<button data-full-exam="${e.id}">Responder prova</button>`}<a href="${e.examUrl}" target="_blank" rel="noopener noreferrer">Prova original ↗</a><a href="${e.answerUrl}" target="_blank" rel="noopener noreferrer">Gabarito ↗</a></article>`).join('')}</div><p class="muted">Acervo histórico. Os gabaritos seguem cada prova histórica. Confira o edital da edição que vai prestar.</p></section>`}
+function bindImportedArchive(){document.querySelectorAll('[data-train-exam]').forEach(b=>b.onclick=()=>{filter={search:'',subject:'',kind:'prova',exam:b.dataset.trainExam};location.hash='questoes'});document.querySelectorAll('[data-full-exam]').forEach(b=>b.onclick=async()=>{if(IMPORTED_EXAMS.find(e=>e.id===b.dataset.fullExam)?.complementary){toast('Edição complementar: escolha Estudar questões para abrir o recorte selecionado.');return}const qs=OFFICIAL_QUESTIONS.filter(q=>examId(q)===b.dataset.fullExam);if(!qs.length||!await allowStudy('exam',qs.length))return;examResult=null;run={questions:qs,answers:Object.create(null),index:0,deadline:Date.now()+240*60000,originTab:'provas',label:'Prova completa',quotaGranted:true};showExamQuestion()})}
 
 // Daily learning flow: stored inside the existing per-account program/backup.
 function routineProfile(){return store.program.profile||{level:'zero',schedule:'weekly',days:[1,2,3,4,5],minutes:20,workMinutes:10,freeMinutes:30,anchor:localDay(),time:'19:00',examDate:''}}
@@ -910,7 +910,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.5-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.5')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.5');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.6-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.6')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.6');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 

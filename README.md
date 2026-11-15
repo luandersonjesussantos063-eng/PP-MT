@@ -2,7 +2,7 @@
 
 Migração do PP-MT em 14/11/2026. Mantidos domínio `ppmt.novabytesolucoes.com.br`, GitHub Pages, projeto Supabase, login, RLS, sincronização, administração e identificador Android `br.com.novabytesolucoes.ppmt`. Não foram alterados segredos, funções de pagamento ou permissões.
 
-171 questões válidas dos 180 itens do acervo PMMG (2018, 2021, 2023 e 2024). Nove anuladas excluídas. IDs, alternativas, gabaritos e reproduções preservados a partir do app PMMG no repositório nova-byte, commit cc96f5ed867e1ce2ba377552c4acb06079cb772b. Comentários individuais de resolução ainda não disponíveis.
+205 questões válidas em 214 itens disponíveis: 180 do acervo principal (2018, 2021, 2023 e 2024) e 34 questões complementares selecionadas de 2015 e 2017. Nove anuladas do acervo principal excluídas. As duas edições complementares são recortes, não provas completas; usam os gabaritos publicados da época, sem confirmação de versão posterior aos recursos. IDs, alternativas, gabaritos e reproduções preservados a partir do app PMMG no repositório nova-byte, commit cc96f5ed867e1ce2ba377552c4acb06079cb772b. Comentários individuais de resolução ainda não disponíveis.
 
 As contas existentes continuam funcionando. Na primeira abertura, o estado PP-MT é arquivado integralmente em `legacyPPMT`, na mesma linha de user_state e nos backups, antes de iniciar o histórico PMMG. A rotina e preferências são preservadas. Nenhum dado de conta é excluído. Não se tenta importar automaticamente históricos do app `/questoes/`, pois têm outro formato e outra origem.
 

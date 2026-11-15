@@ -152,6 +152,9 @@ function renderHome(){
 }
 function renderSources(){
  const exam=DB.exams[$("exam").value]||DB.exams.pmmg2024;
+ const full=$('mode').querySelector('[value="full"]');full.disabled=!!exam.complementary;full.hidden=!!exam.complementary;
+ if(exam.complementary&&$('mode').value==='full')$('mode').value='daily';
+ $('exam-selection-note').hidden=!exam.complementary;$('exam-selection-note').textContent=exam.complementary?exam.includedCount+' questões selecionadas de '+exam.originalTotal+'. Treino complementar; não é a prova completa. Gabarito publicado na época, sem confirmação da versão após recursos.':'';
  $("exam-note").textContent=exam.note;
  $("paper-link").href=exam.source;
  $("paper-link").textContent="PDF da prova original ↗";
@@ -192,6 +195,7 @@ async function sessionNew(options={}){
  const kind=options.kind||$("mode").value;
  const grading=kind==="full"||kind==="diagnostic"?"exam":options.grading||$("grading").value;
  const exam=kind==="diagnostic"?"pmmg2024":options.exam||$("exam").value||"pmmg2024";
+ if(kind==='full'&&DB.exams[exam]?.complementary){toast('Esta edição contém um recorte complementar. Escolha um treino de questões selecionadas.');return;}
  const subject=kind==="diagnostic"||kind==="full"?"all":options.subject||$("subject").value||"all";
  const count=kind==="diagnostic"?10:kind==="full"?DB.questions.filter(q=>q.exam===exam).length:Number(options.count||$("quantity").value||5);
  const candidates=kind==='favorites'?DB.questions.filter(q=>(state.settings.favorites||[]).includes(q.id)):kind==='mistakes'?outstandingMistakes():DB.questions;
@@ -269,7 +273,7 @@ function renderQuestion(){
  s.index=Math.max(0,Math.min(items.length-1,Number(s.index)||0));
  const q=items[s.index],info=DB.exams[q.exam],chosen=s.picks[q.id]||"",graded=!!s.checked[q.id]&&s.grading==="practice"||!!s.finished;
  const moved=area.dataset.question!==q.id;area.dataset.question=q.id;
- $("question-chip").textContent="PMMG "+info.year+" · "+info.board;
+ $("question-chip").textContent="PMMG "+info.year+" · "+(info.complementary?'Treino complementar':info.board);
  $("question-counter").textContent=(s.reviewIds&&s.reviewing?'Erros · ':'')+(s.index+1)+" / "+items.length;
  $("question-meta").textContent=C.subjectGroup(q)+" · questão original nº "+q.number+" · "+(info.type||"caderno original");
  meter("quiz-meter",percent(items.filter(x=>s.checked[x.id]).length,items.length));
@@ -335,6 +339,7 @@ function renderQuestion(){
  else {
  add(f,"strong","",chosen===q.key?"✓ Você acertou!":"Gabarito oficial: alternativa "+q.key);
  add(f,'p','correct-answer','Resposta do gabarito: '+q.key+'. '+q.options[q.key]);
+ if(info.complementary)add(f,'p','fine','Gabarito publicado em '+info.answerPublishedAt.split('-').reverse().join('/')+'. Não foi confirmada versão posterior aos recursos.');
  if(chosen&&chosen!==q.key)add(f,'p','chosen-answer','Você marcou: '+chosen+'. '+q.options[chosen]);
  const explanation=add(f,'details','correction-guide');
  add(explanation,'summary','','Entender a correção passo a passo');

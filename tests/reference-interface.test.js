@@ -321,3 +321,30 @@ test('gráfico mantém tentativas sem horário em intervalo identificado',()=>{
   assert.equal(rows.reduce((n,row)=>n+Number(row.lastElementChild.textContent),0),Number(d.querySelector('#performance-total').textContent));assert.deepEqual(a.errors,[]);
  }finally{a.dom.window.close()}
 });
+
+test('edições complementares treinam e aparecem no desempenho sem se apresentar como prova completa',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();
+  for(const exam of ['pmmg2015','pmmg2017']){
+   d.querySelector('#exam').value=exam;d.querySelector('#exam').dispatchEvent(new a.w.Event('change'));
+   assert.equal(d.querySelector('#mode [value=full]').disabled,true);assert.equal(d.querySelector('#exam-selection-note').hidden,false);
+   d.querySelector('#subject').value='Raciocínio Lógico-Matemático';d.querySelector('#quantity').value='2';d.querySelector('#create-session').click();await pause();
+   const session=a.saved.at(-1).state.session;assert.equal(session.exam,exam);assert.equal(session.ids.length,2);
+   const q=a.w.EXAM_BANK.questions.find(q=>q.id===session.ids[0]);d.querySelector(`.option[data-letter="${q.key}"]`).click();d.querySelector('#check').click();
+   assert.equal(a.saved.at(-1).state.progress[q.id].correct,true);assert.match(d.querySelector('#question-chip').textContent,/Treino complementar/);
+  }
+  assert.equal(a.saved.at(-1).state.events.length,2);
+  d.querySelector('[data-tab=insights]').click();d.querySelector('#performance-exam').value='pmmg2017';d.querySelector('#performance-exam').dispatchEvent(new a.w.Event('change'));
+  assert.equal(d.querySelector('#performance-total').textContent,'1');assert.equal(d.querySelector('#performance-correct').textContent,'1');
+  d.querySelector('#exam').value='pmmg2024';d.querySelector('#exam').dispatchEvent(new a.w.Event('change'));assert.equal(d.querySelector('#mode [value=full]').disabled,false);assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('histórico complementar atravessa a ponte da conta e treinos novos priorizam edições recentes',async()=>{
+ const state=toReferenceState({attempts:[{id:'pmmg2015-1',selected:3,correct:true,at:'2026-11-15T12:00:00Z'},{id:'pmmg2017-29',selected:3,correct:true,at:'2026-11-15T12:01:00Z'}]});
+ assert.equal(state.events.length,2);assert.ok(state.progress['pmmg2015-1']);assert.ok(state.progress['pmmg2017-29']);
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('#daily-start').click();await pause();
+  assert.ok(a.saved.at(-1).state.session.ids[0].startsWith('pmmg2024-'));assert.ok(a.saved.at(-1).state.session.ids.every(id=>!/^pmmg(2015|2017)-/.test(id)));assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});

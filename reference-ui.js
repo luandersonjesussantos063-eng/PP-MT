@@ -2,7 +2,7 @@ const copy=x=>JSON.parse(JSON.stringify(x));
 export function toReferenceState(store={}){
  const state={version:3,progress:{},events:[],sessions:[],topics:{},essay:'',essayWeek:'',settings:{goal:5,timer:'off',favorites:[...(store.favorites||[])]},session:null};
  for(const row of store.attempts||[]){
-  if(!/^pmmg(2018|2021|2023|2024)-\d+$/.test(row.id)||!Number.isInteger(row.selected)||row.selected<0||row.selected>3)continue;
+  if(!/^pmmg(2015|2017|2018|2021|2023|2024)-\d+$/.test(row.id)||!Number.isInteger(row.selected)||row.selected<0||row.selected>3)continue;
   const at=Date.parse(row.at);if(!Number.isFinite(at))continue;
   const answer='ABCD'[row.selected],day=new Date(at).toISOString().slice(0,10),exam=row.id.split('-')[0];
   state.events.push({id:row.id,day,at,answer,correct:row.correct===true,exam});
@@ -47,7 +47,7 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
 
  };
  let shell=document.getElementById('reference-shell');
- if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Início, Estudar, Trilha e Desempenho';frame.src='./missao/index.html?v=3.2.5';shell.appendChild(frame);document.body.appendChild(shell)}
+ if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Início, Estudar, Trilha e Desempenho';frame.src='./missao/index.html?v=3.2.6';shell.appendChild(frame);document.body.appendChild(shell)}
  document.body.classList.add('reference-mode');
 }
 

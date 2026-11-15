@@ -18,19 +18,40 @@ test('migração arquiva integralmente o estado PP-MT, preserva rotina e não mi
  assert.equal(state.program.xp,undefined);
  assert.equal(migratePMMGState(state),state);
 });
-test('banco PMMG preserva quatro provas, 171 válidas, quatro alternativas e todas as imagens locais',()=>{
+test('banco PMMG preserva acervo principal e acrescenta recortes com imagens e quatro alternativas',()=>{
  validateBank(PMMG_QUESTIONS);
- assert.equal(PMMG_QUESTIONS.length,171);assert.equal(PMMG_EXAMS.length,4);
+ assert.equal(PMMG_QUESTIONS.length,205);assert.equal(PMMG_EXAMS.length,6);
  assert.equal(PMMG_SUBJECTS.length,11);
- assert.equal(PMMG_EXAMS.reduce((n,e)=>n+e.total,0),180);
+ assert.equal(PMMG_EXAMS.reduce((n,e)=>n+e.total,0),260);
  assert.equal(PMMG_EXAMS.reduce((n,e)=>n+e.annulled.length,0),9);
- assert.equal(new Set(PMMG_QUESTIONS.map(q=>q.id)).size,171);
+ assert.equal(new Set(PMMG_QUESTIONS.map(q=>q.id)).size,205);
  for(const q of PMMG_QUESTIONS){
   const exam=PMMG_EXAMS.find(e=>e.id===q.source.examId);
   assert.ok(exam&&!exam.annulled.includes(Number(q.source.number)));
   assert.equal(q.options.length,4);
   for(const image of [...q.facsimile,...q.contextImages])assert.ok(existsSync(new URL('../'+image,import.meta.url)),image);
  }
+});
+test('recortes de 2015 e 2017 incluem só Português e RLM e preservam gabaritos publicados',()=>{
+ const manifest=JSON.parse(read('docs/pmmg-complementary-sources.json'));
+ const data={};new Function('window',read('missao/banco-transcrito.js'))(data);
+ const additions=PMMG_QUESTIONS.filter(q=>q.complementary);
+ assert.equal(additions.length,34);assert.equal(PMMG_QUESTIONS.filter(q=>!q.complementary).length,171);
+ assert.equal(data.EXAM_BANK.questions.length,214);
+ for(const entry of manifest){
+  const raw=data.EXAM_BANK.questions.filter(q=>q.exam===entry.id),exam=PMMG_EXAMS.find(e=>e.id===entry.id);
+  assert.equal(raw.length,entry.id==='pmmg2015'?20:14);assert.deepEqual(raw.map(q=>q.number),entry.selected);
+  assert.equal(exam.complementary,true);assert.equal(exam.total,40);assert.equal(exam.answerStatus,'publicado');
+  assert.ok(existsSync(new URL('../'+entry.keyImage,import.meta.url)));
+  for(const q of raw){
+   assert.ok(['Português','Raciocínio Lógico-Matemático'].includes(q.subject));
+   assert.equal(q.key,entry.publishedAnswers[q.number]);assert.equal(q.annulled,false);
+   const canonical=PMMG_QUESTIONS.find(row=>row.id===q.id);assert.equal(canonical.answer,'ABCD'.indexOf(q.key));assert.deepEqual(canonical.options,Object.values(q.options));
+   assert.match(canonical.source.answerStatus,/publicado/);assert.ok(canonical.facsimile.length);
+  }
+ }
+ assert.equal(data.EXAM_BANK.questions.find(q=>q.id==='pmmg2015-4').text.includes('−3x²/4 + 90x − 1500'),true);
+ assert.equal(data.EXAM_BANK.questions.find(q=>q.id==='pmmg2015-5').text.includes('(3/2)^(t+k)'),true);
 });
 const names=[...read('auth.js').matchAll(/export (?:async )?function (\w+)/g)].map(m=>m[1]);
 const auth=names.map(n=>`export async function ${n}(...args){${['getCurrentUser','verifiedUser','signIn'].includes(n)?"return {id:'test-account',email:'aluno@example.com'}":n==='loadUserState'?'return window.__seed':n==='saveUserState'?'window.__saved=args[1];return null':n==='loadMembership'?"return {active:true,premium:true}":'return null'}}`).join('\n');
@@ -43,14 +64,14 @@ async function open(seed=legacy){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>{w.__audioPlayed=(w.__audioPlayed||0)+1;return Promise.resolve()};w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
- w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.5'})});w.eval(bundle.outputFiles[0].text);
+ w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.6'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{
  const {dom,w,errors}=await open();
  try{
   assert.equal(w.__saved.contest,'PMMG');assert.equal(w.__saved.legacyPPMT.program.xp,900);
-  assert.equal(w.__pmmgTest.bank().length,171);
+  assert.equal(w.__pmmgTest.bank().length,205);
   for(const hash of ['questoes','materias','provas','conteudos','edital','noticias','rotina','desempenho','simulados','dados','estudar']){
    w.location.hash=hash;w.__pmmgTest.navigate();
    assert.ok(w.document.querySelector('#content').textContent.length>30,hash);
