@@ -1,14 +1,14 @@
-import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.3';
+import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.4';
 function signalAppReady(){window.__PMMG_READY__=true;window.dispatchEvent(new Event('pmmg:ready'))}
-import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.3';
-import {migratePMMGState} from './pmmg-state.js?v=3.2.3';
+import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.4';
+import {migratePMMGState} from './pmmg-state.js?v=3.2.4';
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=3.2.3';
+import {createNotificationCenter} from './notifications.js?v=3.2.4';
 import {createProgressSync,cachedAccount} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 const AUTHORIAL_MT_QUESTIONS=[];
@@ -25,13 +25,13 @@ const EXAM_SOURCES=PMMG_EXAMS;const SOURCE_TOTAL=PMMG_QUESTIONS.length,IMPORTED_
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.3';
-import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.3';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.4';
+import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.4';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 import {videoLessonForErrorHTML} from './video-lessons.js?v=2.20.6';
-import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.3';
+import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.4';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='3.2.3';
+const APP_VERSION='3.2.4';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -343,6 +343,7 @@ function openReferenceHelp(id,mode='base',answer){
   closeTacticalHelp();document.body.insertAdjacentHTML('beforeend',`<div class="tactical-overlay" role="dialog" aria-modal="true" aria-label="Explicação da questão"><div class="tactical-sheet"><button id="closeTactical" class="secondary">Fechar</button>${premiumAIHelp(q,selected)}</div></div>`);$('#closeTactical').onclick=closeTacticalHelp;return;
  }
  openTacticalHelp(q);
+ if(mode==='lesson')$('#lessonHelp')?.click();
  $('#eliminateHelp').onclick=()=>{
   const api=document.getElementById('reference-app')?.contentWindow?.MFAccount,info=api?.questionInfo?.(q.id);if(!info)return;
   const candidates=q.options.map((_,i)=>i).filter(i=>i!==q.answer&&'ABCD'[i]!==info.answer&&!info.eliminated.includes('ABCD'[i]));
@@ -350,6 +351,12 @@ function openReferenceHelp(id,mode='base',answer){
   if(!spendAssistXP(q,'eliminacao',{repeatable:true}))return;
   api.eliminate(q.id,'ABCD'[candidates[0]]);closeTacticalHelp();
  };
+}
+function referenceCorrection(id){
+ const q=bank().find(q=>q.id===id);if(!q)return {};
+ const content=document.createElement('div');content.innerHTML=microLesson(q);
+ const comments={'pmmg2021-1':'O trecho começa contando um acontecimento passado, um namoro: isso caracteriza a narração. Depois apresenta as qualificações e o comportamento do professor, caracterizando-o: isso é descrição. Por isso, os tipos predominantes são narrativo e descritivo. As demais opções incluem instruções, exposição ou defesa de uma ideia como tipos predominantes, o que não corresponde ao fragmento citado.'};
+ return {foundation:content.textContent,tip:questionCommand(q).tip,reasoning:q.lesson?.reasoning||comments[id]||null};
 }
 function closeTacticalHelp(){document.querySelector('.tactical-overlay')?.remove()}
 function showEasySimilar(q,related,attempt=0){
@@ -540,7 +547,7 @@ function render(){
  const c=$('#content');
  if(tab==='inicio'){
   renderToday();
-  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{for(const row of referenceAttempts(snapshot,store.attempts)){const q=bank().find(q=>q.id===row.id);if(q){row.xpAwarded=localDay(new Date(row.at))===localDay()?applyQuestionXP(q,row.correct):0;row.assists=[...assistFor(q.id).used];row.assistXp=assistFor(q.id).spent||0;store.attempts.push(row)}}const favorites=snapshot.profiles[snapshot.activeProfile]?.settings?.favorites;if(Array.isArray(favorites))store.favorites=favorites.filter(id=>bank().some(q=>q.id===id));store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click(),tools:{install:installApp,installationState,setSound:value=>{store.program.answerSound=value;answerSounds.stop();save()},open:route=>{location.hash=route},sound:correct=>answerSounds.play(correct),activity:()=>{studyTracker.paused=false;noteStudyActivity()},help:openReferenceHelp}});
+  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{for(const row of referenceAttempts(snapshot,store.attempts)){const q=bank().find(q=>q.id===row.id);if(q){row.xpAwarded=localDay(new Date(row.at))===localDay()?applyQuestionXP(q,row.correct):0;row.assists=[...assistFor(q.id).used];row.assistXp=assistFor(q.id).spent||0;store.attempts.push(row)}}const favorites=snapshot.profiles[snapshot.activeProfile]?.settings?.favorites;if(Array.isArray(favorites))store.favorites=favorites.filter(id=>bank().some(q=>q.id===id));store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click(),tools:{install:installApp,installationState,setSound:value=>{store.program.answerSound=value;answerSounds.stop();save()},open:route=>{location.hash=route},sound:correct=>answerSounds.play(correct),activity:()=>{studyTracker.paused=false;noteStudyActivity()},help:openReferenceHelp,correction:referenceCorrection}});
  }
  if(tab==='missao')renderMission();
  if(tab==='estudar')renderLearn();
@@ -741,7 +748,7 @@ async function enableAppAutoUpdates(){
   persistStudyLocal();location.reload();
  });
  try{
-  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.3',{updateViaCache:'none'});
+  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.4',{updateViaCache:'none'});
   setTimeout(()=>void checkAppUpdates(),3000);
   window.addEventListener('online',()=>void checkAppUpdates());
   document.addEventListener('visibilitychange',()=>{
@@ -903,7 +910,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.3-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.3')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.3');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.4-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.4')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.4');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 

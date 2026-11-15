@@ -43,7 +43,7 @@ async function open(seed=legacy){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
  const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>{w.__audioPlayed=(w.__audioPlayed||0)+1;return Promise.resolve()};w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
- w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.3'})});w.eval(bundle.outputFiles[0].text);
+ w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.4'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{

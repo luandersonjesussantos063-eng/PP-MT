@@ -31,6 +31,7 @@
   installationState:()=>bridge.installationState?.()||{installed:true},install:()=>bridge.install?.(),
   preferences:()=>bridge.preferences?.()||{},setSound:value=>bridge.setSound?.(value),openTool:route=>bridge.openTool?.(route),help:(id,mode,answer)=>bridge.help?.(id,mode,answer),answerFeedback:correct=>bridge.answerFeedback?.(correct),
   questionInfo:id=>window.MFQuestionInfo?.(id),eliminate:(id,letter)=>window.MFEliminate?.(id,letter),
+  correction:questionId=>bridge.correction?.(questionId)||{},
   allow:(kind,count)=>bridge.allow(kind,count),openAccount:()=>bridge.openAccount(),logout:()=>bridge.logout()
  };
  window.addEventListener('mf-sync-status',event=>{const el=document.getElementById('sync-status');if(el)el.textContent=event.detail;});

@@ -100,6 +100,20 @@ function visible(view){document.querySelectorAll("[data-tab]").forEach(x=>{const
 function show(view){visible(view);renderAll();}
 function currentSession(){return state.session&&Array.isArray(state.session.ids)?state.session:null;}
 function sessionItems(){return (currentSession()?.ids||[]).map(id=>QUESTION.get(id)).filter(Boolean);}
+function reviewItems(){const s=currentSession();return s?.finished&&s.reviewing&&Array.isArray(s.reviewIds)?sessionItems().filter(q=>s.reviewIds.includes(q.id)):sessionItems();}
+function sessionMistakes(){const s=currentSession();return sessionItems().filter(q=>C.isValid(q)&&s.picks[q.id]&&s.checked[q.id]&&s.picks[q.id]!==q.key);}
+function outstandingMistakes(){return DB.questions.filter(q=>C.isValid(q)&&state.progress[q.id]?.correct===false);}
+function openSessionReview(onlyErrors=false){
+ const s=currentSession();if(!s)return;
+ const wrong=sessionMistakes();if(onlyErrors&&!wrong.length){toast('Nenhum erro neste treino.');return;}
+ if(s.finished){s.reviewing=true;s.reviewIds=onlyErrors?wrong.map(q=>q.id):null;s.index=0;}
+ else if(onlyErrors)s.index=s.ids.indexOf(wrong[0].id);
+ save();show('train');
+}
+function reviewNow(){
+ if(sessionMistakes().length){openSessionReview(true);return;}
+ sessionNew({kind:'mistakes',exam:'all',subject:'all',count:5,grading:'practice'});
+}
 function totalEvents(){return state.events.filter(e=>e&&"ABCD".includes(e.answer||"")&&!QUESTION.get(e.id)?.annulled);}
 function getDue(){return C.progressCount(state.progress,DB.questions,DAY).due;}
 function lastDate(){const d=state.events.map(x=>x.day).sort();return d.at(-1)||null;}
@@ -110,15 +124,18 @@ function upcoming(){ $("days-left").textContent="Confira o próximo edital no CR
 function getWeeklyCount(){return new Set(C.weeklyActivity(state.events,DAY).filter(x=>x.count).map(x=>x.day)).size;}
 function renderHome(){
  const events=totalEvents(),score=C.score(events,DB.questions),seen=C.progressCount(state.progress,DB.questions,DAY),week=getWeeklyCount();
- $("home-answered").textContent=String(events.length);
+ $("home-answered").textContent=String(score.attempts);
  $("home-accuracy").textContent=score.percent===null?"—":score.percent+"%";
  $("unique-done").textContent=seen.seen+"/"+DB.questions.length;meter("seen-meter",percent(seen.seen,DB.questions.length));
  $("today-count").textContent=String(events.filter(e=>e.day===DAY).length);
  $("due-count").textContent=String(getDue());
  $("weeks-active").textContent=week+"/7";
  $("phase").textContent=C.phase(events.length,C.daysBetween(DAY,C.DEFAULT_EXAM_DATE));
- $("home-review-text").textContent=getDue()?getDue()+" questão(ões) para revisar.":"Nenhuma revisão pendente.";
- $("review-shortcut").hidden=!getDue();
+ const mistakes=outstandingMistakes(),dates=mistakes.map(q=>state.progress[q.id].due).filter(Boolean).sort();
+ $('home-review-text').textContent=mistakes.length?mistakes.length+' erro(s) para reforçar.':getDue()?getDue()+' revisão(ões) programada(s) para hoje.':'Nenhuma revisão pendente.';
+ $('review-schedule').textContent=getDue()?getDue()+' revisão(ões) programada(s) para hoje.':dates[0]?'Próxima revisão programada: '+dates[0].split('-').reverse().join('/')+'.':'As próximas revisões aparecem após o treino.';
+ $('review-shortcut').hidden=!mistakes.length&&!getDue();
+ $('review-shortcut').textContent=mistakes.length?'Rever meu erro agora':'Fazer revisão de hoje';
  const last=lastDate(),gap=last?C.daysBetween(last,DAY):null;
  $("greeting").textContent=gap!==null&&gap>=2?"Um recomeço pequeno já vale.":events.length===0?"Começar é só resolver uma questão.":"Mais um passo na sua preparação.";
  const ongoing=currentSession()&&!currentSession().finished;
@@ -175,8 +192,8 @@ async function sessionNew(options={}){
  const exam=kind==="diagnostic"?"pmmg2024":options.exam||$("exam").value||"pmmg2024";
  const subject=kind==="diagnostic"||kind==="full"?"all":options.subject||$("subject").value||"all";
  const count=kind==="diagnostic"?10:kind==="full"?DB.questions.filter(q=>q.exam===exam).length:Number(options.count||$("quantity").value||5);
- const candidates=kind==='favorites'?DB.questions.filter(q=>(state.settings.favorites||[]).includes(q.id)):DB.questions;
- const list=C.choose(candidates,state.progress,{kind:kind==='favorites'?'daily':kind,exam,subject,count,today:DAY,excludeAnnulled:kind!=='full'});
+ const candidates=kind==='favorites'?DB.questions.filter(q=>(state.settings.favorites||[]).includes(q.id)):kind==='mistakes'?outstandingMistakes():DB.questions;
+ const list=C.choose(candidates,state.progress,{kind:['favorites','mistakes'].includes(kind)?'daily':kind,exam,subject,count,today:DAY,excludeAnnulled:kind!=='full'});
  if(!list.length){toast(kind==="review"?"Ainda não há revisões vencidas. Faça um treino de questões novas.":"Não há questões disponíveis neste filtro. Tente outra disciplina ou edição.");show("train");return;}
  if(!await window.MFAccount.allow(grading==='exam'?'exam':'block',list.filter(C.isValid).length)){return;}
  if(activeProfile!==requestedProfile)return;
@@ -230,13 +247,15 @@ function showSessionResult(area){
  }
  const p=add(area,"p","support-note","Acerto nas questões corrigíveis: "+(result.valid?percent(result.correct,result.valid)+"%":"—")+". Questões sem gabarito confirmado não entram na nota. Esta taxa não prevê aprovação.");
  const actions=add(area,"div","source-links");
- actions.appendChild(button("Revisar minhas respostas","outline",()=>{s.reviewing=true;s.index=0;save();renderAll();}));
+ if(sessionMistakes().length)actions.appendChild(button('Revisar só os erros','primary',()=>openSessionReview(true)));
+ actions.appendChild(button("Revisar minhas respostas","outline",()=>openSessionReview(false)));
  actions.appendChild(button("Fazer outra sessão","outline light",()=>sessionNew({kind:"daily",exam:s.exam,subject:"all",count:5})));
  actions.appendChild(button("Ir para meu painel","ghost",()=>show("insights")));
  const last=add(area,"p","fine","Se já foi suficiente por hoje, pode encerrar aqui. Sua sessão foi salva.");
 }
 function renderQuestion(){
  const area=$("question-area");area.replaceChildren();
+ $('feedback').hidden=true;
  const s=currentSession();
  if(!s){$("question-chip").textContent="PMMG · PROVAS REAIS";$("question-counter").textContent="";$("question-meta").textContent="Selecione uma edição e um treino.";
  const empty=add(area,"div","empty-state");add(empty,"div","empty-mark","▤");add(empty,"h2","","Seu treino começa aqui");add(empty,"p","","Escolha uma edição da PMMG. Você responderá às questões reais usando o caderno oficial como referência.");
@@ -244,14 +263,16 @@ function renderQuestion(){
  if(s.finished&&!s.reviewing){
  $("question-actions").hidden=true;$("question-numbers-wrap").hidden=true;meter("quiz-meter",100);
  showSessionResult(area);return;}
- const items=sessionItems();if(!items.length){state.session=null;save();renderQuestion();return;}
+ const items=reviewItems();if(!items.length){if(s.finished){s.reviewing=false;save();renderQuestion();return;}state.session=null;save();renderQuestion();return;}
  s.index=Math.max(0,Math.min(items.length-1,Number(s.index)||0));
  const q=items[s.index],info=DB.exams[q.exam],chosen=s.picks[q.id]||"",graded=!!s.checked[q.id]&&s.grading==="practice"||!!s.finished;
+ const moved=area.dataset.question!==q.id;area.dataset.question=q.id;
  $("question-chip").textContent="PMMG "+info.year+" · "+info.board;
- $("question-counter").textContent=(s.index+1)+" / "+items.length;
+ $("question-counter").textContent=(s.reviewIds&&s.reviewing?'Erros · ':'')+(s.index+1)+" / "+items.length;
  $("question-meta").textContent=C.subjectGroup(q)+" · questão original nº "+q.number+" · "+(info.type||"caderno original");
  meter("quiz-meter",percent(items.filter(x=>s.checked[x.id]).length,items.length));
  const title=add(area,"h2","question-title","Questão "+q.number+" — "+C.subjectGroup(q));
+ title.tabIndex=-1;
  add(area,"p","actual-question",q.text||"Enunciado em revisão.");
  function sourceImages(paths,label,opened){
   if(!paths?.length)return;
@@ -311,8 +332,19 @@ function renderQuestion(){
  else if(!q.key){add(f,"strong","","Resposta registrada");add(f,"p","","Ainda não há gabarito definitivo conferido nesta versão. Sua escolha não será contada como erro nem acerto.");}
  else {
  add(f,"strong","",chosen===q.key?"✓ Você acertou!":"Gabarito oficial: alternativa "+q.key);
- add(f,"p","",chosen===q.key?"Boa! A banca indicou a mesma alternativa que você marcou.":"Você marcou "+(chosen||"em branco")+". A alternativa oficial deste caderno é "+q.key+".");
- add(f,"p","","O app usa o gabarito da banca; ele não inventa uma explicação para o enunciado.");
+ add(f,'p','correct-answer','Resposta do gabarito: '+q.key+'. '+q.options[q.key]);
+ if(chosen&&chosen!==q.key)add(f,'p','chosen-answer','Você marcou: '+chosen+'. '+q.options[chosen]);
+ const explanation=add(f,'details','correction-guide');
+ add(explanation,'summary','','Entender a correção passo a passo');
+ const guide=window.MFAccount.correction?.(q.id)||{};
+ add(explanation,'p','',guide.foundation||LESSONS[C.subjectGroup(q)]?.intro||'Confira o comando, os dados e o contexto antes de comparar as alternativas.');
+ const steps=add(explanation,'ol','lesson-steps');
+ add(steps,'li','',guide.tip||(/\bII\./.test(q.text)?'Julgue cada afirmativa separadamente antes de comparar as combinações.':/incorreta|exceto/i.test(q.text)?'O comando pede uma exceção ou uma afirmação incorreta. Confira a negação antes de escolher.':'Identifique exatamente o que o comando pede e localize a regra ou os dados necessários.'));
+ add(steps,'li','','Compare a alternativa '+q.key+' com o enunciado: '+q.options[q.key]);
+ if(chosen&&chosen!==q.key)add(steps,'li','','Volte à alternativa '+chosen+' e identifique qual trecho muda o sentido ou não atende ao comando.');
+ if(guide.reasoning)add(explanation,'p','',guide.reasoning);
+ else add(explanation,'p','fine','Este roteiro orienta a análise. O item ainda não tem comentário individual de resolução conferido.');
+ explanation.appendChild(button('Abrir aula curta deste conteúdo','outline',()=>window.MFAccount.help(q.id,'lesson',chosen)));
  if(chosen&&chosen!==q.key){
  const help=button("Estudar a base de "+C.subjectGroup(q)+" →","small-button",()=>{
   show("path");$("lesson-subject").value=C.subjectGroup(q);renderLesson();$("lesson-hub").scrollIntoView({block:"start",behavior:"smooth"});
@@ -331,9 +363,11 @@ function renderQuestion(){
  }
  const actions=$("question-actions");actions.hidden=false;
  $("previous").disabled=s.index===0;
+ $("previous").hidden=s.index===0;
+ $("next").hidden=true;
  $("next").disabled=s.index===items.length-1;
  const c=$("check");
- if(s.finished){c.textContent="Voltar ao resultado";c.disabled=false;}
+ if(s.finished){c.textContent=s.index===items.length-1?"Voltar ao resultado":"Próxima questão";c.disabled=false;}
  else if(s.grading==="exam" || s.kind==="diagnostic"||s.kind==="full"){
  c.textContent=s.index===items.length-1?"Finalizar e corrigir":"Salvar e avançar";c.disabled=false;
  }else if(s.checked[q.id]){c.textContent=s.index===items.length-1?"Concluir sessão":"Próxima questão";c.disabled=false;}
@@ -347,10 +381,11 @@ function renderQuestion(){
  b.addEventListener("click",()=>{s.index=i;save();renderAll();});
  nav.appendChild(b);
  });
+ if(moved&&activeTab==='train'){title.focus({preventScroll:true});title.scrollIntoView?.({block:'start',behavior:'auto'});}
 }
 function checkClick(){
  const s=currentSession();if(!s)return;
- if(s.finished){s.reviewing=false;save();renderAll();return;}
+ if(s.finished){if(s.index<reviewItems().length-1)s.index++;else{s.reviewing=false;s.reviewIds=null;}save();renderAll();return;}
  const items=sessionItems(),q=items[s.index];if(!q)return;
  if(s.grading==="exam"||s.kind==="diagnostic"||s.kind==="full"){
   if(s.index===items.length-1){gradeAll();return;}
@@ -358,7 +393,7 @@ function checkClick(){
  }
  if(s.checked[q.id]){if(s.index===items.length-1){finish();return;}s.index++;save();renderAll();return;}
  if(!s.picks[q.id]&&!q.annulled){toast("Marque uma alternativa antes de corrigir, ou pule para a próxima questão.");return;}
- gradeOne(q);renderAll();
+ gradeOne(q);renderAll();$('feedback').scrollIntoView?.({block:'nearest',behavior:'auto'});
 }
 function renderTraining(){
  renderSources();renderQuestion();
@@ -379,6 +414,11 @@ function renderLesson(){
  add(target,"p","support-note",lesson.practice);
 }
 function renderPath(){
+ const mistake=outstandingMistakes().sort((a,b)=>(state.progress[b.id]?.at||0)-(state.progress[a.id]?.at||0))[0];
+ const subject=mistake?C.subjectGroup(mistake):C.weakestSubject(C.statsBySubject(totalEvents(),DB.questions))||'Português';
+ $('path-next-title').textContent='Seu próximo passo: '+subject;
+ $('path-next-copy').textContent=mistake?'Reforce o conteúdo de uma questão que você errou e pratique com duas questões.':'Leia a base desta matéria e pratique com duas questões, no seu ritmo.';
+ $('path-study').dataset.subject=subject;$('path-practice').dataset.subject=subject;
  renderLesson();upcoming();const total=Object.values(TOPICS).reduce((a,b)=>a+b.length,0);
  const done=Object.keys(state.topics).filter(k=>state.topics[k]===true).length;
  $("topics-complete").textContent=done+"/"+total;meter("topics-meter",percent(done,total));
@@ -399,6 +439,7 @@ function renderPath(){
  $("essay-week").checked=state.essayWeek===weekStart;
 }
 function renderInsights(){
+ renderHome();
  const events=totalEvents(),total=C.score(events,DB.questions),groups=C.statsBySubject(events,DB.questions);
  $("insight-attempts").textContent=String(total.attempts);
  $("insight-accuracy").textContent=total.percent===null?"—":total.percent+"%";
@@ -464,19 +505,22 @@ function initEvents(){
  $("two-questions").addEventListener("click",()=>sessionNew({kind:"daily",exam:"all",subject:"all",count:2,grading:"practice"}));
  $("resume").addEventListener("click",()=>show("train"));
  $("diagnostic-home").addEventListener("click",()=>sessionNew({kind:"diagnostic",count:10}));
- $("review-shortcut").addEventListener("click",()=>sessionNew({kind:"review",exam:"all",subject:"all",count:5,grading:"practice"}));
+ $("review-shortcut").addEventListener("click",()=>outstandingMistakes().length?reviewNow():sessionNew({kind:"review",exam:"all",subject:"all",count:5,grading:"practice"}));
  $("exam").addEventListener("change",()=>{fillSubjects();renderSources();});
  $("create-session").addEventListener("click",()=>sessionNew());
  $("mode").addEventListener("change",()=>{const mode=$("mode").value;if(mode==="full"||mode==="diagnostic")$("grading").value="exam";});
  $("check").addEventListener("click",checkClick);
  $("previous").addEventListener("click",()=>{if(!currentSession()||currentSession().index<=0)return;state.session.index--;save();renderAll();});
- $("next").addEventListener("click",()=>{const s=currentSession();if(!s||s.index>=s.ids.length-1)return;s.index++;save();renderAll();});
+ $("next").addEventListener("click",()=>{const s=currentSession();if(!s||s.index>=reviewItems().length-1)return;s.index++;save();renderAll();});
  $("timer-setting").value=state.settings.timer||"off";
  $("timer-setting").addEventListener("change",()=>{state.settings.timer=$("timer-setting").value;save();timerStart(true);});
  $("timer-toggle").addEventListener("click",()=>{timerPaused=!timerPaused;if(state.session?.clock){state.session.clock.paused=timerPaused;state.session.clock.remaining=remaining;save();}$("timer-toggle").textContent=timerPaused?"Continuar":"Pausar";});
  $("timer-reset").addEventListener("click",()=>timerStart(true));
  $("lesson-subject").addEventListener("change",renderLesson);
- $("lesson-practice").addEventListener("click",()=>{const subject=$("lesson-subject").value;$("exam").value="pmmg2024";fillSubjects();sessionNew({kind:"daily",exam:"pmmg2024",subject,count:5,grading:"practice"});});
+ function practiceTwo(subject){const q=DB.questions.find(q=>C.subjectGroup(q)===subject&&C.isValid(q));if(q)sessionNew({kind:'daily',exam:q.exam,subject,count:2,grading:'practice'});}
+ $('path-study').onclick=()=>{$('lesson-subject').value=$('path-study').dataset.subject;renderLesson();$('lesson-hub').scrollIntoView?.({block:'start',behavior:'smooth'});};
+ $('path-practice').onclick=()=>practiceTwo($('path-practice').dataset.subject);
+ $("lesson-practice").addEventListener("click",()=>practiceTwo($("lesson-subject").value));
  $("essay").addEventListener("input",()=>{state.essay=$("essay").value;save();$("essay-status").textContent=state.essay.trim().split(/\s+/).filter(Boolean).length+" palavras · salvo no aparelho, com sincronização automática pela conta";});
  $("essay-week").addEventListener("change",()=>{
  const offset=(new Date(DAY+"T12:00:00Z").getUTCDay()+6)%7;

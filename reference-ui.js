@@ -41,12 +41,13 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
   setSound:value=>{if(guard())tools.setSound?.(value===true)},
   openTool:route=>{if(guard()&&['rotina','simulados','desempenho','estudar','erros','questoes','provas','livre','videoaulas','edital','favoritos','dados','plano','ofertas','mais'].includes(route))tools.open?.(route)},
   help:(id,mode,answer)=>{if(guard())tools.help?.(id,mode,answer)},
+  correction:questionId=>guard()?tools.correction?.(questionId)||{}:{},
   answerFeedback:correct=>{if(guard()&&typeof correct==='boolean')tools.sound?.(correct)},
   activity:()=>{if(guard())tools.activity?.()}
 
  };
  let shell=document.getElementById('reference-shell');
- if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Hoje, Questões, Trilha e Evolução';frame.src='./missao/index.html?v=3.2.3';shell.appendChild(frame);document.body.appendChild(shell)}
+ if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Hoje, Questões, Trilha e Evolução';frame.src='./missao/index.html?v=3.2.4';shell.appendChild(frame);document.body.appendChild(shell)}
  document.body.classList.add('reference-mode');
 }
 

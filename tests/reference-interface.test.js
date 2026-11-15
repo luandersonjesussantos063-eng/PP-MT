@@ -171,3 +171,82 @@ test('menu agrupa preferências, ferramentas e conta e explica sincronização d
   assert.deepEqual(a.errors,[]);
  }finally{a.dom.window.close()}
 });
+
+test('erro pode ser revisto hoje sem alterar agenda, respostas ou consumo de acesso',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-goal="2"]').click();d.querySelector('#daily-start').click();await pause();
+  const q=a.w.EXAM_BANK.questions.find(q=>q.id===a.saved.at(-1).state.session.ids[0]);
+  d.querySelector(`.option[data-letter="${'ABCD'.split('').find(k=>k!==q.key)}"]`).click();d.querySelector('#check').click();
+  const due=a.saved.at(-1).state.progress[q.id].due,events=a.saved.at(-1).state.events.length,charged=a.charges.length;
+  d.querySelector('[data-tab=home]').click();
+  assert.match(d.querySelector('#home-review-text').textContent,/1 erro/);
+  assert.equal(d.querySelector('#review-shortcut').hidden,false);
+  assert.match(d.querySelector('#review-schedule').textContent,/Próxima revisão programada/);
+  d.querySelector('#review-shortcut').click();await pause();
+  assert.equal(d.querySelector('#view-train').hidden,false);assert.equal(d.querySelectorAll('.option.correct').length,1);
+  assert.equal(a.saved.at(-1).state.progress[q.id].due,due);assert.equal(a.saved.at(-1).state.events.length,events);assert.equal(a.charges.length,charged);
+  assert.equal(d.querySelector('#next').hidden,true);assert.equal(d.querySelector('#check').textContent,'Próxima questão');assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('evolução atualiza todos os indicadores e revisão só de erros preserva resultado completo',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-goal="2"]').click();d.querySelector('#daily-start').click();await pause();
+  const ids=a.saved.at(-1).state.session.ids;
+  const first=a.w.EXAM_BANK.questions.find(q=>q.id===ids[0]),second=a.w.EXAM_BANK.questions.find(q=>q.id===ids[1]);
+  d.querySelector(`.option[data-letter="${'ABCD'.split('').find(k=>k!==first.key)}"]`).click();d.querySelector('#check').click();
+  d.querySelector('[data-tab=home]').click();d.querySelector('#daily-start').click();d.querySelector('#check').click();
+  d.querySelector(`.option[data-letter="${second.key}"]`).click();d.querySelector('#check').click();d.querySelector('#check').click();
+  assert.equal(d.querySelector('#feedback').hidden,true);
+  const result=d.querySelector('#question-area').textContent,charged=a.charges.length;
+  [...d.querySelectorAll('#question-area button')].find(b=>b.textContent==='Revisar só os erros').click();
+  assert.equal(d.querySelector('#question-counter').textContent,'Erros · 1 / 1');assert.match(d.querySelector('.question-title').textContent,new RegExp('Questão '+first.number));
+  assert.equal(d.querySelectorAll('#question-numbers button').length,1);d.querySelector('#check').click();
+  assert.equal(d.querySelector('#question-area').textContent,result);assert.equal(a.charges.length,charged);assert.equal(a.saved.at(-1).state.events.length,2);
+  [...d.querySelectorAll('#question-area button')].find(b=>b.textContent==='Revisar minhas respostas').click();
+  assert.equal(d.querySelectorAll('#question-numbers button').length,2);d.querySelector('#check').click();assert.match(d.querySelector('.question-title').textContent,new RegExp('Questão '+second.number));
+  d.querySelector('[data-tab=insights]').click();
+  for(const id of ['home-answered','insight-attempts'])assert.equal(d.querySelector('#'+id).textContent,'2');
+  for(const id of ['home-accuracy','insight-accuracy'])assert.equal(d.querySelector('#'+id).textContent,'50%');
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=jackeline]').click();d.querySelector('[data-tab=insights]').click();
+  assert.equal(d.querySelector('#home-answered').textContent,'0');assert.equal(d.querySelector('#insight-attempts').textContent,'0');assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('correção mostra alternativas por extenso, roteiro e aula curta sem mudar gabarito',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('#daily-start').click();await pause();
+  const q=a.w.EXAM_BANK.questions.find(q=>q.id===a.saved.at(-1).state.session.ids[0]),wrong='ABCD'.split('').find(k=>k!==q.key);
+  assert.equal(d.querySelector('.correction-guide'),null);
+  d.querySelector(`.option[data-letter="${wrong}"]`).click();d.querySelector('#check').click();
+  assert.ok(d.querySelector('.correct-answer').textContent.includes(q.options[q.key]));assert.ok(d.querySelector('.chosen-answer').textContent.includes(q.options[wrong]));
+  assert.equal(d.querySelectorAll('.correction-guide li').length,3);assert.match(d.querySelector('.correction-guide').textContent,/ainda não tem comentário individual/);
+  d.querySelector('.correction-guide button').click();assert.deepEqual(a.actions.help.at(-1),[q.id,'lesson',wrong]);assert.equal(a.saved.at(-1).state.events.length,1);assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('trilha orienta uma matéria e inicia duas questões inclusive em disciplina de 2021',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=path]').click();
+  assert.match(d.querySelector('#path-next-title').textContent,/Seu próximo passo/);assert.equal(d.querySelector('#path-full-plan').open,false);
+  d.querySelector('#lesson-subject').value='Direito Penal';d.querySelector('#lesson-practice').click();await pause();
+  const session=a.saved.at(-1).state.session;assert.equal(session.ids.length,2);assert.equal(session.subject,'Direito Penal');assert.equal(session.exam,'pmmg2021');
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('erros de treinos anteriores podem ser praticados antes da data programada',async()=>{
+ const a=open();let saved;try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('#daily-start').click();await pause();
+  const q=a.w.EXAM_BANK.questions.find(q=>q.id===a.saved.at(-1).state.session.ids[0]);
+  d.querySelector(`.option[data-letter="${'ABCD'.split('').find(k=>k!==q.key)}"]`).click();d.querySelector('#check').click();
+  saved=JSON.parse(JSON.stringify(a.saved.at(-1).state));saved.session=null;
+ }finally{a.dom.window.close()}
+ const b=open({snapshot:{profiles:{luanderson:saved},activeProfile:'luanderson'}});try{
+  const d=b.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('#review-shortcut').click();await pause();
+  const session=b.saved.at(-1).state.session;
+  assert.equal(session.kind,'mistakes');assert.deepEqual(session.ids,Object.keys(saved.progress));assert.equal(b.charges.length,1);
+  assert.equal(b.saved.at(-1).state.events.length,saved.events.length);
+  assert.equal(b.saved.at(-1).state.progress[session.ids[0]].due,saved.progress[session.ids[0]].due);assert.deepEqual(b.errors,[]);
+ }finally{b.dom.window.close()}
+});

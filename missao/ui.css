@@ -104,6 +104,15 @@ body{padding-bottom:calc(var(--mf-bottom-nav) + var(--mf-safe-bottom,env(safe-ar
 @supports(height:100dvh){body{min-height:100dvh}.profile-overlay{max-height:100dvh;overflow-y:auto}}
 
 /* Estudo com uma ação principal e opções recolhidas. */
+.home-review small{display:block;margin-top:6px;line-height:1.5}
+.correction-guide{margin:14px 0;border-top:1px solid currentColor;padding-top:10px}
+.correction-guide>summary,.question-navigation>summary{min-height:44px;align-content:center;cursor:pointer;font-weight:750;line-height:1.5}
+.correction-guide[open]>summary{margin-bottom:12px}
+.correct-answer,.chosen-answer{line-height:1.6;white-space:pre-line}
+.question-navigation{margin-top:16px;border-top:1px solid var(--edge);padding-top:8px}
+.question-title{scroll-margin-top:16px}
+.path-next{margin:20px 0 16px}
+.path-next h2{margin-bottom:12px}
 #view-home .home-grid{display:block;max-width:720px;margin:20px auto 14px}
 #view-home .hero{min-height:0;padding:24px;background:var(--panel);box-shadow:none}
 #view-home h1{font-size:clamp(25px,4vw,34px);margin-bottom:12px}

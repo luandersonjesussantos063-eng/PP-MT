@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=3.2.3';
+import {signIn,verifiedUser,runMonthlyBilling} from '../auth.js?v=3.2.4';
 const $=id=>document.getElementById(id);
 function show(id,visible){$(id).hidden=!visible;}
 async function check(){

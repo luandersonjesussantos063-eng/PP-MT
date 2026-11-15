@@ -28,6 +28,8 @@ export function microLesson(q){
   if(q?.lesson?.concept)return String(q.lesson.concept).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const text=(String(q?.statement||'')+' '+String(q?.subject||'')).toLocaleLowerCase('pt-BR');
   const lessons=[
+    [/tipos textuais|gênero textual|genero textual/,
+      '<b>Tipos textuais em 60s:</b> narração apresenta acontecimentos; descrição caracteriza pessoas, lugares ou objetos; exposição explica um assunto; argumentação defende uma ideia; injunção orienta uma ação. Um mesmo trecho pode misturar tipos. Identifique o que predomina e compare os sinais do próprio texto com cada alternativa.'],
     [/diagnóstico estratégico externo|diagnostico estrategico externo|rastreamento|mapeamento ambiental/,
       '<b>Diagnóstico estratégico externo em 60s:</b> pense em uma sequência: <b>rastreamento</b> identifica sinais e tendências; <b>monitoramento</b> acompanha esses sinais ao longo do tempo; <b>previsão</b> projeta possíveis desdobramentos futuros; <b>avaliação</b> mede o impacto provável dessas mudanças para a organização. Se a alternativa troca “previsão” por análise contínua do presente, desconfie.'],
     [/retroaliment|processador|parâmetros de sistemas|parametros de sistemas/,

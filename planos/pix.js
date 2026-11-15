@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runPixPilot} from '../auth.js?v=3.2.3';
+import {signIn,verifiedUser,runPixPilot} from '../auth.js?v=3.2.4';
 const $=id=>document.getElementById(id);
 let working=false,ready=false;
 function info(message,error=false){
