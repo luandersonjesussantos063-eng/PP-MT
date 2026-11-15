@@ -185,3 +185,9 @@ body{padding-bottom:calc(var(--mf-bottom-nav) + var(--mf-safe-bottom,env(safe-ar
  .question-actions .primary{flex:1;min-width:130px}
  .profile-choice,.legacy-tool-links button{min-height:48px}
 }
+
+.contest-choice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.contest-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:132px;padding:20px 16px;border:1px solid var(--edge);border-radius:14px;background:#24286d;color:var(--ink);text-align:left;cursor:pointer}
+.contest-card:hover{border-color:var(--mint);background:#2c3179}.contest-card:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+.contest-card strong{font-size:20px;line-height:1.25}.contest-card small{color:var(--dim);font-size:14px}.contest-code{font-weight:800;font-size:12px;letter-spacing:.1em;color:var(--mint)}
+@media(max-width:380px){.contest-choice{gap:8px}.contest-card{padding:16px 12px}.contest-card strong{font-size:18px}}

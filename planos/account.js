@@ -1,4 +1,4 @@
-import {loadMembership,runPremiumPractice} from '../auth.js?v=3.2.7';
+import {loadMembership,runPremiumPractice} from '../auth.js?v=3.2.8';
 import {PLAN} from './plan.js?v=2.15.0-comercial1';
 
 export async function renderMembership(container){

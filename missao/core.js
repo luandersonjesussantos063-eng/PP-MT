@@ -53,7 +53,7 @@ function attemptRank(q,progress,today,kind){
 function choose(questions,progress={},options={}){
  const kind=options.kind||"daily",now=options.today||dayDate(),size=Number(options.count||5),exam=options.exam||"all",subject=options.subject||"all";
  let pool=(questions||[]).filter(q=>isReal(q)&&(!options.excludeAnnulled||!q.annulled)&&(!q.annulled||kind==="full"));
- if(exam!=="all")pool=pool.filter(q=>q.exam===exam);
+ if(exam!=="all")pool=pool.filter(q=>q.exam===exam||["pcmg","pmmg"].includes(exam)&&q.exam.startsWith(exam));
  if(subject!=="all")pool=pool.filter(q=>subjectGroup(q)===subject||q.subject===subject);
  if(kind==="review")pool=pool.filter(q=>progress[q.id]&&reviewDue(progress[q.id],now));
  if(kind==="new")pool=pool.filter(q=>!progress[q.id]);

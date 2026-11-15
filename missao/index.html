@@ -6,15 +6,15 @@
 <meta name="robots" content="noindex,follow">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 
-<link rel="stylesheet" href="./ui.css?v=3.2.7">
+<link rel="stylesheet" href="./ui.css?v=3.2.8">
 <title>Missão Farda | Do zero à prova da PMMG</title>
-<script src="./banco-transcrito.js?v=3.2.7" defer=""></script>
-<script src="./pcmg-bank.js?v=3.2.7" defer=""></script>
-<script src="./core.js?v=3.2.7" defer=""></script>
-<script src="./sync.js?v=3.2.7" defer=""></script>
-<script src="./account-bridge.js?v=3.2.7" defer=""></script>
-<script src="./strike.js?v=3.2.7" defer=""></script>
-<script src="./app.js?v=3.2.7" defer=""></script>
+<script src="./banco-transcrito.js?v=3.2.8" defer=""></script>
+<script src="./pcmg-bank.js?v=3.2.8" defer=""></script>
+<script src="./core.js?v=3.2.8" defer=""></script>
+<script src="./sync.js?v=3.2.8" defer=""></script>
+<script src="./account-bridge.js?v=3.2.8" defer=""></script>
+<script src="./strike.js?v=3.2.8" defer=""></script>
+<script src="./app.js?v=3.2.8" defer=""></script>
 </head>
 <body>
 <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -48,6 +48,10 @@
 <div class="home-grid">
 <div class="hero panel">
 <div><p class="eyebrow">SEU TREINO DE HOJE</p><h1 id="greeting">Seu próximo treino</h1><p id="daily-copy" class="dim">Escolha seu ritmo e resolva uma questão de cada vez.</p></div>
+<div id="contest-choice" class="contest-choice" role="group" aria-label="O que vamos estudar hoje?" hidden>
+<button type="button" class="contest-card" data-study-contest="pcmg"><span class="contest-code">PCMG</span><strong>Polícia Civil</strong><small>Investigador</small></button>
+<button type="button" class="contest-card" data-study-contest="pmmg"><span class="contest-code">PMMG</span><strong>Polícia Militar</strong><small>Soldado</small></button>
+</div>
 <div class="micro-goal"><span>ESCOLHA O SEU RITMO</span><div class="goal-buttons" role="group" aria-label="Quantidade de questões para hoje"><button type="button" data-goal="2">2 <small>mínimo</small></button><button type="button" data-goal="5" class="selected" aria-pressed="true">5 <small>leve</small></button><button type="button" data-goal="10">10 <small>foco</small></button></div></div>
 <div class="hero-actions"><button id="daily-start" type="button" class="primary large">Começar treino</button><button id="resume" type="button" class="ghost" hidden="">Continuar treino</button></div>
 

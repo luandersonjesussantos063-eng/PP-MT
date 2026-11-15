@@ -1,4 +1,4 @@
-import {signIn,verifiedUser,runCentavoPremium,runMercadoPagoDiagnostic} from '../auth.js?v=3.2.7';
+import {signIn,verifiedUser,runCentavoPremium,runMercadoPagoDiagnostic} from '../auth.js?v=3.2.8';
 const $=id=>document.getElementById(id);
 let busy=false,enabled=false,created=false;
 function info(msg,error=false){

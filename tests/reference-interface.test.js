@@ -352,7 +352,7 @@ test('histórico complementar atravessa a ponte da conta e treinos novos prioriz
 test('Jackeline recebe treino misto real e Luanderson mantém banco PMMG ao trocar perfis',async()=>{
  const a=open();try{
   const d=a.w.document;d.querySelector('[data-profile=jackeline]').click();
-  assert.match(d.querySelector('#daily-copy').textContent,/PMMG \+ PCMG/);
+  assert.match(d.querySelector('#daily-copy').textContent,/Escolha Polícia Civil ou Polícia Militar/);
   assert.equal(d.querySelector('#exam').value,'all');
   assert.ok(d.querySelector('#exam option[value=pcmg2025]'));
   assert.ok(d.querySelector('#exam option[value=pcmg2021]'));
@@ -395,5 +395,50 @@ test('PCMG aceita alternativa E, inclui desempenho, favoritos e mantém eventos 
   assert.equal(a.w.MFCore.isValid(a.w.PCMG_BANK.questions.find(q=>q.id==='pcmg2025-59')),false);
   const merged=a.w.MFSync.merge(state,{...state,events:[]});assert.equal(merged.events[0].answer,'E');
   assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+
+test('escolha inicial da Jackeline abre somente Civil ou Militar e permite retomar sem perder respostas',async()=>{
+ const a=open();try{
+  const d=a.w.document;d.querySelector('[data-profile=jackeline]').click();
+  assert.equal(d.querySelector('#greeting').textContent,'O que vamos estudar hoje?');
+  assert.equal(d.querySelector('#contest-choice').hidden,false);
+  assert.match(d.querySelector('#daily-start').textContent,/Estudar as duas/);
+  d.querySelector('[data-study-contest=pcmg]').click();await pause();
+  assert.equal(a.saved.at(-1).state.session.exam,'pcmg');
+  assert.ok(a.saved.at(-1).state.session.ids.every(id=>id.startsWith('pcmg')));
+  assert.equal(d.querySelector('#exam').value,'pcmg');
+  assert.match(d.querySelector('#exam-note').textContent,/Somente Polícia Civil/);
+  assert.equal(d.querySelector('#mode option[value=full]').disabled,true);
+  d.querySelector('.option').click();d.querySelector('#check').click();
+  const civilIds=a.saved.at(-1).state.session.ids;
+  d.querySelector('[data-tab=home]').click();
+  assert.match(d.querySelector('#daily-copy').textContent,/Polícia Civil está salvo/);
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=luanderson]').click();
+  assert.equal(d.querySelector('#contest-choice').hidden,true);
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=jackeline]').click();
+  d.querySelector('#daily-start').click();await pause();
+  assert.deepEqual(a.saved.at(-1).state.session.ids,civilIds);
+  d.querySelector('[data-tab=home]').click();
+  a.w.confirm=()=>false;d.querySelector('[data-study-contest=pmmg]').click();await pause();
+  assert.equal(a.saved.at(-1).state.session.exam,'pcmg');
+  a.w.confirm=()=>true;d.querySelector('[data-study-contest=pmmg]').click();await pause();
+  assert.equal(a.saved.at(-1).state.session.exam,'pmmg');
+  assert.ok(a.saved.at(-1).state.session.ids.every(id=>id.startsWith('pmmg')));
+  assert.match(d.querySelector('#exam-note').textContent,/Somente Polícia Militar/);
+  assert.ok(a.saved.at(-1).state.events.some(e=>e.id.startsWith('pcmg')));
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('treino por polícia inclui edições antigas e respeita matéria, quantidade e anuladas',()=>{
+ const a=open();try{
+  const C=a.w.MFCore,questions=[...a.w.EXAM_BANK.questions,...a.w.PCMG_BANK.questions];
+  const civil=C.choose(questions,{}, {exam:'pcmg',count:200,excludeAnnulled:true});
+  assert.equal(civil.length,125);assert.ok(civil.some(q=>q.exam==='pcmg2021'));assert.ok(civil.some(q=>q.exam==='pcmg2025'));
+  assert.ok(civil.every(q=>q.exam.startsWith('pcmg')&&!q.annulled));
+  const military=C.choose(questions,{}, {exam:'pmmg',count:5,subject:'Português'});
+  assert.equal(military.length,5);assert.ok(military.every(q=>q.exam.startsWith('pmmg')&&q.subject==='Português'));
  }finally{a.dom.window.close()}
 });
