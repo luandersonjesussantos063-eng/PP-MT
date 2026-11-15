@@ -6,14 +6,14 @@
 <meta name="robots" content="noindex,follow">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 
-<link rel="stylesheet" href="./ui.css?v=3.2.4">
+<link rel="stylesheet" href="./ui.css?v=3.2.5">
 <title>Missão Farda | Do zero à prova da PMMG</title>
-<script src="./banco-transcrito.js?v=3.2.4" defer=""></script>
-<script src="./core.js?v=3.2.4" defer=""></script>
-<script src="./sync.js?v=3.2.4" defer=""></script>
-<script src="./account-bridge.js?v=3.2.4" defer=""></script>
-<script src="./strike.js?v=3.2.4" defer=""></script>
-<script src="./app.js?v=3.2.4" defer=""></script>
+<script src="./banco-transcrito.js?v=3.2.5" defer=""></script>
+<script src="./core.js?v=3.2.5" defer=""></script>
+<script src="./sync.js?v=3.2.5" defer=""></script>
+<script src="./account-bridge.js?v=3.2.5" defer=""></script>
+<script src="./strike.js?v=3.2.5" defer=""></script>
+<script src="./app.js?v=3.2.5" defer=""></script>
 </head>
 <body>
 <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -41,7 +41,7 @@
 <button type="button" class="tab active" data-tab="home" aria-current="page"><span aria-hidden="true">⌂</span> Início</button>
 <button type="button" class="tab" data-tab="train"><span aria-hidden="true">▤</span> Estudar</button>
 <button type="button" class="tab" data-tab="path"><span aria-hidden="true">◎</span> Trilha</button>
-<button type="button" class="tab" data-tab="insights"><span aria-hidden="true">▥</span> Evolução</button>
+<button type="button" class="tab" data-tab="insights"><span aria-hidden="true">▥</span> Desempenho</button>
 </nav>
 <section id="view-home" class="view">
 <div class="home-grid">
@@ -109,7 +109,7 @@
 <div id="weight-list" class="weights"></div><p class="fine">Referência histórica: CFSd 2025, com 50 questões. As matérias adicionais abaixo pertencem à prova de 2021. Confira o programa do próximo edital.</p>
 <a href="https://www.policiamilitar.mg.gov.br/site/crs" target="_blank" rel="noopener noreferrer">Consultar portal de concursos ↗</a>
 </div>
-</div></details><div class="panel section-card topics-card"><div class="section-head"><div><p class="eyebrow">SEU CHECKLIST</p><h2>Matérias e assuntos para revisar</h2></div></div><p class="dim small">Marcar um assunto significa “revisei”; não é certificado de domínio. Questões reais e seu percentual de acertos ficam na aba Evolução.</p><div id="syllabus" class="syllabus"></div></div></details>
+</div></details><div class="panel section-card topics-card"><div class="section-head"><div><p class="eyebrow">SEU CHECKLIST</p><h2>Matérias e assuntos para revisar</h2></div></div><p class="dim small">Marcar um assunto significa “revisei”; não é certificado de domínio. Questões reais e seu percentual de acertos ficam na aba Desempenho.</p><div id="syllabus" class="syllabus"></div></div></details>
 
 
 
@@ -136,7 +136,18 @@
 <p class="fine">Este aplicativo ajuda nos estudos e não substitui editais, acompanhamento médico ou preparação física profissional.</p>
 </details></div>
 </section>
-<section id="view-insights" class="view" hidden=""><aside class="snapshot panel">
+<section id="view-insights" class="view" hidden=""><section class="performance-dashboard">
+<div class="performance-heading"><p class="eyebrow">SEUS ESTUDOS EM NÚMEROS</p><h1>Desempenho</h1><p id="performance-profile" class="dim"></p></div>
+<div class="performance-tabs" role="tablist" aria-label="Visualização do desempenho"><button type="button" role="tab" id="performance-general-tab" aria-controls="performance-general" aria-selected="true">Geral</button><button type="button" role="tab" id="performance-saved-tab" aria-controls="performance-saved" aria-selected="false">Filtros salvos <span id="performance-saved-count">0</span></button></div>
+<div id="performance-general" role="tabpanel" aria-labelledby="performance-general-tab">
+<details class="panel performance-filters"><summary>Filtrar <span id="performance-filter-label">Todas as matérias e provas</span></summary><div class="performance-filter-fields"><div class="field"><label for="performance-subject">Matéria do desempenho</label><select id="performance-subject"><option value="all">Todas as matérias</option></select></div><div class="field"><label for="performance-exam">Prova do desempenho</label><select id="performance-exam"><option value="all">Todas as provas</option></select></div></div><div class="field"><label for="performance-filter-name">Nome para salvar este filtro (opcional)</label><input id="performance-filter-name" maxlength="60" placeholder="Ex.: Português da semana"></div><div class="source-links"><button id="performance-save-filter" type="button" class="outline">Salvar filtro</button><button id="performance-clear-filter" type="button" class="ghost">Limpar filtros</button></div></details>
+<div class="performance-periods" role="group" aria-label="Período do desempenho"><button type="button" data-performance-period="today" aria-pressed="true">Hoje</button><button type="button" data-performance-period="7" aria-pressed="false">7 dias</button><button type="button" data-performance-period="30" aria-pressed="false">30 dias</button><button type="button" data-performance-period="all" aria-pressed="false">Sempre</button></div>
+<div id="performance-empty" class="performance-empty" hidden=""><h2>Pratique questões agora mesmo!</h2><p class="dim">Você ainda não respondeu questões com estes filtros. Escolha outro período ou comece um treino.</p><button id="performance-start" type="button" class="outline">Praticar questões</button></div>
+<section class="panel performance-score" aria-label="Resumo do período selecionado"><div class="performance-ring" role="img" id="performance-ring" aria-label="Nenhuma resposta no período"><svg viewBox="0 0 112 112" aria-hidden="true"><circle class="performance-ring-track" cx="56" cy="56" r="44"></circle><circle id="performance-ring-correct" cx="56" cy="56" r="44" stroke-dasharray="0 276.46"></circle></svg><strong id="performance-percent">0%</strong></div><dl class="performance-totals"><div><dt><i class="legend-resolved" aria-hidden="true"></i>Resolvidas</dt><dd id="performance-total">0</dd></div><div><dt><i class="legend-correct" aria-hidden="true"></i>Certas</dt><dd id="performance-correct">0</dd></div><div><dt><i class="legend-wrong" aria-hidden="true"></i>Erradas</dt><dd id="performance-wrong">0</dd></div></dl><p class="fine performance-count-note">Cada resposta corrigida conta como uma tentativa. Questões anuladas não entram nos totais.</p></section>
+<section class="panel section-card performance-trend"><h2 id="performance-chart-title">Sua evolução hoje</h2><p id="performance-chart-range" class="dim small"></p><div class="performance-chart-legend"><span><i class="legend-correct"></i>Certas</span><span><i class="legend-wrong"></i>Erradas</span></div><div id="performance-chart" class="performance-chart" role="img" aria-label="Evolução das respostas"></div><details class="performance-chart-data"><summary>Ver valores do gráfico</summary><div class="performance-table-scroll"><table><caption>Respostas corrigidas por intervalo</caption><thead><tr><th scope="col">Intervalo</th><th scope="col">Certas</th><th scope="col">Erradas</th><th scope="col">Total</th></tr></thead><tbody id="performance-chart-table"></tbody></table></div></details></section>
+<details class="panel section-card quiet-details"><summary>Desempenho por matéria</summary><div id="performance-subjects" class="subject-progress"></div></details>
+</div>
+<div id="performance-saved" role="tabpanel" aria-labelledby="performance-saved-tab" hidden=""><p class="dim">Os filtros ficam salvos neste perfil. Ao abrir um filtro, os resultados são calculados com suas respostas atuais.</p><div id="performance-saved-list"></div></div></section><details id="performance-history" class="panel section-card quiet-details"><summary>Histórico completo e revisões</summary><aside class="snapshot panel">
 <div class="snapshot-head"><span class="eyebrow">SEU PAINEL</span><span class="dot-label">PROGRESSO DO PERFIL</span></div>
 <div class="snapshot-row"><div><strong id="home-answered">0</strong><small>tentativas registradas</small></div><div><strong id="home-accuracy">—</strong><small>acertos até agora</small></div></div>
 <div class="mini-meter"><div class="mini-meter-top"><span>Conhecimento praticado</span><strong id="unique-done">0/180</strong></div><div class="meter"><span id="seen-meter"></span></div></div>
@@ -156,12 +167,13 @@
 </div>
 <div class="two-cols"><div class="panel section-card"><p class="eyebrow">ÚLTIMOS SETE DIAS</p><h2>Constância sem cobrança</h2><div id="insight-calendar" class="week-calendar"></div><p id="last-activity" class="dim small"></p></div>
 <div class="panel section-card"><p class="eyebrow">SUA PRÓXIMA AÇÃO</p><h2 id="next-recommendation">Comece com uma sessão curta</h2><p class="dim" id="next-recommendation-detail">Depois de responder questões reais, suas prioridades aparecerão aqui.</p><button id="next-step" type="button" class="outline">Treinar minha prioridade →</button></div></div>
-<details class="panel section-card quiet-details"><summary>Backup e privacidade</summary><p class="eyebrow">SEUS DADOS</p><h2>Backup e privacidade</h2><p class="dim">O progresso de cada perfil é salvo neste navegador e sincronizado com a sua conta nos aparelhos conectados. Exporte um backup como cópia adicional dos seus estudos.</p>
-<div class="backup-actions"><button id="export-backup" class="outline" type="button">Baixar backup do meu perfil</button><button id="export-csv" class="outline light" type="button">Exportar CSV</button><button id="import-trigger" class="ghost" type="button">Restaurar backup</button><input id="import-file" class="sr-only" type="file" accept=".json,application/json"></div><p id="backup-status" class="dim small" role="status"></p></details>
-</section>
+
+</details><details class="panel section-card quiet-details"><summary>Backup e privacidade</summary><p class="eyebrow">SEUS DADOS</p><h2>Backup e privacidade</h2><p class="dim">O progresso de cada perfil é salvo neste navegador e sincronizado com a sua conta nos aparelhos conectados. Exporte um backup como cópia adicional dos seus estudos.</p>
+<div class="backup-actions"><button id="export-backup" class="outline" type="button">Baixar backup do meu perfil</button><button id="export-csv" class="outline light" type="button">Exportar CSV</button><button id="import-trigger" class="ghost" type="button">Restaurar backup</button><input id="import-file" class="sr-only" type="file" accept=".json,application/json"></div><p id="backup-status" class="dim small" role="status"></p></details></section>
 </main>
 <footer class="footer"><div class="shell"><strong>Missão Farda</strong> · Uma ferramenta independente de preparação para a PMMG.<p>Questões consultadas nos cadernos oficiais e fontes identificadas em cada exercício. Gabarito não é comentário detalhado. Não somos vinculados à corporação nem às bancas.</p><a href="https://novabytesolucoes.com.br/" target="_blank" rel="noopener noreferrer">Desenvolvido por Nova Byte ↗</a></div></footer>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden=""></div>
+
 
 
 

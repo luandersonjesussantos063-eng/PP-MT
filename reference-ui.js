@@ -47,7 +47,7 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
 
  };
  let shell=document.getElementById('reference-shell');
- if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Hoje, Questões, Trilha e Evolução';frame.src='./missao/index.html?v=3.2.4';shell.appendChild(frame);document.body.appendChild(shell)}
+ if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Início, Estudar, Trilha e Desempenho';frame.src='./missao/index.html?v=3.2.5';shell.appendChild(frame);document.body.appendChild(shell)}
  document.body.classList.add('reference-mode');
 }
 

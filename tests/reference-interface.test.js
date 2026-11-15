@@ -14,9 +14,9 @@ function open({installation={installed:true},id='account-a',snapshot={profiles:{
  for(const file of ['banco-transcrito.js','core.js','sync.js','account-bridge.js','strike.js','app.js'])w.eval(read(file));
  return {dom,w,saved,charges,errors,actions};
 }
-test('interface do vídeo mantém exatamente as abas Hoje, Questões, Trilha e Evolução',()=>{
+test('navegação mantém quatro abas: Início, Estudar, Trilha e Desempenho',()=>{
  const a=open();try{
-  assert.deepEqual([...a.w.document.querySelectorAll('.tabs [data-tab]')].map(x=>x.textContent.trim().replace(/^[^\p{L}]+/u,'')),['Início','Estudar','Trilha','Evolução']);
+  assert.deepEqual([...a.w.document.querySelectorAll('.tabs [data-tab]')].map(x=>x.textContent.trim().replace(/^[^\p{L}]+/u,'')),['Início','Estudar','Trilha','Desempenho']);
   a.w.document.querySelector('[data-profile=luanderson]').click();
   for(const tab of ['train','path','insights','home']){a.w.document.querySelector(`[data-tab=${tab}]`).click();assert.equal(a.w.document.querySelector('#view-'+tab).hidden,false)}
   assert.deepEqual(a.errors,[]);
@@ -249,4 +249,75 @@ test('erros de treinos anteriores podem ser praticados antes da data programada'
   assert.equal(b.saved.at(-1).state.events.length,saved.events.length);
   assert.equal(b.saved.at(-1).state.progress[session.ids[0]].due,saved.progress[session.ids[0]].due);assert.deepEqual(b.errors,[]);
  }finally{b.dom.window.close()}
+});
+
+function performanceFixture(){
+ const at=(offset,hour=12)=>{const d=new Date();d.setDate(d.getDate()+offset);d.setHours(hour,0,0,0);return d.toISOString();};
+ const attempts=[
+  {id:'pmmg2024-1',selected:0,correct:false,at:at(0,9)},
+  {id:'pmmg2024-31',selected:2,correct:true,at:at(0,10)},
+  {id:'pmmg2021-1',selected:3,correct:true,at:at(0,11)},
+  {id:'pmmg2021-2',selected:1,correct:false,at:at(-2)},
+  {id:'pmmg2024-3',selected:1,correct:true,at:at(-15)},
+  {id:'pmmg2021-3',selected:1,correct:false,at:at(-45)},
+  {id:'pmmg2023-2',selected:0,correct:true,at:at(0)}, // anulada: não entra
+  {id:'pmmg2024-4',selected:0,correct:true,at:at(2)}, // data futura: não entra
+ ];
+ return toReferenceState({attempts,sessions:[],program:{}});
+}
+test('desempenho filtra períodos e gráfico soma exatamente as respostas válidas',()=>{
+ const data=performanceFixture(),a=open({snapshot:{profiles:{luanderson:data},activeProfile:'luanderson'}});try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=insights]').click();
+  const expected={today:[3,2,1,'67%'],'7':[4,2,2,'50%'],'30':[5,3,2,'60%'],all:[6,3,3,'50%']};
+  for(const [period,values] of Object.entries(expected)){
+   d.querySelector(`[data-performance-period="${period}"]`).click();
+   assert.deepEqual(['total','correct','wrong','percent'].map(id=>d.querySelector('#performance-'+id).textContent),values.map(String));
+   const rows=[...d.querySelectorAll('#performance-chart-table tr')];
+   assert.equal(rows.reduce((n,row)=>n+Number(row.lastElementChild.textContent),0),values[0]);
+   assert.equal(d.querySelector(`[data-performance-period="${period}"]`).getAttribute('aria-pressed'),'true');
+  }
+  assert.deepEqual(a.saved.at(-1).state.events,data.events);assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('desempenho combina matéria e prova e mostra estado vazio sem barras fictícias',()=>{
+ const a=open({snapshot:{profiles:{luanderson:performanceFixture()},activeProfile:'luanderson'}});try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=insights]').click();d.querySelector('[data-performance-period="7"]').click();
+  const select=(id,value)=>{d.querySelector('#'+id).value=value;d.querySelector('#'+id).dispatchEvent(new a.w.Event('change'));};
+  select('performance-subject','Português');select('performance-exam','pmmg2021');
+  assert.equal(d.querySelector('#performance-total').textContent,'2');assert.equal(d.querySelector('#performance-percent').textContent,'50%');
+  select('performance-subject','Literatura');assert.equal(d.querySelector('#performance-empty').hidden,false);assert.equal(d.querySelector('#performance-percent').textContent,'0%');
+  assert.equal(d.querySelector('#performance-ring').classList.contains('has-data'),false);
+  assert.ok([...d.querySelectorAll('.performance-bar span')].every(n=>n.style.height==='0%'));
+  d.querySelector('#performance-clear-filter').click();assert.equal(d.querySelector('#performance-total').textContent,'3');assert.equal(d.querySelector('#performance-empty').hidden,true);assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+});
+
+test('filtros salvos persistem no perfil, reabrem valores atuais e não vazam para outro aluno',()=>{
+ const a=open({snapshot:{profiles:{luanderson:performanceFixture()},activeProfile:'luanderson'}});let snapshot;try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=insights]').click();d.querySelector('[data-performance-period="7"]').click();
+  d.querySelector('#performance-filter-name').value='Meu filtro <img src=x onerror=alert(1)>';
+  d.querySelector('#performance-save-filter').click();assert.equal(d.querySelector('#performance-saved-count').textContent,'1');
+  snapshot=JSON.parse(JSON.stringify(a.saved.at(-1).state));
+  d.querySelector('#performance-saved-tab').click();assert.equal(d.querySelector('#performance-saved').hidden,false);assert.equal(d.querySelector('#performance-saved-list img'),null);
+  d.querySelector('#switch-profile').click();d.querySelector('[data-profile=jackeline]').click();d.querySelector('[data-tab=insights]').click();
+  assert.equal(d.querySelector('#performance-total').textContent,'0');assert.equal(d.querySelector('#performance-saved-count').textContent,'0');
+  assert.equal(d.querySelector('#performance-general').hidden,false);assert.equal(d.querySelector('[data-performance-period=today]').getAttribute('aria-pressed'),'true');
+  assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
+ const b=open({snapshot:{profiles:{luanderson:snapshot},activeProfile:'luanderson'}});try{
+  const d=b.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=insights]').click();d.querySelector('[data-performance-period=today]').click();
+  d.querySelector('#performance-saved-tab').click();[...d.querySelectorAll('#performance-saved-list button')].find(b=>b.textContent==='Abrir filtro').click();
+  assert.equal(d.querySelector('#performance-total').textContent,'4');assert.equal(d.querySelector('[data-performance-period="7"]').getAttribute('aria-pressed'),'true');
+  d.querySelector('#performance-saved-tab').click();[...d.querySelectorAll('#performance-saved-list button')].find(b=>b.textContent==='Remover').click();assert.equal(d.querySelector('#performance-saved-count').textContent,'0');assert.equal(b.saved.at(-1).state.events.length,snapshot.events.length);assert.deepEqual(b.errors,[]);
+ }finally{b.dom.window.close()}
+});
+
+test('gráfico mantém tentativas sem horário em intervalo identificado',()=>{
+ const data=performanceFixture();data.events[0].at=null;
+ const a=open({snapshot:{profiles:{luanderson:data},activeProfile:'luanderson'}});try{
+  const d=a.w.document;d.querySelector('[data-profile=luanderson]').click();d.querySelector('[data-tab=insights]').click();
+  const rows=[...d.querySelectorAll('#performance-chart-table tr')];assert.ok(rows.some(row=>row.textContent.includes('Horário não informado')));
+  assert.equal(rows.reduce((n,row)=>n+Number(row.lastElementChild.textContent),0),Number(d.querySelector('#performance-total').textContent));assert.deepEqual(a.errors,[]);
+ }finally{a.dom.window.close()}
 });

@@ -39,6 +39,7 @@ return state;
 let state=defaultState();
 let activeTab="home",countdown=null,remaining=0,timerPaused=false,toastTimeout=null,readerOpenKey=null;
 let syncClient=null;
+let performancePanel='general';
 function save(){if(!activeProfile)return false;try{
  if(window.MFSync)window.MFSync.touch(state,read(STATEKEY)?._sync?read(STATEKEY):defaultState());
  localStorage.setItem(STATEKEY,JSON.stringify(state));syncClient?.schedule();return true;}catch{toast("Armazenamento do navegador indisponível: exporte um backup dos seus dados.");return false;}}
@@ -47,6 +48,7 @@ function chooseProfile(id){
  if(activeProfile&&!save())return;
  syncClient?.stop();timerStop();remaining=0;timerPaused=false;readerOpenKey=null;
  activeProfile=id;STATEKEY=LEGACYKEY+"-"+id;state=loadProfile(id);
+ performancePanel='general';$('performance-filter-name').value='';
  if(save())try{if(!read(PROFILEKEY))localStorage.setItem(PROFILEKEY,JSON.stringify(id));}catch{}
  $("active-profile-name").textContent=PROFILES[id];
  $("active-profile-avatar").src="./avatares/"+id+".webp";$("active-profile-avatar").hidden=false;
@@ -438,8 +440,70 @@ function renderPath(){
  const weekStart=C.dayShift(DAY,-((new Date(DAY+"T12:00:00Z").getUTCDay()+6)%7));
  $("essay-week").checked=state.essayWeek===weekStart;
 }
+function sanitizePerformance(value={}){
+ return {period:['today','7','30','all'].includes(value?.period)?value.period:'today',subject:C.GROUPS.includes(value?.subject)?value.subject:'all',exam:Object.hasOwn(DB.exams,value?.exam)?value.exam:'all'};
+}
+function performanceFilter(){return sanitizePerformance(state.settings.performanceFilter);}
+function savedPerformanceFilters(){return Array.isArray(state.settings.performanceSaved)?state.settings.performanceSaved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&x.filter).slice(0,12):[];}
+function performanceEvents(filter){
+ const today=C.dayDate(),start=filter.period==='7'?C.dayShift(today,-6):filter.period==='30'?C.dayShift(today,-29):filter.period==='today'?today:null;
+ return totalEvents().filter(e=>{const q=QUESTION.get(e.id),at=Date.parse(e.day+'T12:00:00Z');return C.isValid(q)&&/^[ABCD]$/.test(e.answer)&&typeof e.correct==='boolean'&&/^\d{4}-\d{2}-\d{2}$/.test(e.day||'')&&Number.isFinite(at)&&new Date(at).toISOString().slice(0,10)===e.day&&e.day<=today&&(!start||e.day>=start)&&(filter.subject==='all'||C.subjectGroup(q)===filter.subject)&&(filter.exam==='all'||q.exam===filter.exam);});
+}
+function performanceBuckets(events,period){
+ const today=C.dayDate(),first=events.map(e=>e.day).sort()[0]||today;
+ const start=period==='today'?today:period==='7'?C.dayShift(today,-6):period==='30'?C.dayShift(today,-29):first;
+ const days=C.daysBetween(start,today)+1,span=period==='all'?Math.max(1,Math.ceil(days/12)):1;
+ const buckets=period==='today'?Array.from({length:24},(_,i)=>({label:String(i).padStart(2,'0')+'h',full:String(i).padStart(2,'0')+'h',correct:0,wrong:0})):Array.from({length:Math.ceil(days/span)},(_,i)=>{const from=C.dayShift(start,i*span),to=C.dayShift(start,Math.min(days-1,(i+1)*span-1)),format=d=>d.split('-').reverse().join('/');return {label:from.slice(8)+'/'+from.slice(5,7),full:from===to?format(from):format(from)+' a '+format(to),correct:0,wrong:0};});
+ for(const event of events){
+  let index;
+  if(period==='today'){
+   const at=typeof event.at==='number'?event.at:Date.parse(event.at),date=new Date(at);
+   if(Number.isFinite(date.getTime()))index=date.getHours();
+   else{index=buckets.findIndex(b=>b.label==='Sem horário');if(index<0){index=buckets.length;buckets.push({label:'Sem horário',full:'Horário não informado',correct:0,wrong:0});}}
+  }else index=Math.floor(C.daysBetween(start,event.day)/span);
+  if(buckets[index])buckets[index][event.correct?'correct':'wrong']++;
+ }
+ return {buckets,start,end:today};
+}
+function renderPerformance(){
+ const filter=performanceFilter(),events=performanceEvents(filter),correct=events.filter(e=>e.correct).length,wrong=events.length-correct,score=percent(correct,events.length);
+ const labels={today:'hoje','7':'nos últimos 7 dias','30':'nos últimos 30 dias',all:'em todo o período'};
+ $('performance-profile').textContent='Perfil: '+(PROFILES[activeProfile]||'Escolha um aluno');
+ $('performance-subject').value=filter.subject;$('performance-exam').value=filter.exam;
+ document.querySelectorAll('[data-performance-period]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.performancePeriod===filter.period)));
+ $('performance-filter-label').textContent=(filter.subject==='all'?'Todas as matérias':filter.subject)+' · '+(filter.exam==='all'?'Todas as provas':DB.exams[filter.exam].short);
+ $('performance-empty').hidden=events.length>0;
+ $('performance-total').textContent=String(events.length);$('performance-correct').textContent=String(correct);$('performance-wrong').textContent=String(wrong);$('performance-percent').textContent=score+'%';
+ $('performance-ring').classList.toggle('has-data',events.length>0);
+ $('performance-ring').setAttribute('aria-label',events.length?score+'% de acertos: '+correct+' certas e '+wrong+' erradas em '+events.length+' respostas.':'Nenhuma resposta neste período.');
+ $('performance-ring-correct').setAttribute('stroke-dasharray',(events.length?correct/events.length*276.46:0)+' 276.46');
+ const data=performanceBuckets(events,filter.period),chart=$('performance-chart'),table=$('performance-chart-table');chart.replaceChildren();table.replaceChildren();
+ $('performance-chart-title').textContent='Sua evolução '+labels[filter.period];
+ $('performance-chart-range').textContent=data.start.split('-').reverse().join('/')+' a '+data.end.split('-').reverse().join('/')+(filter.period==='today'?' · por horário':'');
+ chart.setAttribute('aria-label','Respostas corrigidas '+labels[filter.period]+': '+correct+' certas e '+wrong+' erradas. Os valores por intervalo estão na tabela abaixo.');
+ const max=Math.max(1,...data.buckets.map(b=>b.correct+b.wrong)),tick=Math.max(1,Math.ceil(data.buckets.length/6));
+ for(const [index,bucket] of data.buckets.entries()){
+  const column=add(chart,'div','performance-column');column.title=bucket.full+': '+bucket.correct+' certas, '+bucket.wrong+' erradas';
+  const bar=add(column,'div','performance-bar');bar.setAttribute('aria-hidden','true');
+  const bad=add(bar,'span','performance-bar-wrong');bad.style.height=(bucket.wrong/max*100)+'%';
+  const good=add(bar,'span','performance-bar-correct');good.style.height=(bucket.correct/max*100)+'%';
+  const label=add(column,'small','',index%tick===0||index===data.buckets.length-1?bucket.label:'');label.setAttribute('aria-hidden','true');
+  const row=add(table,'tr');const heading=add(row,'th','',bucket.full);heading.scope='row';for(const value of [bucket.correct,bucket.wrong,bucket.correct+bucket.wrong])add(row,'td','',value);
+ }
+ const groups=C.statsBySubject(events,DB.questions),subjects=$('performance-subjects');subjects.replaceChildren();
+ for(const subject of C.GROUPS){const value=groups[subject];if(filter.subject!=='all'&&filter.subject!==subject)continue;if(!value.attempts)continue;const row=add(subjects,'div','subject-line');add(row,'span','',subject);add(row,'strong','',value.percent+'%');add(row,'small','',value.correct+' certas em '+value.attempts+' respostas');}
+ if(!subjects.childNodes.length)add(subjects,'p','dim','Nenhuma resposta para comparar neste período.');
+ const saved=savedPerformanceFilters();$('performance-saved-count').textContent=String(saved.length);
+ const savedList=$('performance-saved-list');savedList.replaceChildren();
+ if(!saved.length)add(savedList,'p','support-note','Nenhum filtro salvo. Em Geral, abra Filtrar e toque em Salvar filtro.');
+ for(const item of saved){const entry=add(savedList,'article','panel performance-saved-item');add(entry,'h2','',item.name.slice(0,60));const selected=sanitizePerformance(item.filter);add(entry,'p','dim small',(selected.subject==='all'?'Todas as matérias':selected.subject)+' · '+labels[selected.period]);const actions=add(entry,'div','source-links');actions.append(button('Abrir filtro','outline',()=>{state.settings.performanceFilter=selected;performancePanel='general';save();renderInsights();}),button('Remover','ghost',()=>{state.settings.performanceSaved=savedPerformanceFilters().filter(f=>f.id!==item.id);save();renderPerformance();}));}
+ $('performance-general').hidden=performancePanel!=='general';$('performance-saved').hidden=performancePanel!=='saved';
+ $('performance-history').hidden=performancePanel!=='general';
+ $('performance-general-tab').setAttribute('aria-selected',String(performancePanel==='general'));$('performance-saved-tab').setAttribute('aria-selected',String(performancePanel==='saved'));
+}
 function renderInsights(){
  renderHome();
+ renderPerformance();
  const events=totalEvents(),total=C.score(events,DB.questions),groups=C.statsBySubject(events,DB.questions);
  $("insight-attempts").textContent=String(total.attempts);
  $("insight-accuracy").textContent=total.percent===null?"—":total.percent+"%";
@@ -483,6 +547,8 @@ function restore(file){
  safe.essay=typeof incoming.essay==="string"?incoming.essay.slice(0,20000):"";
  safe.essayWeek=typeof incoming.essayWeek==="string"?incoming.essayWeek.slice(0,10):"";
  safe.settings={favorites:Array.isArray(incoming.settings?.favorites)?incoming.settings.favorites.filter(id=>IDS.has(id)):[],goal:[2,5,10].includes(Number(incoming.settings?.goal))?Number(incoming.settings.goal):5,timer:"off"};
+ if(incoming.settings?.performanceFilter)safe.settings.performanceFilter=sanitizePerformance(incoming.settings.performanceFilter);
+ if(Array.isArray(incoming.settings?.performanceSaved))safe.settings.performanceSaved=incoming.settings.performanceSaved.filter(x=>x&&typeof x.id==='string'&&typeof x.name==='string'&&x.filter).slice(0,12).map(x=>({id:x.id.slice(0,100),name:x.name.slice(0,60),filter:sanitizePerformance(x.filter)}));
  state=window.MFSync?window.MFSync.merge(state,window.MFSync.touch(safe,defaultState())):safe;save();toast("Backup restaurado com sucesso.");show("insights");
  }catch(e){toast("Não foi possível restaurar: formato do backup inválido.");}};
  reader.readAsText(file);
@@ -491,6 +557,24 @@ function shortcuts(e){if(!$("profile-picker").hidden||activeTab!=="train"||!curr
  const key=e.key.toUpperCase();if("ABCD".includes(key)&&key.length===1){const s=currentSession(),q=sessionItems()[s.index];if(!q.options[key]||(s.checked[q.id]&&s.grading==="practice"))return;s.picks[q.id]=key;save();renderQuestion();e.preventDefault();}
 }
 function initEvents(){
+ for(const subject of C.GROUPS){const option=el('option','',subject);option.value=subject;$('performance-subject').append(option);}
+ for(const [id,exam] of Object.entries(DB.exams)){const option=el('option','',exam.short);option.value=id;$('performance-exam').append(option);}
+ function changePerformance(values){state.settings.performanceFilter={...performanceFilter(),...values};save();renderInsights();}
+ document.querySelectorAll('[data-performance-period]').forEach(b=>b.onclick=()=>changePerformance({period:b.dataset.performancePeriod}));
+ $('performance-subject').onchange=()=>changePerformance({subject:$('performance-subject').value});
+ $('performance-exam').onchange=()=>changePerformance({exam:$('performance-exam').value});
+ $('performance-clear-filter').onclick=()=>changePerformance({period:'today',subject:'all',exam:'all'});
+ $('performance-general-tab').onclick=()=>{performancePanel='general';renderInsights();};
+ $('performance-saved-tab').onclick=()=>{performancePanel='saved';renderInsights();};
+ const performanceTabs=[$('performance-general-tab'),$('performance-saved-tab')];
+ performanceTabs.forEach((button,index)=>button.onkeydown=event=>{const key=event.key;if(!['ArrowLeft','ArrowRight','Home','End'].includes(key))return;event.preventDefault();const next=key==='Home'?0:key==='End'?1:1-index;performanceTabs[next].click();performanceTabs[next].focus();});
+ $('performance-start').onclick=()=>show('train');
+ $('performance-save-filter').onclick=()=>{
+  const filter=performanceFilter(),saved=savedPerformanceFilters();if(saved.length>=12){toast('Você já tem 12 filtros salvos. Remova um para salvar outro.');return;}
+  const periods={today:'Hoje','7':'7 dias','30':'30 dias',all:'Sempre'},name=$('performance-filter-name').value.trim().slice(0,60)||periods[filter.period]+' · '+(filter.subject==='all'?'Todas as matérias':filter.subject);
+  if(saved.some(item=>item.name===name&&JSON.stringify(sanitizePerformance(item.filter))===JSON.stringify(filter))){toast('Este filtro já está salvo.');return;}
+  state.settings.performanceSaved=[...saved,{id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),name,filter}];save();$('performance-filter-name').value='';toast('Filtro salvo neste perfil.');renderInsights();
+ };
  window.MFQuestionInfo=id=>{const session=currentSession();if(!session||session.finished||session.grading!=='practice'||session.ids[session.index]!==id||session.checked[id])return null;return {answer:session.picks[id]||'',eliminated:session.eliminated?.[id]||[]}};
  window.MFEliminate=(id,letter)=>{const info=window.MFQuestionInfo(id),q=QUESTION.get(id);if(!info||!q||q.key===letter||!'ABCD'.includes(letter))return false;const session=currentSession();session.eliminated=session.eliminated||{};session.eliminated[id]=[...new Set([...(session.eliminated[id]||[]),letter])];if(session.picks[id]===letter)delete session.picks[id];save();renderQuestion();return true;};
  $('train-favorites').onclick=()=>sessionNew({kind:'favorites',exam:'all',subject:'all',count:10,grading:'practice'});
