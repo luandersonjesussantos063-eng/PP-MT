@@ -8,13 +8,14 @@
 <meta name="robots" content="noindex,follow">
 <link rel="icon" type="image/svg+xml" href="./icon.svg">
 
-<link rel="stylesheet" href="./ui.css?v=3.2.0">
+<link rel="stylesheet" href="./ui.css?v=3.2.1">
 <title>Missão Farda | Do zero à prova da PMMG</title>
-<script src="./banco-transcrito.js?v=3.2.0" defer></script>
-<script src="./core.js?v=3.2.0" defer></script>
-<script src="./sync.js?v=3.2.0" defer></script>
-<script src="./account-bridge.js?v=3.2.0" defer></script>
-<script src="./app.js?v=3.2.0" defer></script>
+<script src="./banco-transcrito.js?v=3.2.1" defer></script>
+<script src="./core.js?v=3.2.1" defer></script>
+<script src="./sync.js?v=3.2.1" defer></script>
+<script src="./account-bridge.js?v=3.2.1" defer></script>
+<script src="./strike.js?v=3.2.1" defer></script>
+<script src="./app.js?v=3.2.1" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Pular para o conteúdo</a>
@@ -24,7 +25,7 @@
 <span class="logo-symbol"><img src="./brasao-pmmg.svg" alt="Brasão da Polícia Militar de Minas Gerais" width="58" height="65"></span>
 <span><strong>MISSÃO FARDA</strong><small>TRILHA PMMG · SOLDADO</small></span>
 </a>
-<div class="head-links"><button id="account-settings" class="ghost" type="button">Minha conta</button><button id="account-signout" class="ghost" type="button">Sair</button><span class="online-status" id="connection-status"><span class="status-dot"></span>Provas oficiais</span><a class="header-link" href="https://www.policiamilitar.mg.gov.br/site/crs" target="_blank" rel="noopener noreferrer">Portal CRS/PMMG <span aria-hidden="true">↗</span></a></div>
+<div class="head-links"><button id="account-settings" class="ghost" type="button" aria-label="Configurações e ferramentas" title="Configurações e ferramentas">⚙</button><button id="account-signout" class="ghost" type="button">Sair</button><span class="online-status" id="connection-status"><span class="status-dot"></span>Provas oficiais</span><a class="header-link" href="https://www.policiamilitar.mg.gov.br/site/crs" target="_blank" rel="noopener noreferrer">Portal CRS/PMMG <span aria-hidden="true">↗</span></a></div>
 </div>
 </header>
 <section id="profile-picker" class="profile-overlay" role="dialog" aria-modal="true" aria-labelledby="profile-title" hidden>
@@ -34,6 +35,7 @@
 <p class="fine">Escolha seu perfil. Seu progresso é sincronizado com a conta conectada.</p><button id="profile-cancel" type="button" class="ghost" hidden>Voltar ao meu painel</button></div></section>
 <main id="main" class="shell" inert>
 <div class="profile-bar"><div class="profile-identity"><img id="active-profile-avatar" src="./avatares/luanderson.webp" alt="" width="56" height="84" hidden><div><small>ESTUDANDO AGORA</small><strong id="active-profile-name">Escolha seu perfil</strong><span id="sync-status" class="sync-status" role="status">Escolha um perfil para sincronizar</span></div></div><button id="switch-profile" type="button" class="outline">Trocar perfil</button></div>
+<section id="legacy-settings" class="panel section-card legacy-settings" hidden><div class="legacy-settings-heading"><h2>Configurações e ferramentas</h2><button id="close-legacy-settings" class="ghost" type="button">Fechar</button></div><p id="legacy-settings-summary" class="dim small"></p><section class="legacy-sound-row"><span>Som de acerto e erro</span><button id="legacy-sound" class="outline" type="button">Som ligado</button></section><details><summary>Rotina e acompanhamento</summary><div class="legacy-tool-links"><button data-legacy-tool="rotina">Minha rotina · dias, horários e escala 12×36</button><button data-legacy-tool="desempenho">Horas estudadas, XP e desempenho</button><button data-legacy-tool="estudar">Estudo guiado · orientação e prática</button><button data-legacy-tool="erros">Revisão espaçada dos erros e chutes</button></div></details><details><summary>Questões e simulados</summary><div class="legacy-tool-links"><button data-legacy-tool="simulados">Configurar simulado</button><button data-legacy-tool="provas">Provas completas e fontes</button><button data-legacy-tool="videoaulas">Videoaulas por assunto</button><button data-legacy-tool="livre">Treino livre</button><button data-legacy-tool="edital">Disciplinas e cobertura do acervo</button></div></details><details><summary>Conta, backup e aplicativo</summary><div class="legacy-tool-links"><button data-legacy-tool="dados">Backup completo e importação</button><button data-legacy-tool="plano">Meu plano e assinatura</button><button data-legacy-tool="ofertas">Notificações</button><button data-legacy-tool="mais">Atualização, instalação e outros ajustes</button></div></details></section>
 <details class="sync-settings"><summary>Conta e sincronização</summary><p>Seu progresso é sincronizado com sua conta. Para estudar em outro aparelho, entre com o mesmo e-mail e escolha o mesmo perfil.</p><input id="sync-code" hidden><input id="sync-connect-code" hidden></details>
 <div class="page-heading">
 <div><p class="eyebrow">Sua preparação, um treino de cada vez</p><h1>Do zero à <em>próxima etapa.</em></h1><p class="page-subtitle">Sem metas impossíveis. Só progresso real, baseado nas provas anteriores da PM de Minas Gerais.</p></div>
@@ -89,7 +91,7 @@
 </section>
 </div>
 </section>
-<section id="view-train" class="view" hidden>
+<section id="view-train" class="view" hidden><details class="panel section-card"><summary>Favoritos e ferramentas de estudo</summary><div class="legacy-tool-links"><button id="train-favorites" type="button">Estudar minhas favoritas</button><button type="button" data-legacy-tool="rotina">Minha rotina</button><button type="button" data-legacy-tool="simulados">Simulado configurável</button><button type="button" data-legacy-tool="videoaulas">Videoaulas</button></div></details>
 <div class="training-layout">
 <aside class="panel config">
 <div class="section-head"><div><p class="eyebrow">PROVAS ANTERIORES</p><h2>Seu treino</h2></div></div>

@@ -1,6 +1,6 @@
 const copy=x=>JSON.parse(JSON.stringify(x));
 export function toReferenceState(store={}){
- const state={version:3,progress:{},events:[],sessions:[],topics:{},essay:'',essayWeek:'',settings:{goal:5,timer:'off'},session:null};
+ const state={version:3,progress:{},events:[],sessions:[],topics:{},essay:'',essayWeek:'',settings:{goal:5,timer:'off',favorites:[...(store.favorites||[])]},session:null};
  for(const row of store.attempts||[]){
   if(!/^pmmg(2018|2021|2023|2024)-\d+$/.test(row.id)||!Number.isInteger(row.selected)||row.selected<0||row.selected>3)continue;
   const at=Date.parse(row.at);if(!Number.isFinite(at))continue;
@@ -16,7 +16,7 @@ export function leaveReferenceUI(dispose=false){
  document.body.classList.remove('reference-mode');
  if(dispose){document.getElementById('reference-shell')?.remove();delete window.MFAccountBridge}
 }
-export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAccount,logout}){
+export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAccount,logout,tools={}}){
  if(!user?.id)return;
  if(window.MFAccountBridge?.id!==user.id)leaveReferenceUI(true);
  const id=user.id;
@@ -34,9 +34,29 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
   },
   pull:async()=>guard()?await pull():null,
   allow:async(kind,count)=>guard()&&['block','exam'].includes(kind)&&Number.isInteger(count)&&count>0?await allow(kind,count):false,
-  openAccount:()=>{if(guard())openAccount()},logout:()=>{if(guard())logout()}
+  openAccount:()=>{if(guard())openAccount()},logout:()=>{if(guard())logout()},
+  preferences:()=>guard()?{sound:getState().program?.answerSound!==false,xp:getState().program?.xp||0,profile:getState().program?.profile||null,seconds:Object.values(getState().program?.studySeconds||{}).reduce((a,b)=>a+(Number(b)||0),0)}:{},
+  setSound:value=>{if(guard())tools.setSound?.(value===true)},
+  openTool:route=>{if(guard()&&['rotina','simulados','desempenho','estudar','erros','questoes','provas','livre','videoaulas','edital','favoritos','dados','plano','ofertas','mais'].includes(route))tools.open?.(route)},
+  help:(id,mode,answer)=>{if(guard())tools.help?.(id,mode,answer)},
+  answerFeedback:correct=>{if(guard()&&typeof correct==='boolean')tools.sound?.(correct)},
+  activity:()=>{if(guard())tools.activity?.()}
+
  };
  let shell=document.getElementById('reference-shell');
- if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Hoje, Questões, Trilha e Evolução';frame.src='./missao/index.html?v=3.2.0';shell.appendChild(frame);document.body.appendChild(shell)}
+ if(!shell){shell=document.createElement('section');shell.id='reference-shell';const frame=document.createElement('iframe');frame.id='reference-app';frame.title='Missão Farda — Hoje, Questões, Trilha e Evolução';frame.src='./missao/index.html?v=3.2.1';shell.appendChild(frame);document.body.appendChild(shell)}
  document.body.classList.add('reference-mode');
+}
+
+export function referenceAttempts(snapshot,existing=[]){
+ const exact=new Set(existing.map(a=>(a.referenceProfile||'')+'|'+a.id+'|'+Date.parse(a.at)+'|'+a.selected));
+ const legacy=new Set(existing.filter(a=>!a.referenceProfile).map(a=>a.id+'|'+Date.parse(a.at)+'|'+a.selected));
+ const rows=[];
+ for(const profile of ['luanderson','jackeline'])for(const e of snapshot?.profiles?.[profile]?.events||[]){
+  const selected='ABCD'.indexOf(e.answer),at=Number(e.at);if(selected<0||!Number.isFinite(at)||!/^pmmg/.test(e.id))continue;
+  const key=profile+'|'+e.id+'|'+at+'|'+selected,base=e.id+'|'+at+'|'+selected;
+  if(exact.has(key)||legacy.has(base))continue;exact.add(key);
+  rows.push({id:e.id,selected,correct:e.correct===true,at:new Date(at).toISOString(),mode:'practice',referenceProfile:profile});
+ }
+ return rows;
 }

@@ -25,3 +25,9 @@ O painel abre por `app-loader.js` e um pacote único `app.bundle.js`, gerado com
 
 ## Interface do vídeo 3.2.0
 Reutiliza a interface original Missão Farda em `missao/`, com abas Hoje, Questões, Trilha e Evolução. É exibida após o login existente, com armazenamento separado por conta e perfil, e sincronização em user_state.program.missaoFarda. Tentativas anteriores são convertidas em eventos na primeira escolha de perfil; originais preservados. Quotas continuam verificadas pelo serviço existente ao iniciar treinos. Controles Minha conta e Sair mantêm acesso à configuração anterior.
+
+## Alternativas riscadas 3.2.1
+Deslizar horizontalmente em qualquer direção elimina uma alternativa; repetir desfaz. Movimento vertical mantém a rolagem. Não marca respostas nem corrige questões. Riscos persistem na sessão por perfil/conta. Após correção, o gesto fica bloqueado. Teclado: Delete na alternativa focada.
+
+## Recursos do PP-MT reconectados
+Configurações agrupadas acessíveis pela engrenagem; rotina e escala 12×36, desempenho/horas, estudo guiado, revisões, simulados, videoaulas, backup, notificações e plano continuam no motor original. A nova tela usa os mesmos sons/preferências, ajuda tática (comando, armadilhas, aula curta, exemplo fácil e eliminação por XP), IA Premium acionada pelo aluno, favoritos por perfil e cronômetro persistente com prazo do simulado. Respostas novas são espelhadas de forma idempotente no histórico do motor anterior para manter XP e desempenho; históricos originais não são excluídos. Comentários e exercícios específicos de MT não são reclassificados como PMMG.

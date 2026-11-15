@@ -42,8 +42,8 @@ const bundle=await build({stdin:{contents:read('app.js')+'\nwindow.__pmmgTest={b
 async function open(seed=legacy){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
- const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>Promise.resolve();w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
- w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.0'})});w.eval(bundle.outputFiles[0].text);
+ const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>{w.__audioPlayed=(w.__audioPlayed||0)+1;return Promise.resolve()};w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
+ w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.1'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{
@@ -136,4 +136,21 @@ test('primeiro acesso começa sem formulário longo e bloco salvo pode ser retom
   assert.match(resumed.w.document.querySelector('#beginLearning').textContent,/Continuar estudo/);
   assert.deepEqual(JSON.parse(resumed.w.localStorage.getItem('ppmt-v2:test-account')).program.learning.ids,snapshot.program.learning.ids);
  }finally{resumed.dom.window.close()}
+});
+test('configurações antigas, sons e ajuda fácil estão ligados ao motor original',async()=>{
+ const profile={schedule:'weekly',days:[1,3,5],minutes:35,time:'18:30'};
+ const {dom,w}=await open({contest:'PMMG',attempts:[],favorites:[],custom:[],sessions:[],program:{profile,answerSound:false,xp:90}});
+ try{
+  const bridge=w.MFAccountBridge;assert.deepEqual(JSON.parse(JSON.stringify(bridge.preferences().profile)),profile);
+  bridge.answerFeedback(true);assert.equal(w.__audioPlayed||0,0);
+  bridge.setSound(true);bridge.answerFeedback(true);assert.equal(w.__audioPlayed,1);
+  bridge.help('pmmg2021-1','base');assert.ok(w.document.querySelector('.tactical-overlay'));
+  w.document.querySelector('#similarHelp').click();assert.ok(w.document.querySelector('[data-easy-choice]'));
+  assert.equal(JSON.parse(w.localStorage.getItem('ppmt-v2:test-account')).program.xp,90,'Exemplo fácil continua gratuito');
+  const snapshot={profiles:{luanderson:{version:3,progress:{},events:[{id:'pmmg2021-1',answer:'D',correct:true,at:Date.now()}],sessions:[],settings:{favorites:['pmmg2021-1']}}},activeProfile:'luanderson'};
+  bridge.save(snapshot);bridge.save(snapshot);await new Promise(r=>setTimeout(r,5));
+  const state=JSON.parse(w.localStorage.getItem('ppmt-v2:test-account'));
+  assert.equal(state.attempts.length,1,'Sincronizar o mesmo evento não duplica histórico ou XP');
+  assert.ok(state.program.xp>90);assert.deepEqual(state.favorites,['pmmg2021-1']);assert.deepEqual(state.program.profile,profile);
+ }finally{dom.window.close()}
 });

@@ -8,7 +8,7 @@
  window.MFAccount={id,
   initial:()=>({activeProfile}),
   seed(){
-   const data=bridge.initial();profiles=clone(data.profiles||{});activeProfile=data.activeProfile||null;
+   const data=bridge.initial();profiles=clone(data.profiles||{});activeProfile=localStorage.getItem('mf-active-profile:'+id)||null;
    for(const [name,value] of Object.entries(profiles)){
     const key=base+'-'+name;let local=null;try{local=JSON.parse(localStorage.getItem(key))}catch{}
     profiles[name]=window.MFSync.merge(local,value);localStorage.setItem(key,JSON.stringify(profiles[name]));
@@ -17,7 +17,7 @@
   },
   saveProfile(name,state){
    if(!['luanderson','jackeline'].includes(name))return;
-   profiles[name]=clone(state);activeProfile=name;bridge.save({profiles:clone(profiles),activeProfile});
+   profiles[name]=clone(state);activeProfile=name;localStorage.setItem('mf-active-profile:'+id,name);bridge.save({profiles:clone(profiles),activeProfile});
    document.getElementById('sync-status').textContent=navigator.onLine?'Salvo no aparelho · sincronização automática':'Salvo neste aparelho · sem conexão';
   },
   async pull(){
@@ -27,8 +27,11 @@
     this.onIncoming?.(profiles);bridge.save({profiles:clone(profiles),activeProfile});
    }catch{}finally{pulling=false}
   },
+  preferences:()=>bridge.preferences?.()||{},setSound:value=>bridge.setSound?.(value),openTool:route=>bridge.openTool?.(route),help:(id,mode,answer)=>bridge.help?.(id,mode,answer),answerFeedback:correct=>bridge.answerFeedback?.(correct),
+  questionInfo:id=>window.MFQuestionInfo?.(id),eliminate:(id,letter)=>window.MFEliminate?.(id,letter),
   allow:(kind,count)=>bridge.allow(kind,count),openAccount:()=>bridge.openAccount(),logout:()=>bridge.logout()
  };
  window.addEventListener('mf-sync-status',event=>{const el=document.getElementById('sync-status');if(el)el.textContent=event.detail;});
+ ['pointerdown','keydown','scroll'].forEach(type=>document.addEventListener(type,()=>bridge.activity?.(),{capture:true,passive:true}));
  setInterval(()=>{if(!document.hidden)window.MFAccount.pull()},20000);
 })();

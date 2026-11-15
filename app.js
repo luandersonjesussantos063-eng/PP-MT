@@ -1,14 +1,14 @@
-import {mountReferenceUI,leaveReferenceUI} from './reference-ui.js?v=3.2.0';
+import {mountReferenceUI,leaveReferenceUI,referenceAttempts} from './reference-ui.js?v=3.2.1';
 function signalAppReady(){window.__PMMG_READY__=true;window.dispatchEvent(new Event('pmmg:ready'))}
-import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.0';
-import {migratePMMGState} from './pmmg-state.js?v=3.2.0';
+import {PMMG_EXAMS,PMMG_QUESTIONS,PMMG_SUBJECTS} from './pmmg-bank.js?v=3.2.1';
+import {migratePMMGState} from './pmmg-state.js?v=3.2.1';
 import {renderMembership} from './planos/account.js?v=2.17.0';
 import {commandDashboard} from './dashboard-v218.js?v=2.18.1';
 import {loginWithGoogle,studyQuota,takeGoogleReturn,takeGoogleAuthError,myPremiumOffers} from './account-services.js?v=2.20.4';
 import {performanceSummary} from './performance.js?v=2.15.0';
 import {freeTrainingPool,createFreeTraining,nextFreeQuestion,freeTrainingSummary} from './free-training.js?v=2.15.0';
 import {loadNewsFeed,newsPageHTML,newsItemsHTML} from './concurso-news.js?v=2.15.0';
-import {createNotificationCenter} from './notifications.js?v=3.2.0';
+import {createNotificationCenter} from './notifications.js?v=3.2.1';
 import {createProgressSync,cachedAccount} from './offline.js?v=47';
 import {EDITAL_SOURCE,EDITAL_TOPICS,questionTopicIds,syllabusCoverage} from './syllabus.js?v=2.15.0';
 const AUTHORIAL_MT_QUESTIONS=[];
@@ -25,13 +25,13 @@ const EXAM_SOURCES=PMMG_EXAMS;const SOURCE_TOTAL=PMMG_QUESTIONS.length,IMPORTED_
 const BUILTIN=[...OFFICIAL_QUESTIONS.filter(q=>q.displayMode!=='source-pdf'),...QUESTIONS,...CONCEPT_PRACTICE,...AUTHORIAL_MT_QUESTIONS];
 const PENDING_OFFICIAL=OFFICIAL_QUESTIONS.filter(q=>q.displayMode==='source-pdf');
 import {validateBank,shuffle,latestErrors,summary} from './core.js?v=15';
-import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.0';
-import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.0';
+import {getCurrentUser,verifiedUser,signIn,signUp,signOut,loadUserState,saveUserState,pushSubscriptionAction,explainQuestionWithAI} from './auth.js?v=3.2.1';
+import {questionCommand,trapWords,microLesson,findSimilar,canOpenTacticalHelp} from './help.js?v=3.2.1';
 import {createEasySimilar} from './easy-similar.js?v=2.20.2';
 import {videoLessonForErrorHTML} from './video-lessons.js?v=2.20.6';
-import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.0';
+import {CURATED_VIDEO_LESSONS} from './video-catalog.js?v=3.2.1';
 const $=s=>document.querySelector(s), esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const APP_VERSION='3.2.0';
+const APP_VERSION='3.2.1';
 
 // No iOS, position:fixed dentro do <aside> oculto (height:0/overflow:auto)
 // pode ser renderizado no meio do conteúdo. O dock móvel é filho direto do body.
@@ -61,7 +61,7 @@ const KEY='ppmt-v2';
 const emptyStore=()=>({attempts:[],favorites:[],custom:[],sessions:[],program:null,contest:'PMMG'});
 let store=emptyStore(),currentUser=null,legacyStore=null;
 const notificationCenter=createNotificationCenter({loadOffers:myPremiumOffers,registerPush:pushSubscriptionAction,toast:message=>toast(message)});
-const answerSounds=createAnswerSounds({enabled:()=>!!currentUser&&store.program?.answerSound===true});
+const answerSounds=createAnswerSounds({enabled:()=>!!currentUser&&store.program?.answerSound!==false});
 try{const raw=localStorage.getItem(KEY);if(raw){const s=JSON.parse(raw);if(validStore(s))legacyStore=s}}catch{}
 function validStore(s){try{return !!(s&&Array.isArray(s.attempts)&&Array.isArray(s.favorites)&&Array.isArray(s.sessions)&&Array.isArray(s.custom)&&(validateBank(s.custom)||true))}catch{return false}}
 function normalizeStore(s){s=migratePMMGState(s);return validStore(s)?{...emptyStore(),...s,program:s.program||null}:emptyStore()}
@@ -181,7 +181,7 @@ function formatStudyShort(sec){sec=Math.max(0,Math.floor(sec));const h=Math.floo
 function studyRemaining(){return Math.max(0,studyGoalSeconds()-todayStudySeconds())}
 function studyPct(){return Math.min(100,Math.round(todayStudySeconds()/Math.max(1,studyGoalSeconds())*100))}
 function noteStudyActivity(){studyTracker.lastActivity=Date.now()}
-function studyEligible(){return !!(currentUser&&document.visibilityState==='visible'&&document.querySelector('.question, .learning-session')&&!studyTracker.paused&&Date.now()-studyTracker.lastActivity<180000)}
+function studyEligible(){return !!(currentUser&&document.visibilityState==='visible'&&(document.querySelector('.question, .learning-session')||document.body.classList.contains('reference-mode')&&document.getElementById('reference-app')?.contentDocument?.querySelector('#view-train:not([hidden]) .actual-question'))&&!studyTracker.paused&&Date.now()-studyTracker.lastActivity<180000)}
 function persistStudyLocal(){if(!currentUser)return;try{store.updatedAt=new Date().toISOString();localStorage.setItem(userKey(),JSON.stringify(store));localStorage.setItem(`ppmt-sync:${currentUser.id}`,JSON.stringify(store))}catch{}}
 function syncStudyClockUI(){const sec=todayStudySeconds(),pct=studyPct(),rem=studyRemaining();document.querySelectorAll('[data-study-time]').forEach(x=>x.textContent=formatStudyTime(sec));document.querySelectorAll('[data-study-progress]').forEach(x=>x.style.width=pct+'%');document.querySelectorAll('[data-study-percent]').forEach(x=>x.textContent=pct+'%');document.querySelectorAll('[data-study-remaining]').forEach(x=>x.textContent=rem?formatStudyShort(rem)+' restantes':studyGoalSeconds()?'meta concluída':'estudo opcional');const toggle=$('#studyClockToggle');if(toggle){toggle.textContent=studyEligible()?'Pausar contagem':'Retomar contagem';toggle.setAttribute('aria-pressed',String(studyTracker.paused))}}
 function studyTick(){const now=Date.now(),delta=Math.min(2,Math.max(0,(now-studyTracker.lastTick)/1000));studyTracker.lastTick=now;if(studyEligible()){ensureProgram();store.program.studySeconds[localDay()]=todayStudySeconds()+delta;studyTracker.localFlush+=delta;studyTracker.cloudFlush+=delta;if(studyTracker.localFlush>=15){persistStudyLocal();studyTracker.localFlush=0}if(studyTracker.cloudFlush>=120){save();studyTracker.cloudFlush=0}}syncStudyClockUI()}
@@ -332,6 +332,21 @@ document.addEventListener('click',e=>{
 },{capture:true});
 function runAnswered(id){return !!(run&&Object.prototype.hasOwnProperty.call(run.answers,id))}
 function noteAssist(q,type){const a=assistFor(q.id);if(!a.used.includes(type))a.used.push(type);if(run){run.assists=run.assists||{};run.assists[q.id]=[...a.used]}}
+function openReferenceHelp(id,mode='base',answer){
+ const q=bank().find(q=>q.id===id);if(!q)return;
+ if(mode==='ai'){
+  const selected='ABCD'.indexOf(answer);if(selected<0||selected===q.answer)return;
+  closeTacticalHelp();document.body.insertAdjacentHTML('beforeend',`<div class="tactical-overlay" role="dialog" aria-modal="true" aria-label="Explicação da questão"><div class="tactical-sheet"><button id="closeTactical" class="secondary">Fechar</button>${premiumAIHelp(q,selected)}</div></div>`);$('#closeTactical').onclick=closeTacticalHelp;return;
+ }
+ openTacticalHelp(q);
+ $('#eliminateHelp').onclick=()=>{
+  const api=document.getElementById('reference-app')?.contentWindow?.MFAccount,info=api?.questionInfo?.(q.id);if(!info)return;
+  const candidates=q.options.map((_,i)=>i).filter(i=>i!==q.answer&&'ABCD'[i]!==info.answer&&!info.eliminated.includes('ABCD'[i]));
+  if(!candidates.length){$('#tacticalContent').textContent='Não há outra alternativa disponível para eliminar.';return;}
+  if(!spendAssistXP(q,'eliminacao',{repeatable:true}))return;
+  api.eliminate(q.id,'ABCD'[candidates[0]]);closeTacticalHelp();
+ };
+}
 function closeTacticalHelp(){document.querySelector('.tactical-overlay')?.remove()}
 function showEasySimilar(q,related,attempt=0){
  const mini=createEasySimilar(q,related,attempt),container=$('#tacticalContent');
@@ -486,8 +501,8 @@ function renderMore(){
  ['Acompanhamento',[['edital','Disciplinas do acervo'],['noticias','Notícias PMMG']]],
  ['Minha conta',[['rotina','Minha rotina'],['dados','Backup e meus dados'],['plano','Meu plano'],['ofertas','Notificações']]]
  ];
- $('#content').innerHTML=title('Mais','Abra apenas o que precisa agora.')+`<div class="focus-menu">${groups.map(([name,items])=>`<details class="card focus-details" name="focus-menu"><summary>${name}</summary><div class="focus-menu-links">${items.map(([id,label])=>`<a href="#${id}">${label}<span aria-hidden="true">→</span></a>`).join('')}</div></details>`).join('')}<details class="card focus-details" name="focus-menu"><summary>Preferências e aplicativo</summary><section class="sound-settings"><div><h2>Som das respostas</h2><p class="muted">Ative se ajudar na sua concentração.</p></div><button id="answerSoundToggle" type="button" aria-pressed="${store.program.answerSound===true}">${store.program.answerSound===true?'Som ligado':'Som desligado'}</button></section><section class="app-update-controls"><h2>Atualização</h2><p class="muted">Versão ${APP_VERSION}</p><button id="checkAppUpdates" class="secondary" type="button">Verificar atualizações</button><a class="focus-text-link" href="./atualizar.html">Corrigir versão travada</a></section><details class="focus-inner-details"><summary>Instalar e usar sem internet</summary>${installCardHTML()}<p>Entre na sua conta com internet. Os arquivos carregados ficam no aparelho. Novas respostas e simulados precisam de conexão para verificar o acesso.</p><p id="offlineReady" class="muted">Conferindo arquivos…</p></details></details></div>`;
- $('#answerSoundToggle').onclick=()=>{store.program.answerSound=store.program.answerSound!==true;answerSounds.stop();save();const b=$('#answerSoundToggle');b.textContent=store.program.answerSound?'Som ligado':'Som desligado';b.setAttribute('aria-pressed',String(store.program.answerSound))};
+ $('#content').innerHTML=title('Mais','Abra apenas o que precisa agora.')+`<div class="focus-menu">${groups.map(([name,items])=>`<details class="card focus-details" name="focus-menu"><summary>${name}</summary><div class="focus-menu-links">${items.map(([id,label])=>`<a href="#${id}">${label}<span aria-hidden="true">→</span></a>`).join('')}</div></details>`).join('')}<details class="card focus-details" name="focus-menu"><summary>Preferências e aplicativo</summary><section class="sound-settings"><div><h2>Som das respostas</h2><p class="muted">Ative se ajudar na sua concentração.</p></div><button id="answerSoundToggle" type="button" aria-pressed="${store.program.answerSound!==false}">${store.program.answerSound!==false?'Som ligado':'Som desligado'}</button></section><section class="app-update-controls"><h2>Atualização</h2><p class="muted">Versão ${APP_VERSION}</p><button id="checkAppUpdates" class="secondary" type="button">Verificar atualizações</button><a class="focus-text-link" href="./atualizar.html">Corrigir versão travada</a></section><details class="focus-inner-details"><summary>Instalar e usar sem internet</summary>${installCardHTML()}<p>Entre na sua conta com internet. Os arquivos carregados ficam no aparelho. Novas respostas e simulados precisam de conexão para verificar o acesso.</p><p id="offlineReady" class="muted">Conferindo arquivos…</p></details></details></div>`;
+ $('#answerSoundToggle').onclick=()=>{store.program.answerSound=store.program.answerSound===false;answerSounds.stop();save();const b=$('#answerSoundToggle');b.textContent=store.program.answerSound?'Som ligado':'Som desligado';b.setAttribute('aria-pressed',String(store.program.answerSound))};
  $('#checkAppUpdates').onclick=()=>void checkAppUpdates(true);syncInstallUI();offlineReadyUI();
 }
 
@@ -521,7 +536,7 @@ function render(){
  const c=$('#content');
  if(tab==='inicio'){
   renderToday();
-  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click()});
+  mountReferenceUI({user:currentUser,getState:()=>store,saveSnapshot:snapshot=>{for(const row of referenceAttempts(snapshot,store.attempts)){const q=bank().find(q=>q.id===row.id);if(q){row.xpAwarded=localDay(new Date(row.at))===localDay()?applyQuestionXP(q,row.correct):0;row.assists=[...assistFor(q.id).used];row.assistXp=assistFor(q.id).spent||0;store.attempts.push(row)}}const favorites=snapshot.profiles[snapshot.activeProfile]?.settings?.favorites;if(Array.isArray(favorites))store.favorites=favorites.filter(id=>bank().some(q=>q.id===id));store.program.missaoFarda=snapshot;save()},pull:async()=>{const cloud=await loadUserState(currentUser.id);return cloud?.program?.missaoFarda||null},allow:allowStudy,openAccount:()=>{location.hash='mais'},logout:()=>$('#logout')?.click(),tools:{setSound:value=>{store.program.answerSound=value;answerSounds.stop();save()},open:route=>{location.hash=route},sound:correct=>answerSounds.play(correct),activity:()=>{studyTracker.paused=false;noteStudyActivity()},help:openReferenceHelp}});
  }
  if(tab==='missao')renderMission();
  if(tab==='estudar')renderLearn();
@@ -722,7 +737,7 @@ async function enableAppAutoUpdates(){
   persistStudyLocal();location.reload();
  });
  try{
-  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.0',{updateViaCache:'none'});
+  appUpdateRegistration=await navigator.serviceWorker.register('./sw.js?v=3.2.1',{updateViaCache:'none'});
   setTimeout(()=>void checkAppUpdates(),3000);
   window.addEventListener('online',()=>void checkAppUpdates());
   document.addEventListener('visibilitychange',()=>{
@@ -884,7 +899,7 @@ function renderSyllabus(){
  $('#topicSearch').oninput=update;$('#topicStatus').onchange=update;update();
 }
 
-async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.0-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.0')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.0');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
+async function offlineReadyUI(){const el=$('#offlineReady');if(!el)return;if(!('serviceWorker' in navigator)){el.textContent='Este navegador não oferece preparo offline.';return}try{const registration=await navigator.serviceWorker.ready;const cache=await caches.open('ppmt-3.2.1-self-healing');const prepared=registration.active?.scriptURL.includes('sw.js?v=3.2.1')&&await cache.match('./index.html')&&await cache.match('./app.js?v=3.2.1');if(el.isConnected)el.textContent=prepared?'Arquivos preparados para estudar offline neste aparelho.':'Preparando arquivos. Mantenha o app aberto com internet.'}catch{if(el.isConnected)el.textContent='Não foi possível confirmar o preparo offline. Tente novamente com internet.'}}
 
 if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',offlineReadyUI);
 
