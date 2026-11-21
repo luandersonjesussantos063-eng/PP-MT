@@ -6,7 +6,7 @@
  const id=bridge.id,base='missao-farda-pmmg-state-v3:'+id;
  let profiles={},activeProfile=null,pulling=false;
  const clone=value=>JSON.parse(JSON.stringify(value));
- window.MFAccount={id,
+ window.MFAccount={id,localGuest:!!bridge.localGuest,
   initial:()=>({activeProfile}),
   seed(){
    const data=bridge.initial();profiles=clone(data.profiles||{});activeProfile=localStorage.getItem('mf-active-profile:'+id)||null;
@@ -19,10 +19,10 @@
   saveProfile(name,state){
    if(!['luanderson','jackeline'].includes(name))return;
    profiles[name]=clone(state);activeProfile=name;localStorage.setItem('mf-active-profile:'+id,name);bridge.save({profiles:clone(profiles),activeProfile});
-   document.getElementById('sync-status').textContent=navigator.onLine?'Salvo no aparelho · sincronização automática':'Salvo neste aparelho · sem conexão';
+   document.getElementById('sync-status').textContent=bridge.localGuest?'Salvo neste aparelho':navigator.onLine?'Salvo no aparelho · sincronização automática':'Salvo neste aparelho · sem conexão';
   },
   async pull(){
-   if(pulling||!navigator.onLine)return;pulling=true;
+   if(bridge.localGuest||pulling||!navigator.onLine)return;pulling=true;
    try{const incoming=await bridge.pull();if(!incoming)return;
     for(const [name,value] of Object.entries(incoming.profiles||{}))profiles[name]=window.MFSync.merge(profiles[name],value);
     this.onIncoming?.(profiles);bridge.save({profiles:clone(profiles),activeProfile});

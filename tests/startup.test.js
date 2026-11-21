@@ -25,10 +25,10 @@ test('entrada HTML mostra carregamento, nunca apresenta o texto estático como s
   assert.doesNotMatch(w.document.querySelector('#content').textContent,/Plataforma independente|Conheça o aplicativo/);
  }finally{dom.window.close()}
 });
-test('pacote completo real abre login mesmo sem rede, sem substituir os módulos de autenticação',async()=>{
+test('pacote completo abre estudo público mesmo sem rede',async()=>{
  const {dom,w,errors}=browser({offline:true});try{
   w.eval(bundle);await tick();
-  assert.ok(w.document.querySelector('#authForm'),'O formulário de login deve aparecer');
+  assert.equal(w.document.querySelector('#authForm'),null);assert.ok(w.document.querySelector('#beginLearning'));assert.ok(w.localStorage.getItem('ppmt-v2:public-device-v1'));
   assert.equal(w.document.querySelector('#app-startup'),null);
   assert.equal(w.__PMMG_READY__,true);assert.deepEqual(errors,[]);
  }finally{dom.window.close()}
@@ -56,15 +56,15 @@ test('falha de download exibe recuperação e não apaga a conta ou o progresso'
  }finally{dom.window.close()}
 });
 
-for(const [device,ua,touch] of [['iPhone','Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',5],['iPad com navegador de desktop','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15',5]])test('instalação acessível no '+device+' antes do login',async()=>{
+for(const [device,ua,touch] of [['iPhone','Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1',5],['iPad com navegador de desktop','Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15',5]])test('instalação acessível no '+device+' sem login',async()=>{
  const {dom,w,errors}=browser({offline:true,ua,touch});try{
   let copied='';Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async text=>{copied=text}}});
-  w.eval(bundle);await tick();const button=w.document.querySelector('[data-install-app]');assert.equal(button.hidden,false);assert.match(button.textContent,/iPhone/);button.click();
+  w.eval(bundle);await tick();const button=w.document.querySelector('#installTop');assert.equal(button.hidden,false);assert.match(button.textContent,/iPhone/);button.click();
   const guide=w.document.querySelector('.install-overlay');assert.match(guide.textContent,/Safari/);assert.match(guide.textContent,/Adicionar à Tela de Início/);assert.match(guide.textContent,/Abrir como App da Web/);
   assert.equal(w.document.activeElement.id,'closeInstallGuide');w.document.querySelector('#copyInstallURL').click();await tick();assert.equal(copied,'https://ppmt.novabytesolucoes.com.br/');
   w.document.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(w.document.querySelector('.install-overlay'),null);assert.deepEqual(errors,[]);
  }finally{dom.window.close()}
 });
-test('app aberto pela tela inicial oculta a instalação e preserva login',async()=>{
- const {dom,w}=browser({offline:true,standalone:true});try{w.eval(bundle);await tick();assert.ok(w.document.querySelector('#authForm'));assert.equal(w.document.querySelector('[data-install-app]').hidden,true);assert.equal(w.document.querySelector('#installTop').hidden,true)}finally{dom.window.close()}
+test('app aberto pela tela inicial oculta a instalação e preserva estudo',async()=>{
+ const {dom,w}=browser({offline:true,standalone:true});try{w.eval(bundle);await tick();assert.ok(w.document.querySelector('#beginLearning'));assert.equal(w.document.querySelector('#authForm'),null);assert.equal(w.document.querySelector('#installTop').hidden,true)}finally{dom.window.close()}
 });

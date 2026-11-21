@@ -7,7 +7,7 @@ if(!DB||!C){document.body.textContent="Não foi possível carregar o banco de pr
 const ALL={exams:{...BASE.exams,...PC.exams},questions:[...BASE.questions,...PC.questions]};
 const $=id=>document.getElementById(id),DAY=C.dayDate(),IDS=new Set(ALL.questions.map(q=>q.id)),QUESTION=new Map(ALL.questions.map(q=>[q.id,q]));
 const LEGACYKEY="missao-farda-pmmg-state-v3:"+window.MFAccount.id,PROFILEKEY="missao-farda-pmmg-legacy-owner:"+window.MFAccount.id;
-const PROFILES={luanderson:"Luanderson",jackeline:"Jackeline Santana"};
+const PROFILES={luanderson:"PMMG",jackeline:"PMMG + PCMG"};
 let activeProfile=null,STATEKEY=null;
 const profileGroups=()=>C.GROUPS.filter(subject=>DB.questions.some(q=>C.subjectGroup(q)===subject));
 const contestLabel=()=>activeProfile==='jackeline'?'PMMG + PCMG':'PMMG';
@@ -91,7 +91,7 @@ function initSync(){
  $('close-legacy-settings').onclick=()=>{$('legacy-settings').hidden=true;$('account-settings').setAttribute('aria-expanded','false');$('account-settings').focus();};
  $('legacy-sound').onclick=()=>{window.MFAccount.setSound(window.MFAccount.preferences().sound===false);renderLegacySettings();};
  document.querySelectorAll('[data-legacy-tool]').forEach(button=>{button.onclick=()=>window.MFAccount.openTool(button.dataset.legacyTool);});
- $('account-signout').onclick=()=>window.MFAccount.logout();
+ $('account-signout').onclick=()=>window.MFAccount.logout();if(window.MFAccount.localGuest)$('account-signout').textContent='Trocar perfil';
  window.addEventListener('online',()=>syncClient.pump());
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncClient.pump()});
 }
@@ -320,7 +320,7 @@ function renderQuestion(){
  const favorites=state.settings.favorites||(state.settings.favorites=[]);
  tools.appendChild(button(favorites.includes(q.id)?'★ Favorita':'☆ Salvar', 'outline',()=>{const i=favorites.indexOf(q.id);if(i<0)favorites.push(q.id);else favorites.splice(i,1);save();renderQuestion()}));
  if(s.grading==='practice'||s.finished)tools.appendChild(button('💡 Entender o conteúdo','outline',()=>window.MFAccount.help(q.id,'base',chosen)));
- if(graded&&chosen&&chosen!==q.key&&!q.annulled)tools.appendChild(button('Explicar meu erro com IA','outline',()=>window.MFAccount.help(q.id,'ai',chosen)));
+ if(!window.MFAccount.localGuest&&graded&&chosen&&chosen!==q.key&&!q.annulled)tools.appendChild(button('Explicar meu erro com IA','outline',()=>window.MFAccount.help(q.id,'ai',chosen)));
  add(area,"h3","subheading",graded?"Alternativas e correção":"Marque sua resposta (A a "+Object.keys(q.options).at(-1)+")");
  add(area,"p","swipe-hint","Deslize uma alternativa para o lado para riscá-la. Repita para desfazer.");
  const opts=add(area,"div","answer-options");

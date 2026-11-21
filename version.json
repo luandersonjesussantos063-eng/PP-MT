@@ -1,6 +1,7 @@
 {
   "version": "3.2.8",
   "published_from": "PP-MT/main",
-  "purpose": "Migração para PMMG preservando infraestrutura PP-MT",
-  "updated_at": "2026-11-15"
+  "purpose": "Acesso público gratuito e progresso local, sem dependência do Supabase",
+  "updated_at": "2026-11-21",
+  "public_study": true
 }

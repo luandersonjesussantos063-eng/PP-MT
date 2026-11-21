@@ -21,7 +21,7 @@ export function mountReferenceUI({user,getState,saveSnapshot,pull,allow,openAcco
  if(window.MFAccountBridge?.id!==user.id)leaveReferenceUI(true);
  const id=user.id;
  const guard=()=>window.MFAccountBridge?.id===id;
- window.MFAccountBridge={id,
+ window.MFAccountBridge={id,localGuest:user.localGuest===true,
   initial(){const s=getState(),saved=s.program?.missaoFarda;return copy(saved||{profiles:{},activeProfile:null,legacy:toReferenceState(s)})},
   save(snapshot){
    if(!guard()||!snapshot||!snapshot.profiles)return;

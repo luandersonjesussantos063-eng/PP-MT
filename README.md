@@ -34,3 +34,6 @@ Configurações agrupadas acessíveis pela engrenagem; rotina e escala 12×36, d
 
 ### Instalação no iPhone e iPad — 3.2.2
 O botão Instalar fica disponível antes e depois do login. No iOS abre o guia Safari → Compartilhar → Adicionar à Tela de Início (ativar Abrir como App da Web quando disponível). Inclui cópia do endereço para sair de navegadores internos, detecção de iPad com agente de desktop e áreas seguras de tela. A distribuição atual é PWA, sem publicação na App Store.
+
+## Acesso público — 21/11/2026
+O acesso principal não exige cadastro ou assinatura. PMMG e PCMG conservam questões, filtros, revisão, simulados e backup; o progresso fica no aparelho, reutilizando o identificador local anterior quando há histórico neste navegador. O banco anterior deve permanecer preservado até a validação de publicação e exportação ou pausa reversível. Sincronização remota, IA dependente de servidor, cobrança, notificações push e métricas remotas não integram o modo público. Não publicar estados individuais nem mover credenciais para código.

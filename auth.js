@@ -7,9 +7,11 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Nz1NSEvEmmIHI7LUREPNyg_Wxsrn5ZN
 let supabase;
 const online=()=>navigator.onLine!==false;
 function client(){return supabase??=createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  auth: { persistSession: true, autoRefreshToken: false, detectSessionInUrl: false },
   global:{fetch:async(input,options={})=>{
     if(!online())throw new TypeError("Sem conexão");
+    // The retired PP-MT backend must not be called by the public study site.
+    throw new TypeError("Serviço de contas aposentado; utilize o estudo público.");
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
     options.signal?.addEventListener("abort",()=>controller.abort(),{once:true});
     try{return await fetch(input,{...options,signal:controller.signal})}finally{clearTimeout(timer)}
