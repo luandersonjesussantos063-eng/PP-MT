@@ -30,8 +30,10 @@ test('Google respeita o endereco acessado e permite retorno de checkout sem mist
  assert.match(social,/history\.replaceState/);
  assert.doesNotMatch(social,/MP_ACCESS_TOKEN_PROD|SUPABASE_SERVICE_ROLE_KEY|client_secret/);
  const app=read('app.js');
- assert.match(app,/const oauthError=takeGoogleAuthError\(\)/);
- assert.match(app,/if\(oauthError\)\{/);
+ const boot=app.slice(app.indexOf('async function bootstrap(){'),app.indexOf('\nfunction title('));
+ assert.match(boot,/localGuest:true/);
+ assert.doesNotMatch(boot,/getCurrentUser\(|takeGoogleAuthError\(|loginWithGoogle\(/);
+ assert.match(app,/if\(!currentUser\.localGuest\)progressSync\.queue/);
 });
 test('cache do PWA atualiza login em Android e iOS sem deixar modulos antigos',()=>{
  const index=read('index.html'),sw=read('sw.js'),premium=read('planos/premium.html');

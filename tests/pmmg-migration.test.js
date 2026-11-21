@@ -63,14 +63,14 @@ const bundle=await build({stdin:{contents:read('app.js')+'\nwindow.__pmmgTest={b
 async function open(seed=legacy){
  const errors=[];const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e));
  const dom=new JSDOM(read('index.html'),{url:'https://ppmt.novabytesolucoes.com.br/',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole:vc});
- const w=dom.window;w.__seed=structuredClone(seed);w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>{w.__audioPlayed=(w.__audioPlayed||0)+1;return Promise.resolve()};w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
+ const w=dom.window;w.__seed=structuredClone(seed);w.localStorage.setItem('ppmt-offline-account',JSON.stringify({id:'test-account',email:'aluno@example.com'}));w.localStorage.setItem('ppmt-v2:test-account',JSON.stringify(seed));w.HTMLMediaElement.prototype.pause=()=>{};w.HTMLMediaElement.prototype.play=()=>{w.__audioPlayed=(w.__audioPlayed||0)+1;return Promise.resolve()};w.matchMedia=()=>({matches:false,addEventListener(){}});w.scrollTo=()=>{};w.confirm=()=>true;
  w.fetch=async()=>({ok:true,json:async()=>({version:'3.2.8'})});w.eval(bundle.outputFiles[0].text);
  await new Promise(r=>setTimeout(r,35));return {dom,w,errors};
 }
 test('app real inicia com a conta existente, migra estado e abre banco, textos e todas as ferramentas',async()=>{
  const {dom,w,errors}=await open();
  try{
-  assert.equal(w.__saved.contest,'PMMG');assert.equal(w.__saved.legacyPPMT.program.xp,900);
+  const saved=JSON.parse(w.localStorage.getItem('ppmt-v2:test-account'));assert.equal(saved.contest,'PMMG');assert.equal(saved.legacyPPMT.program.xp,900);assert.equal(w.__saved,undefined,'O modo público nunca escreve no servidor');assert.equal(w.document.querySelector('#authForm'),null);assert.equal(w.MFAccountBridge.localGuest,true);assert.equal(await w.MFAccountBridge.allow('block',100),true);assert.equal(await w.MFAccountBridge.allow('exam',50),true);
   assert.equal(w.__pmmgTest.bank().length,205);
   for(const hash of ['questoes','materias','provas','conteudos','edital','noticias','rotina','desempenho','simulados','dados','estudar']){
    w.location.hash=hash;w.__pmmgTest.navigate();
@@ -134,7 +134,7 @@ test('Mais mantém todas as ferramentas em grupos fechados, sem esconder a atual
   w.location.hash='mais';w.__pmmgTest.navigate();const doc=w.document;
   assert.equal(doc.querySelectorAll('.focus-menu>details').length,4);
   assert.ok([...doc.querySelectorAll('.focus-menu>details')].every(d=>!d.open));
-  for(const target of ['#simulados','#provas','#dados','#rotina','#plano','#questoes','#videoaulas'])assert.ok(doc.querySelector(`.focus-menu a[href="${target}"]`),target);
+  for(const target of ['#simulados','#provas','#dados','#rotina','#questoes','#videoaulas'])assert.ok(doc.querySelector(`.focus-menu a[href="${target}"]`),target);
   assert.ok(doc.querySelector('#checkAppUpdates'));
   const details=doc.querySelector('#answerSoundToggle').closest('details');details.open=true;
   doc.querySelector('#answerSoundToggle').click();assert.equal(details.open,true);
